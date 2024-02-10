@@ -1,0 +1,41 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1705564068148,
+      "tag": "0000_cold_vector",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1705566872441,
+      "tag": "0001_flawless_hellion",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1705566941534,
+      "tag": "0002_plain_meltdown",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1705762772112,
+      "tag": "0003_chilly_maggott",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1705765885168,
+      "tag": "0004_futuristic_silver_samurai",
+      "breakpoints": true
+    }
+  ]
+}

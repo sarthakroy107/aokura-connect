@@ -1,0 +1,1 @@
+ALTER TABLE "profile" ALTER COLUMN "email" SET DATA TYPE varchar(128);
