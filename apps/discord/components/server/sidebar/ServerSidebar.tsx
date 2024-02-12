@@ -1,12 +1,15 @@
-import { getServerAndMemberDetails } from "@/lib/server-actions/server/actions";
 import CategoryComp from "./category-comp";
 import ServersidebarNavbar from "./server-sidebar-nav";
 import ServerSearch from "./server-search";
+
 import { channelTypesEnum } from "@/lib/schema";
-import { Hash, Shield, ShieldHalf, Speaker, Video } from "lucide-react";
+import { getServerAndMemberDetails } from "@/lib/server-actions/server/actions";
 import { currentProfile } from "@/lib/auth/current-user";
 
+import { Hash, Shield, ShieldHalf, Speaker, Video } from "lucide-react";
+
 const ServerSidebar = async ({ server_id }: { server_id: string }) => {
+  
   const profile = await currentProfile();
 
   if (!profile) return null;

@@ -119,7 +119,7 @@ const CreateServerModal = () => {
             <DialogFooter className="bg-[#282b30] px-6 py-4">
               <Button
                 type="submit"
-                className="bg-discord_purple rounded-[2px] text-white hover:bg-discord_purple"
+                className="bg-discord_default rounded-[2px] text-white hover:bg-discord_default"
                 disabled={isSubmitting}
               >
                 Create

@@ -1,17 +1,18 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "@db/db";
 import { Category, Channel, Member, Server, memberToChannel } from "@db/schema";
 import { revalidatePath } from "next/cache";
-import { z } from 'zod'
+import { z } from "zod";
+import { redirect } from "next/navigation";
 
 const getCurrentServerData = z.object({
   serverId: z.string().min(1, { message: "Server ID is required" }),
   profileId: z.string().min(1, { message: "Profile ID is required" }),
-})
+});
 
-/** GET **/
+/***** GET *****/
 
 export const getServers = async (profileId: string) => {
   try {
@@ -29,12 +30,39 @@ export const getServers = async (profileId: string) => {
   }
 };
 
-export const getServerAndMemberDetails = async (serverId: string, profileId: string) => {
+export const seacrhPublicServer = async (searchQuery: string) => {
+  const result = z
+    .string()
+    .min(1, { message: "String can not be empty" })
+    .safeParse(searchQuery);
 
-  const result = getCurrentServerData.safeParse({ serverId, profileId })
+  if (!result.success) return [];
 
-  if(!result.success) {
-    throw new Error( result.error.message )
+  try {
+    const servers = await db
+      .select()
+      .from(Server)
+      .where(
+        sql`to_tsvector('simple', ${Server.name}) @@ to_tsquery('simple', ${searchQuery})`
+      );
+
+    if (!servers) return [];
+
+    return servers;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+export const getServerAndMemberDetails = async (
+  serverId: string,
+  profileId: string
+) => {
+  const result = getCurrentServerData.safeParse({ serverId, profileId });
+
+  if (!result.success) {
+    throw new Error(result.error.message);
   }
 
   try {
@@ -102,7 +130,7 @@ export const getServerAndMemberDetails = async (serverId: string, profileId: str
   }
 };
 
-/** POST **/
+/***** POST *****/
 
 export const createServer = async (
   name: string,
@@ -168,3 +196,37 @@ export const createServer = async (
     console.error(error);
   }
 };
+
+
+export const joinServer = async (serverIds: string[], profileId: string) => {
+  let lastJoined;
+  for (const serverId of serverIds) {
+    try {
+      const alreadyJoined = await checkAlreadyJoined(serverId, profileId);
+      if(alreadyJoined) continue;
+      await db.insert(Member).values({ server_id: serverId, profile_id: profileId, role: 'guest'})
+      lastJoined = serverId;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  redirect(`/channel/${lastJoined}`);
+  revalidatePath("/(main)/channel/[serverId]");
+};
+
+const checkAlreadyJoined = async (serverId: string, profileId: string) => {
+  try {
+    const member = await db.query.Member.findFirst({
+      where: and(
+        eq(Member.server_id, serverId),
+        eq(Member.profile_id, profileId)
+      )
+    })
+
+    if(!member) return false;
+    else return true;
+
+  } catch (error) {
+    console.error(error);
+  }
+}

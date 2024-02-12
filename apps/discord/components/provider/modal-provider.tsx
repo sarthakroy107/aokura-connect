@@ -3,6 +3,7 @@ import CreateCategoryModal from "@/components/modals/create-category-modal";
 import CreateChannelModal from "@/components/modals/create-channel-modal";
 import UploadFileModal from "@/components/modals/upload-file-modal";
 import EditServerProfile from "@/components/modals/edit-server-profile";
+import JoinServerModal from "../modals/join-server-modal";
 
 const ModalProvider = () => {
   return (
@@ -12,6 +13,7 @@ const ModalProvider = () => {
       <CreateChannelModal />
       <UploadFileModal />
       <EditServerProfile />
+      <JoinServerModal />
     </>
   );
 };

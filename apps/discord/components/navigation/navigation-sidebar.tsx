@@ -2,10 +2,12 @@ import { currentProfile } from "@/lib/auth/current-user";
 import { ScrollArea } from "@ui/components/ui/scroll-area"
 import { getServers } from "@/lib/server-actions/server/actions";
 import SidebarServerIdon from "./sidebar-server-icon";
-import { Separator } from "../ui/separator";
-import CreateServerIcon from "./create-server-icon";
+import { Separator } from "@ui/components/ui/separator";
+import CreateServerIcon from "@/app/(main)/create-server-icon";
+import JoinServer from "@/app/(main)/join-server-icon";
 
 const NavigationSidebar = async () => {
+
   const profile = await currentProfile()
   if (!profile) return null;
   
@@ -17,6 +19,7 @@ const NavigationSidebar = async () => {
       }
       <Separator className="mx-1 w-[60px] bg-white/10" />
       <CreateServerIcon profile={profile} />
+      <JoinServer />
     </ScrollArea>
   )
 }

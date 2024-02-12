@@ -4,13 +4,14 @@ import { CategoryType, ChannelType, MemberType, ProfileType, ServerType } from "
 
 
 export enum ModalEnum {
-    CREATE_SERVER   = "create-server",
-    CREATE_CATEGORY = "create-category",
-    CREATE_CHANNEL  = "create-channel",
-    UPLOAD_FILE     = "upload-file",
-    EDIT_SERVER     = "edit-server",
+    CREATE_SERVER       = "create-server",
+    CREATE_CATEGORY     = "create-category",
+    CREATE_CHANNEL      = "create-channel",
+    UPLOAD_FILE         = "upload-file",
+    EDIT_SERVER         = "edit-server",
     EDIT_SERVER_PROFILE = "edit-server-profile",
-    POPOVER         = "popover",
+    JOIN_SERVER         = "join-server",
+    POPOVER             = "popover",
 }
 
 interface IModalDataType {

@@ -1,4 +1,5 @@
 "use server";
+
 import { auth } from "@clerk/nextjs";
 import { db } from "@db/db";
 import { eq } from "drizzle-orm";
@@ -6,7 +7,9 @@ import { Profile } from "@/lib/schema";
 import { currentUser } from "@clerk/nextjs";
 
 export const currentProfile = async () => {
+
   const { userId } = auth();
+  
   if (!userId) return null;
 
   const profile = await db

@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { LucidePlus } from "lucide-react";
-import TooltipWrapper from "../common/tooltip-wrapper";
+import TooltipWrapper from "../../components/common/tooltip-wrapper";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 import { ProfileType } from "@/lib/schema";
 
