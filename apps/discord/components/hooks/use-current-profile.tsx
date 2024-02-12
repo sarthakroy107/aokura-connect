@@ -13,6 +13,6 @@ export const useCurrentProfile = () => {
 
   return {
     currentProfileData: data,
-    refetchCurrentProfile: refetch,
+    refetchCurrentProfileData: refetch,
   }
 }

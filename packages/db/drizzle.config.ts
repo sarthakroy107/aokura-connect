@@ -1,6 +1,9 @@
+import "dotenv/config";
+
 import type { Config } from "drizzle-kit";
+
 export default {
-  schema: "./lib/schema.ts",
+  schema: "./src/schema.ts",
   out: "./drizzle",
   driver: "pg",
   dbCredentials: {

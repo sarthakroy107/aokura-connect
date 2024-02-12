@@ -1,5 +1,5 @@
 'use client';
-import { getMessages } from '@/lib/server-actions/message'
+import { getMessages } from '@/lib/server-actions/message/actions'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation';
 import MessageComponent from './message-component';

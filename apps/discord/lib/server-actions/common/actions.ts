@@ -1,6 +1,6 @@
 'use server';
-import { db } from "@/lib"
-import { Member, Profile, Server } from "@/lib/schema";
+import { db } from "@db/db";
+import { Member, Profile, Server } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 type TChageImage = {

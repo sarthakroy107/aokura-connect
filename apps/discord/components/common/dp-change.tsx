@@ -1,6 +1,6 @@
 'use client';
 
-import { changeImage } from "@/lib/server-actions/put/common";
+import { changeImage } from "@/lib/server-actions/common/actions";
 import { UploadDropzone } from "@/lib/uploadthing";
 import Image from "next/image";
 import { useState } from "react";
@@ -23,7 +23,7 @@ const DisplayImageChange = ({ currentImage, endpoint, id, type }: TDisplayImageC
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const params = useParams<{ serverId: string }>()
 
-  const { serverDataRefetch, refetchCurrentProfile, } = useCurrentServer(params!.serverId);
+  const { refetchCurrentProfileData, refetchServerData } = useCurrentServer(params!.serverId);
 
   return (
     <>
@@ -37,10 +37,10 @@ const DisplayImageChange = ({ currentImage, endpoint, id, type }: TDisplayImageC
             }}
             onClientUploadComplete={async (res) => {
               try {
-                await changeImage({ id, avatar_url: res[0].url, type });
+                await changeImage({ id, avatar_url: res[0]!.url, type });
                 toast.success('Image changed successfully');
-                serverDataRefetch({ throwOnError: false });
-                refetchCurrentProfile({ throwOnError: false });
+                refetchServerData({ throwOnError: false });
+                refetchCurrentProfileData({ throwOnError: false });
               } catch (error) {
                 console.log(error);
                 toast.error('Something went wrong in db');

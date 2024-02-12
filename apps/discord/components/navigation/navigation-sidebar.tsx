@@ -1,6 +1,6 @@
 import { currentProfile } from "@/lib/auth/current-user";
-import { ScrollArea } from "../ui/scroll-area"
-import { getServers } from "@/lib/server-actions/servers";
+import { ScrollArea } from "@ui/components/ui/scroll-area"
+import { getServers } from "@/lib/server-actions/server/actions";
 import SidebarServerIdon from "./sidebar-server-icon";
 import { Separator } from "../ui/separator";
 import CreateServerIcon from "./create-server-icon";

@@ -2,11 +2,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useSocket } from "../provider/socket-provider"
 import { useEffect } from "react";
+
 type TProps = {
   socketEvent: string,
   updateKey: string,
   reactQueryKeys: string[],
 }
+
 const useChatSocket = ({ socketEvent, updateKey, reactQueryKeys }:TProps) => {
   const { socket } = useSocket();
   const queryClient = useQueryClient();

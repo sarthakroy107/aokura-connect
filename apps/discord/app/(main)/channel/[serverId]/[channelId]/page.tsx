@@ -1,7 +1,7 @@
 import ChannelNavbar from "@/components/channel/channel-nav"
 import ChatInput from "@/components/chat/chat-input"
 import ChatMessages from "@/components/chat/chat-messages"
-import { getChannelById } from "@/lib/server-actions/channel"
+import { getChannelById } from "@/lib/server-actions/channel/actions"
 
 const Page = async ({ params }: { params: { serverId: string, channelId: string } }) => {
   const channel = await getChannelById(params.channelId)
