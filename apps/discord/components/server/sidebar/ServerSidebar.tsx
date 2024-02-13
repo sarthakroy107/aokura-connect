@@ -2,7 +2,7 @@ import CategoryComp from "./category-comp";
 import ServersidebarNavbar from "./server-sidebar-nav";
 import ServerSearch from "./server-search";
 
-import { channelTypesEnum } from "@/lib/schema";
+import { channelTypesEnum } from "@db/schema";
 import { getServerAndMemberDetails } from "@/lib/server-actions/server/actions";
 import { currentProfile } from "@/lib/auth/current-user";
 

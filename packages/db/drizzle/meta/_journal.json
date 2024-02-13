@@ -8,6 +8,20 @@
       "when": 1707579452372,
       "tag": "0000_elite_adam_destine",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1707799881767,
+      "tag": "0001_slippery_firestar",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1707801933376,
+      "tag": "0002_sleepy_venom",
+      "breakpoints": true
     }
   ]
 }

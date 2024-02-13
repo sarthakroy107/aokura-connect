@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs";
 import { db } from "@db/db";
 import { eq } from "drizzle-orm";
-import { Profile } from "@/lib/schema";
+import { Profile } from "@db/schema";
 import { currentUser } from "@clerk/nextjs";
 
 export const currentProfile = async () => {

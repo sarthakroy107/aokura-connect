@@ -1,6 +1,6 @@
 {
-  "id": "f136f994-bdd6-4fa0-aa7b-3923ceccc8cc",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "170ce83b-3dfa-40e2-90f3-fa66161830a6",
+  "prevId": "f6bc3898-d2c4-4872-912d-368a5959f318",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -38,6 +38,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "is_private": {
+          "name": "is_private",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
@@ -222,6 +229,18 @@
           "primaryKey": false,
           "notNull": true
         },
+        "nickname": {
+          "name": "nickname",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "server_avatar": {
+          "name": "server_avatar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "server_id": {
           "name": "server_id",
           "type": "uuid",
@@ -233,6 +252,34 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_banned": {
+          "name": "is_banned",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_muted": {
+          "name": "is_muted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_kicked": {
+          "name": "is_kicked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_left": {
+          "name": "is_left",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -340,6 +387,12 @@
           "notNull": true,
           "default": false
         },
+        "in_reply_to": {
+          "name": "in_reply_to",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -381,6 +434,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "message_in_reply_to_message_id_fk": {
+          "name": "message_in_reply_to_message_id_fk",
+          "tableFrom": "message",
+          "tableTo": "message",
+          "columnsFrom": [
+            "in_reply_to"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -426,13 +492,13 @@
         },
         "email": {
           "name": "email",
-          "type": "varchar(64)",
+          "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         },
         "phone": {
           "name": "phone",
-          "type": "bigint",
+          "type": "varchar(13)",
           "primaryKey": false,
           "notNull": false
         },
@@ -440,7 +506,15 @@
           "name": "avatar",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg'"
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -525,6 +599,13 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",

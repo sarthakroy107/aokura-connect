@@ -1,6 +1,6 @@
 'use client';
 import { create } from "zustand"
-import { CategoryType, ChannelType, MemberType, ProfileType, ServerType } from "../schema";
+import { CategoryType, ChannelType, MemberType, ProfileType, ServerType } from "@db/schema";
 
 
 export enum ModalEnum {
@@ -12,6 +12,7 @@ export enum ModalEnum {
     EDIT_SERVER_PROFILE = "edit-server-profile",
     JOIN_SERVER         = "join-server",
     POPOVER             = "popover",
+    DELETE_CHAT_IMAGE   = "delete-chat-image",
 }
 
 interface IModalDataType {

@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { count, desc, eq } from "drizzle-orm";
 import { db } from "@db/db";
 import { Message } from "@db/schema";
 import { transformMessageData } from "../../transformations/message";
@@ -27,11 +27,15 @@ export const createMessage = async (
   }
 };
 
-export const getMessages = async (channel_id: string) => {
+export const getMessages = async (channel_id: string, skip?: number , batchSize?: number) => {
+
+  console.table({channel_id, skip, batchSize});
   try {
-    
     const messages = await db.query.Message.findMany({
       where: eq(Message.channel_id, channel_id),
+      offset: !skip ? 0: skip,
+      limit: batchSize ?? MESSAGE_BATCH,
+      orderBy: desc(Message.created_at),
       with: {
         sender: {
           with: {
@@ -41,16 +45,20 @@ export const getMessages = async (channel_id: string) => {
       },
     });
 
+    const totalMessagesCount = await db.select({ value: count()}).from(Message).where(eq(Message.channel_id, channel_id));
+    console.log('totalMessagesCount', totalMessagesCount[0]?.value);
+
     const transformedMessages = messages.map((message) =>
       transformMessageData(message)
     );
 
     return {
       messages: transformedMessages,
-      nextCursor: MESSAGE_BATCH,
+      skip: (!skip ? 0 : skip ) + (batchSize ?? MESSAGE_BATCH),
+      total: totalMessagesCount[0]?.value ?? 0
     };
   } catch (error) {
     console.log(error);
-    return null;
+    throw new Error("Error fetching messages");
   }
 };

@@ -14,7 +14,6 @@ async function main() {
   console.log("Migrating database...");
 
   const db = drizzle(client);
-  console.log("DB", db);
 
   await migrate(db, { migrationsFolder: "drizzle" });
 

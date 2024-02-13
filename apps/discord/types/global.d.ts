@@ -2,7 +2,7 @@ import { Socket } from "net";
 import { Server as NetServer } from "http";
 import { NextApiResponse } from "next";
 import { Server as SocketIOServer } from "socket.io";
-import { MemberType, MessageType, ProfileType } from "@/lib/schema";
+import { MemberType, MessageType, ProfileType } from "@db/schema";
 
 declare global {
   interface ICustomChannel {
@@ -36,4 +36,5 @@ declare global {
       profile: ProfileType;
     }
   }
+  
 }

@@ -5,7 +5,7 @@ import { createChannel } from "@/lib/server-actions/channel/actions";
 import * as z from "zod";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { channelTypesEnum } from "@/lib/schema";
+import { channelTypesEnum } from "@db/schema";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 
 import {

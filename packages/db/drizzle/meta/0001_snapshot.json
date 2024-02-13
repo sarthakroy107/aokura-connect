@@ -1,6 +1,6 @@
 {
-  "id": "acc8577d-9208-4163-8dc1-cc203549df67",
-  "prevId": "2f33542a-9b5b-46d6-9ae3-e23132a0c524",
+  "id": "f6bc3898-d2c4-4872-912d-368a5959f318",
+  "prevId": "1b821acd-807d-4a17-9404-7526ecb107fd",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -38,6 +38,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "is_private": {
+          "name": "is_private",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
@@ -245,6 +252,34 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_banned": {
+          "name": "is_banned",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_muted": {
+          "name": "is_muted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_kicked": {
+          "name": "is_kicked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_left": {
+          "name": "is_left",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -455,6 +490,13 @@
           "notNull": false,
           "default": "'https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg'"
         },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -538,6 +580,13 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",

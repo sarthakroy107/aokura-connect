@@ -1,12 +1,12 @@
 import { InferSelectModel, relations } from "drizzle-orm";
-import { text, timestamp, pgTable, pgEnum, uuid, varchar, primaryKey, bigint, boolean } from "drizzle-orm/pg-core";
+import { text, timestamp, pgTable, pgEnum, uuid, varchar, primaryKey, boolean, AnyPgColumn } from "drizzle-orm/pg-core";
 
 
 export const memberRole  = pgEnum('role', ['admin', 'moderator', 'guest'])
 export const channelTypes = pgEnum('type', ['text', 'voice', 'video'])
 
 export enum channelTypesEnum {
-  TEXT = 'text',
+  TEXT  = 'text',
   VOICE = 'voice',
   VIDEO = 'video'
 }
@@ -23,6 +23,7 @@ export const Profile = pgTable('profile', {
   email:              varchar('email', { length: 128 }).notNull(),
   phone:              varchar('phone', { length: 13 }).unique(),
   avatar:             text('avatar').default('https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg'),
+  is_deleted:         boolean('deleted').default(false).notNull(),
 
 
   created_at: timestamp('created_at', {
@@ -45,6 +46,7 @@ export const Server = pgTable('server', {
   avatar:              text('avatar'),
   invitation_code:     text('inviteCode').unique().notNull(),
   creator_profile_id:  uuid('creator_profile_id').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
+  is_deleted:          boolean('deleted').default(false).notNull(),
 
   created_at: timestamp('created_at', {
     withTimezone: true,
@@ -58,6 +60,7 @@ export const Server = pgTable('server', {
 
 })
 
+
 export const Member = pgTable('member', {
   
   id:                     uuid('id').defaultRandom().unique().notNull(),
@@ -65,7 +68,11 @@ export const Member = pgTable('member', {
   nickname:               varchar('nickname', { length: 64 }),
   server_avatar:          text('server_avatar'),
   server_id:              uuid('server_id').notNull().references(() => Server.id),
-  profile_id:             uuid('profile_id').notNull().references(() => Profile.id),  
+  profile_id:             uuid('profile_id').notNull().references(() => Profile.id),
+  is_banned:              boolean('is_banned').default(false).notNull(),
+  is_muted:               boolean('is_muted').default(false).notNull(),
+  is_kicked:              boolean('is_kicked').default(false).notNull(),
+  is_left:                boolean('is_left').default(false).notNull(),
 
   created_at: timestamp('created_at', {
     withTimezone: true,
@@ -90,11 +97,11 @@ export const Category = pgTable('category', {
   server_id:          uuid('server_id').notNull().references(() => Server.id, { onDelete: 'cascade' }),
   name:               varchar('name', { length: 64 }).notNull(),
   description:        text('description'),
+  is_private:         boolean('is_private').default(false).notNull(),
 
 }, (t) => ({
   pk: primaryKey({ columns: [ t.id, t.server_id, t.creator_member_id] })
 }));
-
 
 
 
@@ -121,7 +128,6 @@ export const Channel = pgTable('channel', {
 })
 
 
-
 export const memberToChannel = pgTable('member_to_channel', {
   
   id:               uuid('id').defaultRandom().notNull(),
@@ -133,6 +139,7 @@ export const memberToChannel = pgTable('member_to_channel', {
   
 }))
 
+
 export const Message = pgTable('message', {
 
   id:                  uuid('id').defaultRandom().unique().primaryKey().notNull(),
@@ -140,7 +147,8 @@ export const Message = pgTable('message', {
   channel_id:          uuid('channel_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
   content:             text('content'),
   file_url:            text('file_url'),
-  deleted:             boolean('deleted').default(false).notNull(),
+  is_deleted:          boolean('deleted').default(false).notNull(),
+  in_reply_to:         uuid('in_reply_to').references((): AnyPgColumn => Message.id, { onDelete: 'no action' }),
 
   created_at:  timestamp('created_at', {
     withTimezone: true,
@@ -245,6 +253,11 @@ export const messageRelations = relations(Message, ({ one }) => ({
   channel: one(Channel, {
     fields: [Message.channel_id],
     references: [Channel.id]
+  }),
+
+  in_reply_to: one(Message, {
+    fields: [Message.in_reply_to],
+    references: [Message.id]
   })
 
 }))

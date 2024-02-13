@@ -11,7 +11,7 @@ const ChatMessages = async ({channel_id}: { channel_id: string}) => {
 
   await queryClient.prefetchInfiniteQuery({
     queryKey: ['messages', channel_id],
-    queryFn: () => getMessages(channel_id),
+    queryFn: () => getMessages(channel_id, 0, 20),
     initialPageParam: 0,
   })
 

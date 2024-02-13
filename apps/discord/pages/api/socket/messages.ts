@@ -1,6 +1,6 @@
 
-import { db } from "@/lib";
-import { Channel, Member, Message } from "@/lib/schema";
+import { db } from '@db/db';
+import { Channel, Member, Message } from "@db/schema";
 import { eq } from "drizzle-orm";
 import { NextApiRequest } from "next";
 
