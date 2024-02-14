@@ -7,15 +7,17 @@ import { FieldError } from "react-hook-form";
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   required?: boolean;
-  className?: string;
+  inputClassName?: string;
+  containerClassName?: string;
+  labelClassName?: string;
   description?: string;
   error?: FieldError;
 }
 
 const NormalInput = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, className = "", description, required = false, error, ...props }, ref) => {
+  ({ label, containerClassName="", labelClassName="",  inputClassName = "", description, required = false, error, ...props }, ref) => {
     return (
-      <div>
+      <div className={cn(containerClassName, 'my-1')}>
         <Label className="">
           {label}
           {required ? "*" : ""}
@@ -23,7 +25,7 @@ const NormalInput = forwardRef<HTMLInputElement, InputProps>(
         <Input
           ref={ref}
           className={cn(
-            className,
+            inputClassName,
             "bg-[#202225] rounded-[3px] outline-none focus-visible:ring-offset-0 focus-visible:ring-0 mt-1.5"
           )}
           placeholder={description}

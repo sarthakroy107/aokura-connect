@@ -1,4 +1,4 @@
-import { InferSelectModel, relations } from "drizzle-orm";
+import { InferSelectModel, is, relations } from "drizzle-orm";
 import { text, timestamp, pgTable, pgEnum, uuid, varchar, primaryKey, boolean, AnyPgColumn } from "drizzle-orm/pg-core";
 
 
@@ -41,12 +41,15 @@ export const Profile = pgTable('profile', {
 
 export const Server = pgTable('server', {
 
-  id:                  uuid('id').defaultRandom().unique().primaryKey().notNull(),
-  name:                text('name').notNull(),
-  avatar:              text('avatar'),
-  invitation_code:     text('inviteCode').unique().notNull(),
-  creator_profile_id:  uuid('creator_profile_id').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
-  is_deleted:          boolean('deleted').default(false).notNull(),
+  id:                    uuid('id').defaultRandom().unique().primaryKey().notNull(),
+  name:                  text('name').notNull(),
+  avatar:                text('avatar').default('https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg'),
+  description:           text('description').default(''),
+  invitation_code:       text('inviteCode').unique().notNull(),
+  creator_profile_id:    uuid('creator_profile_id').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
+  is_deleted:            boolean('deleted').default(false).notNull(),
+  is_private:            boolean('is_private').default(false).notNull(),
+  is_joining_allowed:    boolean('is_new_member_allowed').default(true).notNull(),
 
   created_at: timestamp('created_at', {
     withTimezone: true,
@@ -265,10 +268,10 @@ export const messageRelations = relations(Message, ({ one }) => ({
 
 //********************************Types***************************************//
 
-export type ProfileType         = InferSelectModel<typeof Profile>
-export type ServerType          = InferSelectModel<typeof Server>
-export type MemberType          = InferSelectModel<typeof Member>
-export type CategoryType        = InferSelectModel<typeof Category>  
-export type ChannelType         = InferSelectModel<typeof Channel>
-export type MemberToChannelType = InferSelectModel<typeof memberToChannel>
-export type MessageType         = InferSelectModel<typeof Message>
+export type TProfile             = InferSelectModel<typeof Profile>
+export type TServer              = InferSelectModel<typeof Server>
+export type TMember              = InferSelectModel<typeof Member>
+export type TCategory            = InferSelectModel<typeof Category>  
+export type TChannel             = InferSelectModel<typeof Channel>
+export type TMemberToChannel     = InferSelectModel<typeof memberToChannel>
+export type TMessage             = InferSelectModel<typeof Message>

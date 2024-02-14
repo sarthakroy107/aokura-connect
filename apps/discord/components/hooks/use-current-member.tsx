@@ -2,15 +2,22 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCurrentProfile } from '@/components/hooks/use-current-profile'
 import { getServerAndMemberDetails } from '@/lib/server-actions/server/actions';
+import { useParams } from 'next/navigation';
 
-const useCurrentServer = ( serverId: string ) => {
+const useCurrentServer = ( serverId?: string ) => {
 
-  const { currentProfileData, refetchCurrentProfileData } = useCurrentProfile();
+  const { currentProfileData, refetchCurrentProfileData, isCurrentProfileDataFetching } = useCurrentProfile();
+  const params = useParams<{ serverId: string }>();
 
-  const { data, refetch, error } = useQuery({
-    queryKey:['server', currentProfileData?.id, serverId],
-    queryFn: () => getServerAndMemberDetails(serverId, currentProfileData?.id!),
+  if(!params || !params.serverId) {
+    throw new Error('useCurrentServer must be used within a server route')
+  }
+
+  const { data, refetch, error, isFetching } = useQuery({
+    queryKey:['server', currentProfileData?.id, params.serverId],
+    queryFn: () => getServerAndMemberDetails(params.serverId, currentProfileData?.id!),
     refetchInterval: false,
+    staleTime: 1000 * 60 * 10,
   })
 
   if (error) {
@@ -23,8 +30,14 @@ const useCurrentServer = ( serverId: string ) => {
     channel_categories: data?.categories,
     refetchServerData: refetch,
     refetchCurrentProfileData,
-    currentProfileData
+    currentProfileData,
+    isCurrentProfileDataFetching,
+    isServerDataFetching: isFetching
   }
 }
+
+type TServer = NonNullable<ReturnType<typeof useCurrentServer>['server']>;
+type TMember = NonNullable<ReturnType<typeof useCurrentServer>['member']>;
+type TChannelCategories = NonNullable<ReturnType<typeof useCurrentServer>['channel_categories']>;
 
 export default useCurrentServer

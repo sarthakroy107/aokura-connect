@@ -29,7 +29,7 @@ export const createMessage = async (
 
 export const getMessages = async (channel_id: string, skip?: number , batchSize?: number) => {
 
-  console.table({channel_id, skip, batchSize});
+  //console.table({channel_id, skip, batchSize});
   try {
     const messages = await db.query.Message.findMany({
       where: eq(Message.channel_id, channel_id),
@@ -46,7 +46,7 @@ export const getMessages = async (channel_id: string, skip?: number , batchSize?
     });
 
     const totalMessagesCount = await db.select({ value: count()}).from(Message).where(eq(Message.channel_id, channel_id));
-    console.log('totalMessagesCount', totalMessagesCount[0]?.value);
+    //console.log('totalMessagesCount', totalMessagesCount[0]?.value);
 
     const transformedMessages = messages.map((message) =>
       transformMessageData(message)

@@ -9,5 +9,7 @@
     "allowJs": true,
     "jsx": "preserve",
     "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
   }
 }

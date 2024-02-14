@@ -8,7 +8,7 @@ import { useInView } from "react-intersection-observer";
 import MessageComponent from "./message-component";
 import useChatSocket from "../hooks/useChatSocket";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { transformMessageData } from "@/lib/transformations/message";
+import MessageLoader from "../loaders/message-loader";
 
 const ChatMessagesClient = () => {
   const { ref, inView } = useInView();
@@ -17,7 +17,6 @@ const ChatMessagesClient = () => {
   const reactQueryKeys = ["messages", params?.channelId!];
 
   const scrollRef = useRef<HTMLDivElement>(null); // Create a ref for the last div
-  const [messages, setMessages] = useState< Array<ReturnType<typeof transformMessageData>>>([]);
 
   const handleGetMessages = async (props: any) => {
     const messages = await getMessages(
@@ -28,7 +27,7 @@ const ChatMessagesClient = () => {
     return messages;
   };
 
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
     queryKey: reactQueryKeys,
     initialPageParam: 0,
     queryFn: handleGetMessages,
@@ -39,6 +38,7 @@ const ChatMessagesClient = () => {
       }
       return lastPage?.skip;
     },
+    staleTime: 1000*60*3,
     refetchInterval: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
@@ -69,6 +69,14 @@ const ChatMessagesClient = () => {
   return (
     <div>
       <div ref={ref} />
+      {
+        isFetching && (
+          <div className="w-full flex flex-col justify-center items-center">
+            {/* <ScaleLoader color="#686bff" /> */}
+            <MessageLoader />
+          </div>
+        )
+      }
       {data.pages.toReversed().map((d, index) => (
         <Fragment key={index}>
           {d.messages.toReversed().map((message, index) => (

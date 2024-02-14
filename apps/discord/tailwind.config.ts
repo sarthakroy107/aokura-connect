@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 import { withUt } from "uploadthing/tw";
 import baseConfig from "@repo/ui/tailwind.config";
-import tailwindcssAnimate from 'tailwindcss-animate';
+
 
 const currentConfig: Config = {
   darkMode: ["class"],
@@ -45,7 +45,7 @@ const currentConfig: Config = {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  
 };
 
 const mergedConfig: Config = {

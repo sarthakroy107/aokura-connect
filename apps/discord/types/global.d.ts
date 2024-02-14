@@ -2,7 +2,8 @@ import { Socket } from "net";
 import { Server as NetServer } from "http";
 import { NextApiResponse } from "next";
 import { Server as SocketIOServer } from "socket.io";
-import { MemberType, MessageType, ProfileType } from "@db/schema";
+import { TProfile, TServer, TMember, TCategory, TChannel, TMemberToChannel, TMessage } from "@db/schema";
+c
 
 declare global {
   interface ICustomChannel {
@@ -31,10 +32,18 @@ declare global {
     };
   };
 
-  type TChatMessageData = MessageType & {
-    sender: MemberType & {
-      profile: ProfileType;
+  type TDBProfile = TProfile
+  type TDBServer = TServer
+  type TDBMember = TMember
+  type TDBCategory = TCategory
+  type TDBChannel = TChannel
+  type TDBMemberToChannel = TMemberToChannel
+  type TDBMessage = TMessage
+
+  type TChatMessageData = TDBMessage & {
+    sender: TDBMember & {
+      profile: TDBProfile;
     }
   }
-  
+
 }

@@ -8,6 +8,8 @@ type TChageImage = {
   avatar_url: string
   id: string
 }
+
+
 export const changeImage = async (data: TChageImage) => {
   const { type, avatar_url, id } = data
   try {

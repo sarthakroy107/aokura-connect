@@ -22,6 +22,34 @@
       "when": 1707801933376,
       "tag": "0002_sleepy_venom",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1707905504371,
+      "tag": "0003_dapper_zuras",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1707906148178,
+      "tag": "0004_minor_boom_boom",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1707913590028,
+      "tag": "0005_eminent_jean_grey",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1707914795040,
+      "tag": "0006_flat_luckman",
+      "breakpoints": true
     }
   ]
 }

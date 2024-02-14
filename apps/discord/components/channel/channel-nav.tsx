@@ -1,4 +1,3 @@
-import { ChannelType } from "@/lib/schema";
 import { Hash, LucideVideo, Speaker } from "lucide-react";
 import ChatLiveBadge from "./chat-live-badge";
 
@@ -9,7 +8,7 @@ const ChannelNavbar = ({
 }: {
   id: string;
   name: string;
-  type: ChannelType["channel_type"];
+  type: TDBChannel["channel_type"];
 }) => {
   return (
     <div

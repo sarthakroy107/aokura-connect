@@ -9,7 +9,7 @@ import {
 } from "@ui/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { useDebounce } from "use-debounce";
-import NormalInput from "../form/NormalInput";
+import NormalInput from "../form/normal-input";
 import { ScrollArea } from "@ui/components/ui/scroll-area";
 import { memo, useState } from "react";
 import Image from "next/image";
@@ -83,7 +83,7 @@ const constants: {
     image:
       "https://www.nautiljon.com/images/perso/00/79/nishikigi_chisato_21497.webp",
     name: "Kaguya-sama: Love is War",
-    description: 'One of the best romance anime'
+    description: "One of the best romance anime",
   },
   {
     id: 9,
@@ -152,8 +152,11 @@ const JoinServerModal = () => {
 export default JoinServerModal;
 
 const ViewSearchResults = memo(
-  ({ data }: { data: { id: number; name: string; image: string, description: string }[] }) => {
-
+  ({
+    data,
+  }: {
+    data: { id: number; name: string; image: string; description: string }[];
+  }) => {
     const [selectedServers, setSelectedServers] = useState<number[]>([]);
     return (
       <>
@@ -162,7 +165,13 @@ const ViewSearchResults = memo(
             <div
               className="flex h-20 hover:bg-discord_purple_dark border-b border-white/10 cursor-pointer"
               key={index}
-              onClick={() => selectedServers.includes(server.id) ? setSelectedServers(selectedServers.filter((id) => id !== server.id)) : setSelectedServers([...selectedServers, server.id])}
+              onClick={() =>
+                selectedServers.includes(server.id)
+                  ? setSelectedServers(
+                      selectedServers.filter((id) => id !== server.id)
+                    )
+                  : setSelectedServers([...selectedServers, server.id])
+              }
             >
               <div className="w-1/5 h-full flex items-center justify-center">
                 <Image
@@ -174,13 +183,22 @@ const ViewSearchResults = memo(
                 />
               </div>
               <div className="w-[70%] h-full pt-2.5 font-medium">
-                <p>{server.name.slice(0, 35)} {server.name.length > 35 && '...'}</p>
-                <p className="text-white/50 text-xs">{server.description.slice(0, 101)} {server.description.length >= 101 && '...'}</p>
+                <p>
+                  {server.name.slice(0, 35)} {server.name.length > 35 && "..."}
+                </p>
+                <p className="text-white/50 text-xs">
+                  {server.description.slice(0, 101)}{" "}
+                  {server.description.length >= 101 && "..."}
+                </p>
               </div>
               <div className="w-[10%] h-full flex justify-center items-center">
                 <div className="h-5 w-5 bg-discord_darkest border border-white/30 rounded-full flex justify-center items-center">
                   <div
-                    className={cn("w-3 h-3 rounded-full", selectedServers.includes(server.id) && "bg-discord_default")}
+                    className={cn(
+                      "w-3 h-3 rounded-full",
+                      selectedServers.includes(server.id) &&
+                        "bg-discord_default"
+                    )}
                   />
                 </div>
               </div>
@@ -188,8 +206,13 @@ const ViewSearchResults = memo(
           ))}
         </ScrollArea>
         <div className="bg-discord_darker w-full px-5 p-3.5 flex justify-between items-center">
-          <p className="text-white/75">SERVER SELECTED: {selectedServers.length}</p>
-          <Button disabled={ selectedServers.length === 0 } className="bg-discord_default rounded-[2px] text-white hover:bg-discord_default">
+          <p className="text-white/75">
+            SERVER SELECTED: {selectedServers.length}
+          </p>
+          <Button
+            disabled={selectedServers.length === 0}
+            className="bg-discord_default rounded-[2px] text-white hover:bg-discord_default"
+          >
             {" "}
             Join
           </Button>

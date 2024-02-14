@@ -1,7 +1,7 @@
 "use client";
 
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
-import { FileUpload } from "../file-upload";
+import { FileUpload } from "@/components/file-upload";
 import { createServer } from "@/lib/server-actions/server/actions";
 import {
   Dialog,
@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import * as z from "zod";
+import { z } from "zod";
 import { currentProfile } from "@/lib/auth/current-user";
 import { useUser } from "@clerk/nextjs";
 

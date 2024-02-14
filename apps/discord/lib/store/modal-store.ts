@@ -1,6 +1,5 @@
 'use client';
 import { create } from "zustand"
-import { CategoryType, ChannelType, MemberType, ProfileType, ServerType } from "@db/schema";
 
 
 export enum ModalEnum {
@@ -13,15 +12,16 @@ export enum ModalEnum {
     JOIN_SERVER         = "join-server",
     POPOVER             = "popover",
     DELETE_CHAT_IMAGE   = "delete-chat-image",
+    MODIFY_SERVER       = "modify-server",
 }
 
 interface IModalDataType {
-    server?: ServerType,
-    category?: CategoryType,
-    channel?: ChannelType,
+    server?: TDBServer,
+    category?: TDBCategory,
+    channel?: TDBChannel,
     api_url?: string;
-    profile?: ProfileType,
-    member?: MemberType
+    profile?: TDBProfile,
+    member?: TDBMember
     query?: Record<string, any>;
 }
 

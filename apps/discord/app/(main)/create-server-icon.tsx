@@ -4,9 +4,8 @@ import { cn } from "@/lib/utils";
 import { LucidePlus } from "lucide-react";
 import TooltipWrapper from "../../components/common/tooltip-wrapper";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
-import { ProfileType } from "@/lib/schema";
 
-const CreateServerIcon = ({ profile }: { profile: ProfileType }) => {
+const CreateServerIcon = ({ profile }: { profile: TDBProfile }) => {
   const { onOpen } = useModal();
   return (
     <TooltipWrapper label="Create Server" side="right">

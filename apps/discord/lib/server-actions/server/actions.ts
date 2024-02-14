@@ -6,13 +6,14 @@ import { Category, Channel, Member, Server, memberToChannel } from "@db/schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { redirect } from "next/navigation";
+import { serverFormSchema } from "./validator";
 
 const getCurrentServerData = z.object({
   serverId: z.string().min(1, { message: "Server ID is required" }),
   profileId: z.string().min(1, { message: "Profile ID is required" }),
 });
 
-/***** GET *****/
+//***** GET *****/
 
 export const getServers = async (profileId: string) => {
   try {
@@ -130,7 +131,7 @@ export const getServerAndMemberDetails = async (
   }
 };
 
-/***** POST *****/
+//***** POST *****/
 
 export const createServer = async (
   name: string,
@@ -197,21 +198,22 @@ export const createServer = async (
   }
 };
 
-
 export const joinServer = async (serverIds: string[], profileId: string) => {
   let lastJoined;
   for (const serverId of serverIds) {
     try {
       const alreadyJoined = await checkAlreadyJoined(serverId, profileId);
-      if(alreadyJoined) continue;
-      await db.insert(Member).values({ server_id: serverId, profile_id: profileId, role: 'guest'})
+      if (alreadyJoined) continue;
+      await db
+        .insert(Member)
+        .values({ server_id: serverId, profile_id: profileId, role: "guest" });
       lastJoined = serverId;
     } catch (error) {
       console.error(error);
     }
   }
-  redirect(`/channel/${lastJoined}`);
   revalidatePath("/(main)/channel/[serverId]");
+  redirect(`/channel/${lastJoined}`);
 };
 
 const checkAlreadyJoined = async (serverId: string, profileId: string) => {
@@ -220,13 +222,34 @@ const checkAlreadyJoined = async (serverId: string, profileId: string) => {
       where: and(
         eq(Member.server_id, serverId),
         eq(Member.profile_id, profileId)
-      )
-    })
+      ),
+    });
 
-    if(!member) return false;
+    if (!member) return false;
     else return true;
-
   } catch (error) {
     console.error(error);
   }
-}
+};
+
+//***** PUT *****/
+
+type TServerDetailsForm = {
+  serverDetails: Omit<TDBServer, "created_at" | "updated_at" | "id">;
+  serverId: string;
+};
+
+export const updateServerDetails = async (data: TServerDetailsForm) => {
+  try {
+    serverFormSchema.parse(data.serverDetails);
+    if(!data.serverId) throw new Error("Server ID is required");
+    await db
+      .update(Server)
+      .set(data.serverDetails)
+      .where(eq(Server.id, data.serverId));
+    return { status: "success", message: "Server details updated" };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error updating server details");
+  }
+};
