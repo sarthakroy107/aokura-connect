@@ -1,6 +1,6 @@
 "use server";
 
-import { count, desc, eq } from "drizzle-orm";
+import { asc, count, desc, eq } from "drizzle-orm";
 import { db } from "@db/db";
 import { Message } from "@db/schema";
 import { transformMessageData } from "../../transformations/message";
@@ -42,11 +42,11 @@ export const getMessages = async (channel_id: string, skip?: number , batchSize?
             profile: true,
           },
         },
+        in_reply_to: true,
       },
     });
 
     const totalMessagesCount = await db.select({ value: count()}).from(Message).where(eq(Message.channel_id, channel_id));
-    //console.log('totalMessagesCount', totalMessagesCount[0]?.value);
 
     const transformedMessages = messages.map((message) =>
       transformMessageData(message)

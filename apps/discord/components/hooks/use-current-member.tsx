@@ -35,9 +35,4 @@ const useCurrentServer = ( serverId?: string ) => {
     isServerDataFetching: isFetching
   }
 }
-
-type TServer = NonNullable<ReturnType<typeof useCurrentServer>['server']>;
-type TMember = NonNullable<ReturnType<typeof useCurrentServer>['member']>;
-type TChannelCategories = NonNullable<ReturnType<typeof useCurrentServer>['channel_categories']>;
-
 export default useCurrentServer

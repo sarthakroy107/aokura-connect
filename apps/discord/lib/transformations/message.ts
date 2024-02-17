@@ -4,10 +4,10 @@ import { formatDate } from "./date-formater"
 export const transformMessageData = (data: TChatMessageData) => {
 
   return {
-
-    text_content: data.content,
-    file_url: data.file_url,
-    is_deleted: data.is_deleted,
+    id:              data.id,
+    text_content:    data.content,
+    file_url:        data.file_url,
+    is_deleted:      data.is_deleted,
 
     sender: {
       member_id:     data.sender.id,
@@ -20,8 +20,8 @@ export const transformMessageData = (data: TChatMessageData) => {
       is_deleted:    data.sender.is_left,
     },
 
-    created_at: formatDate(data.created_at),
-    updated_at: formatDate(data.updated_at),
+    created_at:      formatDate(data.created_at),
+    updated_at:      formatDate(data.updated_at),
   }
 
 }

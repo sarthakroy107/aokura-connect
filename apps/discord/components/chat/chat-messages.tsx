@@ -1,9 +1,8 @@
-import React from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { getMessages } from '@/lib/server-actions/message/actions'
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
-import ChatMessagesClient from './chat-messages-client';
 
+import ChatMessagesClient from './chat-messages-client';
 
 const ChatMessages = async ({channel_id}: { channel_id: string}) => {
 

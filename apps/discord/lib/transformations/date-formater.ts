@@ -3,21 +3,32 @@ export function formatDate(inputDate: string) {
   const inputDateTime = new Date(inputDate);
 
   const timeDifference = currentDate.getTime() - inputDateTime.getTime();
-  const oneHour = 60 * 60 * 1000;
+  const oneMinute = 60 * 1000;
+  const oneHour = 60 * oneMinute;
   const oneDay = 24 * oneHour;
+  const oneWeek = 7 * oneDay;
 
-  if (timeDifference < oneDay) {
-    // Less than 24 hours
-    const formattedTime = inputDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    return `Today at ${formattedTime}`;
-  } else if (timeDifference < 2 * oneDay) {
-    // Between 24 and 48 hours
-    const yesterdayTime = inputDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    return `Yesterday at ${yesterdayTime}`;
-  } else {
-    // More than 48 hours
+  if (timeDifference < oneMinute) {
+    // Less than a minute
+    const seconds = Math.floor(timeDifference / 1000);
+    return `${seconds} seconds ago`;
+  } else if (timeDifference < oneHour) {
+    // Less than an hour
+    const minutes = Math.floor(timeDifference / oneMinute);
+    return `${minutes} minutes ago`;
+  } else if (timeDifference < oneDay) {
+    // Less than a day
+    const hours = Math.floor(timeDifference / oneHour);
+    return `${hours} hours ago`;
+  } else if (timeDifference < oneWeek) {
+    // Less than a week
     const dayOfWeek = inputDateTime.toLocaleDateString('en-US', { weekday: 'long' });
-    const formattedDateTime = inputDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    return `${dayOfWeek} at ${formattedDateTime}`;
+    const formattedTime = inputDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return `${dayOfWeek} ${formattedTime}`;
+  } else {
+    // More than a week
+    const formattedDate = inputDateTime.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    const formattedTime = inputDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return `${formattedDate} ${formattedTime}`;
   }
 }
