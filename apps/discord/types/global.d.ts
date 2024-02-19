@@ -3,6 +3,7 @@ import { Server as NetServer } from "http";
 import { NextApiResponse } from "next";
 import { Server as SocketIOServer } from "socket.io";
 import { TProfile, TServer, TMember, TCategory, TChannel, TMemberToChannel, TMessage } from "@db/schema";
+import { transformMessageData } from "@/lib/transformations/message";
 c
 
 declare global {
@@ -45,5 +46,7 @@ declare global {
       profile: TDBProfile;
     }
   }
+
+  type TTransformedMessage = ReturnType<typeof transformMessageData>
 
 }

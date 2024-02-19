@@ -37,7 +37,7 @@ const ChatMessagesClient = () => {
     initialPageParam: 0,
     queryFn: handleGetMessages,
     getNextPageParam: (lastPage) => {
-      if (!lastPage || lastPage?.skip >= lastPage?.total - 1) {
+      if (!lastPage || lastPage?.skip >= lastPage?.total) {
         return undefined;
       }
       return lastPage?.skip;
