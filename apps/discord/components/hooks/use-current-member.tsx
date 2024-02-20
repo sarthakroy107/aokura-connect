@@ -10,7 +10,7 @@ const useCurrentServer = ( serverId?: string ) => {
   const params = useParams<{ serverId: string }>();
 
   if(!params || !params.serverId) {
-    throw new Error('useCurrentServer must be used within a server route')
+    return {};
   }
 
   const { data, refetch, error, isFetching } = useQuery({

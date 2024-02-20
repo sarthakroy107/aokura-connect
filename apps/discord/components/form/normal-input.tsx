@@ -12,15 +12,29 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelClassName?: string;
   description?: string;
   error?: FieldError;
+  children?: React.ReactNode;
 }
 
 const NormalInput = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, containerClassName="", labelClassName="",  inputClassName = "", description, required = false, error, ...props }, ref) => {
+  (
+    {
+      label,
+      containerClassName = "",
+      labelClassName = "",
+      inputClassName = "",
+      description,
+      required = false,
+      error,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     return (
-      <div className={cn(containerClassName, 'my-1')}>
+      <div className={cn(containerClassName, "my-1")}>
         <Label className="">
           {label}
-          {required ? "*" : ""}
+          {required ? <sup className="text-rose-500 px-0.5">*</sup> : ""}
         </Label>
         <Input
           ref={ref}
@@ -31,12 +45,13 @@ const NormalInput = forwardRef<HTMLInputElement, InputProps>(
           placeholder={description}
           {...props}
         />
+        {children}
         <p className="text-red-500 text-sm h-2">{error?.message}</p>
       </div>
     );
   }
 );
 
-NormalInput.displayName = 'NormalInput';
+NormalInput.displayName = "NormalInput";
 
 export default NormalInput;

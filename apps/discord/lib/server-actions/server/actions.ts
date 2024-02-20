@@ -13,7 +13,7 @@ const getCurrentServerData = z.object({
   profileId: z.string().min(1, { message: "Profile ID is required" }),
 });
 
-//***** GET *****/
+//*************** GET ***************//
 
 export const getServers = async (profileId: string) => {
   try {

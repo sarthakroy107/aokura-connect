@@ -66,19 +66,23 @@ export const verificationTokens = pgTable(
  })
 )
 
+/*---------------------------------------------------------------------------------------------------------------*/
+
 
 //******************************Scheams********************************//
 
 export const Profile = pgTable('profile', {
 
   id:                       uuid('id').defaultRandom().unique().primaryKey().notNull(),
-  next_auth_user_id:        uuid('next_auth_id').notNull().unique(),
+  next_auth_user_id:        text('next_auth_id').notNull().unique(),
   username:                 varchar('username', { length: 32 }).unique().notNull(),
   name:                     varchar('name', { length: 128 }).notNull(),
   email:                    varchar('email', { length: 128 }).notNull(),
+  is_email_verified:        boolean('email_verified').default(false).notNull(),
   phone:                    varchar('phone', { length: 13 }).unique(),
   avatar:                   text('avatar').default('https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg'),
   is_deleted:               boolean('deleted').default(false).notNull(),
+  is_active:                boolean('active').default(true).notNull(),
 
 
   created_at: timestamp('created_at', {
@@ -141,7 +145,7 @@ export const Member = pgTable('member', {
     withTimezone: true,
     mode: 'string'
   }).defaultNow().notNull(),
-  
+
 }, 
 (t) =>({
   pk: primaryKey({ columns: [ t.id, t.server_id, t.profile_id] })
@@ -149,7 +153,7 @@ export const Member = pgTable('member', {
 
 
 export const Category = pgTable('category', {
-  
+
   id:                 uuid('id').defaultRandom().unique().notNull(),
   creator_member_id:  uuid('creator_member_id').notNull().references(() => Member.id, { onDelete: 'cascade' }),
   server_id:          uuid('server_id').notNull().references(() => Server.id, { onDelete: 'cascade' }),

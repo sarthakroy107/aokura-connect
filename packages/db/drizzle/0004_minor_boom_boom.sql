@@ -1,1 +1,0 @@
-ALTER TABLE "server" ADD COLUMN "is_new_member_allowed" boolean DEFAULT true NOT NULL;

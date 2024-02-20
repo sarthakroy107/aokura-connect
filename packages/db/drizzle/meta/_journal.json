@@ -5,71 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1707579452372,
-      "tag": "0000_elite_adam_destine",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1707799881767,
-      "tag": "0001_slippery_firestar",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1707801933376,
-      "tag": "0002_sleepy_venom",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1707905504371,
-      "tag": "0003_dapper_zuras",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1707906148178,
-      "tag": "0004_minor_boom_boom",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1707913590028,
-      "tag": "0005_eminent_jean_grey",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1707914795040,
-      "tag": "0006_flat_luckman",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1708367953047,
-      "tag": "0007_jazzy_frank_castle",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1708369368493,
-      "tag": "0008_rainy_katie_power",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "5",
-      "when": 1708397311755,
-      "tag": "0009_lush_black_knight",
+      "when": 1708436191354,
+      "tag": "0000_goofy_speed",
       "breakpoints": true
     }
   ]
