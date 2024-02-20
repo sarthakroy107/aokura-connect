@@ -1,39 +1,42 @@
 "use server";
 
-import { auth } from "@clerk/nextjs";
+import { auth } from "@/auth";
 import { db } from "@db/db";
 import { eq } from "drizzle-orm";
 import { Profile } from "@db/schema";
-import { currentUser } from "@clerk/nextjs";
 
 export const currentProfile = async () => {
+  const data = await auth();
 
-  const { userId } = auth();
-  
-  if (!userId) return null;
-
+  if (
+    !data ||
+    !data.user ||
+    !data.user.id ||
+    !data.user.email ||
+    !data.user.name
+  )
+    return null;
   const profile = await db
     .select()
     .from(Profile)
-    .where(eq(Profile.clerk_user_id, userId));
-  if (profile && profile[0]) return profile[0];
+    .where(eq(Profile.next_auth_user_id, data?.user?.id));
 
-  const data = await currentUser();
+  if (profile.length === 0) {
+    const newProfile = await db
+      .insert(Profile)
+      .values({
+        next_auth_user_id: data.user.id,
+        username: data.user.name,
+        name: data.user.name,
+        email: data.user.email,
+        avatar: data.user.image,
+      })
+      .returning();
 
-  if (!data) return null;
+    if (!newProfile || !newProfile[0]) return null;
 
-  const newProfile = await db
-    .insert(Profile)
-    .values({
-      clerk_user_id: userId!,
-      username: data?.username!,
-      name: data?.firstName + " " + data?.lastName,
-      email: data?.emailAddresses[0]!.emailAddress,
-      phone: data?.phoneNumbers[0]!.phoneNumber,
-    })
-    .returning();
+    return newProfile[0];
+  }
 
-  if (newProfile && newProfile[0]) return newProfile[0];
-
-  return null;
+  return profile[0];
 };

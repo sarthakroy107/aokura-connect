@@ -10,7 +10,10 @@
     "studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@auth/core": "^0.27.0",
+    "@neondatabase/serverless": "^0.8.1",
     "@next/env": "^14.1.0",
+    "adaptrs": "link:@auth/core/adaptrs",
     "dotenv": "^16.4.1",
     "drizzle-orm": "^0.29.3",
     "esbuild-register": "^3.5.0",

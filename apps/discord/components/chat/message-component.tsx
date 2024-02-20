@@ -4,166 +4,108 @@ import { memo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { transformMessageData } from "@/lib/transformations/message";
-import { Trash2 } from "lucide-react";
 
-import Image from "next/image";
-
-import TooltipWrapper from "../common/tooltip-wrapper";
 import ChatActions from "./chat-actions";
-import { Textarea } from "@ui/components/ui/textarea";
-import { Button } from "@ui/components/ui/button";
-import { BarLoader } from "react-spinners";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@ui/components/ui/alert-dialog";
 import { cn } from "@ui/lib/utils";
+import ActualMessage from "./actual-message";
+import { ScrollArea } from "@ui/components/ui/scroll-area";
 
 const MessageComponent = memo(
   (props: ReturnType<typeof transformMessageData>) => {
-    const {
-      text_content,
-      file_url,
-      sender: { name, avatar },
-      is_deleted,
-      created_at,
-      updated_at,
-    } = props;
+    const [isEditing, setIsEditing] = useState(false);
+    const [isMessageDeleting, setIsMessageDeleting] = useState(false);
 
-    console.log(text_content);
-
-    const [editing, setEditing] = useState(false);
-
-    const form = useForm<{
-      text_content: string | null;
-      file_url: string | null;
-      updated_at: string;
-    }>({
-      defaultValues: {
-        text_content,
-        file_url,
-        updated_at,
-      },
+    const form = useForm<TTransformedMessage>({
+      defaultValues: props,
     });
 
-    const onSubmit = async (values: {
-      text_content: string | null;
-      file_url: string | null;
-      updated_at: string;
-    }) => {
-      setEditing(false);
-      if (
-        text_content !== values.text_content ||
-        file_url !== values.file_url
-      ) {
-        form.setValue("updated_at", new Date().toISOString());
-      }
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 2000);
-      });
-      values.updated_at = new Date().toISOString();
-      console.log("submitting");
-      form.reset();
+    const handleDeleteFunction = () => {
+      try {
+        form.setValue("file_url", "");
+        form.setValue("text_content", "");
+        form.setValue("is_deleted", true);
+      } catch (error) {}
     };
 
-    const currentTextContent = form.watch("text_content");
-    const lastUpdatedAt = form.watch("updated_at");
-
-    console.table({ updated_at, lastUpdatedAt });
+    const isDeleted = form.watch("is_deleted");
 
     return (
       <div
         className={cn(
-          "w-full hover:bg-[#303236] flex gap-x-2.5 px-5 py-1.5 my-1.5",
-          editing && "bg-[#303236]"
+          "group/action w-full hover:bg-[#303236] flex gap-x-2.5 px-5 py-1.5 my-1.5 relative",
+          isEditing && "bg-[#303236]"
         )}
       >
-        <div className="mt-[2px]">
-          <Image
-            src={
-              avatar
-                ? avatar
-                : "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
-            }
-            alt={name}
-            width={64}
-            height={64}
-            draggable={false}
-            className="rounded-full object-cover h-10 w-10"
-          />
-        </div>
-        <div className="group/edit w-[95%] relative">
-          <div className="w-full justify-between flex gap-x-3">
-            <div className="flex gap-x-2">
-              <p className="text-sm font-medium hover:underline cursor-pointer">
-                {name}
-              </p>
-              <p className="text-xs text-white text-opacity-40 mt-0.5">
-                {created_at}
-              </p>
-            </div>
-            {!editing && (
-              <div className="absolute right-0 -top-5 hidden group-hover/edit:block text-black shadow-sm shadow-black/20">
-                <ChatActions data={props} setEditing={setEditing} />
-              </div>
-            )}
+        <ActualMessage
+          isDeleted={isDeleted}
+          isMessageDeleting={isMessageDeleting}
+          form={form}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+        />
+        {!isEditing && (
+          <div className="absolute right-10 -top-5 hidden hover:block group-hover/action:block text-black shadow-sm shadow-black/20">
+            <ChatActions
+              data={props}
+              setIsEditing={setIsEditing}
+              setIsDeleting={setIsMessageDeleting}
+            />
           </div>
-          {editing && !form.formState.isSubmitting ? (
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="text-sm text-white text-opacity-75 mt-[2px] my-1"
-            >
-              <Textarea
-                disabled={form.formState.isSubmitting}
-                className="max-w-[690px] h-10 bg-[#202225] rounded-[3px] outline-none focus-visible:ring-offset-0 focus-visible:ring-0"
-                {...form.register("text_content")}
-              />
-              <div className="flex pl-1 mt-0.5 text-xs text-white/50">
-                <span>
-                  Esc to{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      form.reset();
-                      setEditing(false);
-                    }}
-                    className="text-blue-400 hover:underline"
-                  >
-                    cancel
-                  </button>
-                </span>
-                &nbsp; &middot; &nbsp;
-                <span>
-                  Enter to{" "}
-                  <button
-                    type="submit"
-                    className="text-blue-400 hover:underline"
-                  >
-                    save
-                  </button>
-                </span>
-              </div>
-            </form>
-          ) : (
-            <p className="text-sm text-white text-opacity-75 mt-[2px] my-1">
-              {currentTextContent} &nbsp;{" "}
-              {updated_at !== lastUpdatedAt && "(edited)"}
-            </p>
-          )}
-          {file_url && (
-            <div className="group/delete w-fit mt-1 relative">
-              <div className="hidden group-hover/delete:flex justify-center items-center bg-discord hover:bg-red-500 absolute right-1.5 top-1.5 cursor-pointer rounded-sm">
-                <TooltipWrapper label="Delete" side="top">
-                  <Trash2 className="m-1" />
-                </TooltipWrapper>
-              </div>
-              <Image
-                width={900}
-                height={750}
-                src={file_url}
-                alt="upload"
-                draggable={false}
-                className="h-56 w-fit object-cover rounded-sm"
+        )}
+        {
+          <AlertDialog
+            open={isMessageDeleting}
+            onOpenChange={() => setIsMessageDeleting(false)}
+          >
+            <div className="absolute right-0 -top-5 hidden group-hover/edit:block text-black shadow-sm shadow-black/20">
+              <ChatActions
+                data={props}
+                setIsEditing={setIsEditing}
+                setIsDeleting={setIsMessageDeleting}
               />
             </div>
-          )}
-        </div>
+            <AlertDialogContent className="bg-discord p-0 rounded-[3px]">
+              <AlertDialogHeader className="my-7">
+                <AlertDialogTitle className="text-2xl">
+                  Delete Message
+                </AlertDialogTitle>
+                <AlertDialogDescription className="mb-3">
+                  This action can not be undone
+                </AlertDialogDescription>
+                <ScrollArea className="mx-5 p-2 max-h-80 rounded-[2px] border border-black/15 shadow-sm shadow-black/10">
+                  <ActualMessage
+                    isMessageDeleting={isMessageDeleting}
+                    isDeleted={isDeleted}
+                    form={form}
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                  />
+                </ScrollArea>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex items-center bg-discord_darker px-7 py-3">
+                <AlertDialogCancel className="bg-disord_darker shadow-none border-0 hover:underline hover:bg-discord_darker">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteFunction}
+                  className="mt-1.5 bg-red-500 text-white rounded-[3px] hover:bg-red-600"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        }
       </div>
     );
   }

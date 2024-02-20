@@ -138,7 +138,7 @@ export const createServer = async (
   avatar: string,
   profileId: string
 ) => {
-  console.log({ name, avatar, profileId });
+  console.table({ name, avatar, profileId });
   try {
     const server_id = await db.transaction(async (trx) => {
       const newServer = await trx
