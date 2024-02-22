@@ -13,7 +13,7 @@ export enum channelTypesEnum {
 }
 
 
-//******************************Next Auth********************************//
+//***************************Auth.js********************************//
 
 
 export const users = pgTable("user", {
@@ -43,8 +43,7 @@ export const accounts = pgTable(
 },
 (account) => ({
   compoundKey: primaryKey({ columns: [account.provider, account.providerAccountId] }),
-})
-)
+}))
 
 export const sessions = pgTable("session", {
  sessionToken: text("sessionToken").notNull().primaryKey(),
@@ -73,17 +72,16 @@ export const verificationTokens = pgTable(
 
 export const Profile = pgTable('profile', {
 
-  id:                       uuid('id').defaultRandom().unique().primaryKey().notNull(),
-  next_auth_user_id:        text('next_auth_id').notNull().unique(),
-  username:                 varchar('username', { length: 32 }).unique().notNull(),
+  id:                       uuid('id').defaultRandom().primaryKey().notNull(),
+  username:                 varchar('username', { length: 32 }).notNull(),
   name:                     varchar('name', { length: 128 }).notNull(),
+  date_of_birth:            timestamp('date_of_birth', { withTimezone: true, mode: 'string' }).notNull(),
   email:                    varchar('email', { length: 128 }).notNull(),
+  password:                 text('password').notNull(),
   is_email_verified:        boolean('email_verified').default(false).notNull(),
   phone:                    varchar('phone', { length: 13 }).unique(),
   avatar:                   text('avatar').default('https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg'),
   is_deleted:               boolean('deleted').default(false).notNull(),
-  is_active:                boolean('active').default(true).notNull(),
-
 
   created_at: timestamp('created_at', {
     withTimezone: true,
@@ -100,7 +98,7 @@ export const Profile = pgTable('profile', {
 
 export const Server = pgTable('server', {
 
-  id:                    uuid('id').defaultRandom().unique().primaryKey().notNull(),
+  id:                    uuid('id').defaultRandom().primaryKey().notNull(),
   name:                  text('name').notNull(),
   avatar:                text('avatar').default('https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg'),
   description:           text('description').default(''),
@@ -169,7 +167,7 @@ export const Category = pgTable('category', {
 
 export const Channel = pgTable('channel', {
 
-  id:                  uuid('id').defaultRandom().unique().primaryKey().notNull(),
+  id:                  uuid('id').defaultRandom().primaryKey().notNull(),
   name:                varchar('name', { length: 64 }).notNull(),
   server_id:           uuid('server_id').notNull().references(() => Server.id, { onDelete: 'cascade' }),
   category_id:         uuid('category_id').notNull().references(() => Category.id, { onDelete: 'cascade' }),
@@ -204,7 +202,7 @@ export const memberToChannel = pgTable('member_to_channel', {
 
 export const Message = pgTable('message', {
 
-  id:                  uuid('id').defaultRandom().unique().primaryKey().notNull(),
+  id:                  uuid('id').defaultRandom().primaryKey().notNull(),
   sender_member_id:    uuid('sender_member_id').notNull().references(() => Member.id, { onDelete: 'cascade' }),
   channel_id:          uuid('channel_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
   content:             text('content'),
@@ -224,6 +222,11 @@ export const Message = pgTable('message', {
 
 })
 
+export const EmailActivationTokenTable = pgTable('email_activation_token', {
+  token: varchar('token', { length: 128 }).notNull().primaryKey(),
+  profile_id: uuid('profile_id').notNull().references(() => Profile.id, { onDelete: 'no action' }),
+  exipration_time: timestamp('expiration_time', { withTimezone: true, mode: 'string' }).notNull(),
+})
 
 
 //*******************************Relations**********************************//
@@ -327,10 +330,11 @@ export const messageRelations = relations(Message, ({ one }) => ({
 
 //********************************Types***************************************//
 
-export type TProfile             = InferSelectModel<typeof Profile>
-export type TServer              = InferSelectModel<typeof Server>
-export type TMember              = InferSelectModel<typeof Member>
-export type TCategory            = InferSelectModel<typeof Category>  
-export type TChannel             = InferSelectModel<typeof Channel>
-export type TMemberToChannel     = InferSelectModel<typeof memberToChannel>
-export type TMessage             = InferSelectModel<typeof Message>
+export type TProfile                   = InferSelectModel<typeof Profile>
+export type TServer                    = InferSelectModel<typeof Server>
+export type TMember                    = InferSelectModel<typeof Member>
+export type TCategory                  = InferSelectModel<typeof Category>  
+export type TChannel                   = InferSelectModel<typeof Channel>
+export type TMemberToChannel           = InferSelectModel<typeof memberToChannel>
+export type TMessage                   = InferSelectModel<typeof Message>
+export type TEmailActivationTokenTable = InferSelectModel<typeof EmailActivationTokenTable>

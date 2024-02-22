@@ -39,8 +39,10 @@ const DisplayImageChange = ({ currentImage, endpoint, id, type }: TDisplayImageC
               try {
                 await changeImage({ id, avatar_url: res[0]!.url, type });
                 toast.success('Image changed successfully');
-                refetchServerData({ throwOnError: false });
-                refetchCurrentProfileData({ throwOnError: false });
+                if( refetchCurrentProfileData && refetchServerData ) {
+                  refetchCurrentProfileData();
+                  refetchServerData();
+                }
               } catch (error) {
                 console.log(error);
                 toast.error('Something went wrong in db');

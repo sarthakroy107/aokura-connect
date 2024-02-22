@@ -5,8 +5,22 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1708436191354,
-      "tag": "0000_goofy_speed",
+      "when": 1708606230310,
+      "tag": "0000_remarkable_doctor_doom",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1708606408817,
+      "tag": "0001_round_forgotten_one",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1708612052942,
+      "tag": "0002_fast_captain_america",
       "breakpoints": true
     }
   ]

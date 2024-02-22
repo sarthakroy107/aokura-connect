@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@ui/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Calendar, TUISelectSingleEventHandler } from "@ui/components/ui/calendar";
 import {
   FormControl,
@@ -31,7 +31,7 @@ const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
   ({ label, required, error, ...props }, ref) => {
     return (
       <FormItem className="flex flex-col">
-        <FormLabel>{label}</FormLabel>
+        <FormLabel>{label}<sup className="text-rose-500 px-0.5">*</sup></FormLabel>
         <Popover>
           <PopoverTrigger asChild>
             <FormControl>

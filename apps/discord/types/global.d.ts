@@ -2,7 +2,7 @@ import { Socket } from "net";
 import { Server as NetServer } from "http";
 import { NextApiResponse } from "next";
 import { Server as SocketIOServer } from "socket.io";
-import { TProfile, TServer, TMember, TCategory, TChannel, TMemberToChannel, TMessage } from "@db/schema";
+import { TProfile, TServer, TMember, TCategory, TChannel, TMemberToChannel, TMessage, TEmailActivationTokenTable } from "@db/schema";
 import { transformMessageData } from "@/lib/transformations/message";
 
 declare global {
@@ -39,11 +39,17 @@ declare global {
   type TDBChannel = TChannel
   type TDBMemberToChannel = TMemberToChannel
   type TDBMessage = TMessage
+  type TDBEmailActivationTokenTable = TEmailActivationTokenTable
 
   type TChatMessageData = TDBMessage & {
     sender: TDBMember & {
       profile: TDBProfile;
     }
   }
-  type TTransformedMessage = ReturnType<typeof transformMessageData>
+  type TTransformedMessage = ReturnType<typeof transformMessageData>;
+  type TResponse = {
+    status: number;
+    success: boolean;
+    message: string;
+  }
 }

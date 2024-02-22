@@ -1,5 +1,5 @@
 {
-  "id": "66f21ecc-a013-4966-8df6-7213b780689a",
+  "id": "1b355630-57d5-4f07-b976-d83cb16dc00d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -202,15 +202,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "channel_id_unique": {
-          "name": "channel_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "member": {
       "name": "member",
@@ -451,15 +443,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "message_id_unique": {
-          "name": "message_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "profile": {
       "name": "profile",
@@ -471,12 +455,6 @@
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
-        },
-        "next_auth_id": {
-          "name": "next_auth_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
         },
         "username": {
           "name": "username",
@@ -490,9 +468,21 @@
           "primaryKey": false,
           "notNull": true
         },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
         "email": {
           "name": "email",
           "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -549,27 +539,6 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "profile_id_unique": {
-          "name": "profile_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
-        },
-        "profile_next_auth_id_unique": {
-          "name": "profile_next_auth_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "next_auth_id"
-          ]
-        },
-        "profile_username_unique": {
-          "name": "profile_username_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
-        },
         "profile_phone_unique": {
           "name": "profile_phone_unique",
           "nullsNotDistinct": false,
@@ -676,13 +645,6 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "server_id_unique": {
-          "name": "server_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
-        },
         "server_inviteCode_unique": {
           "name": "server_inviteCode_unique",
           "nullsNotDistinct": false,

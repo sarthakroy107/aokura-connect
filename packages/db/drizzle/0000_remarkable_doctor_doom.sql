@@ -30,8 +30,7 @@ CREATE TABLE IF NOT EXISTS "channel" (
 	"channel_type" "type" NOT NULL,
 	"is_private" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "channel_id_unique" UNIQUE("id")
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "member" (
@@ -60,16 +59,16 @@ CREATE TABLE IF NOT EXISTS "message" (
 	"deleted" boolean DEFAULT false NOT NULL,
 	"in_reply_to" uuid,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "message_id_unique" UNIQUE("id")
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "profile" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"next_auth_id" text NOT NULL,
 	"username" varchar(32) NOT NULL,
 	"name" varchar(128) NOT NULL,
+	"date_of_birth" timestamp with time zone NOT NULL,
 	"email" varchar(128) NOT NULL,
+	"password" text NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"phone" varchar(13),
 	"avatar" text DEFAULT 'https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg',
@@ -77,9 +76,6 @@ CREATE TABLE IF NOT EXISTS "profile" (
 	"active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "profile_id_unique" UNIQUE("id"),
-	CONSTRAINT "profile_next_auth_id_unique" UNIQUE("next_auth_id"),
-	CONSTRAINT "profile_username_unique" UNIQUE("username"),
 	CONSTRAINT "profile_phone_unique" UNIQUE("phone")
 );
 --> statement-breakpoint
@@ -95,7 +91,6 @@ CREATE TABLE IF NOT EXISTS "server" (
 	"is_new_member_allowed" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "server_id_unique" UNIQUE("id"),
 	CONSTRAINT "server_inviteCode_unique" UNIQUE("inviteCode")
 );
 --> statement-breakpoint

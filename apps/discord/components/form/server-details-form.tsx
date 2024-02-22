@@ -47,7 +47,7 @@ const ServerDetailsForm = ({
         if (!data.id) throw new Error("Refresh page and try again.");
         await updateServerDetails({ serverDetails: values, serverId: data.id });
         toast.success("Server details updated");
-        refetchServerData();
+        if (refetchServerData) refetchServerData();
         form.reset();
         onClose();
       }

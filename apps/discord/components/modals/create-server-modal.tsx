@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { currentProfile } from "@/lib/auth/current-user";
 import { useUser } from "@clerk/nextjs";
+import { useCurrentProfile } from "../hooks/use-current-profile";
 
 const formSchema = z.object({
   name: z
@@ -41,6 +42,7 @@ const CreateServerModal = () => {
   const isModalOpen = isOpen && type === ModalEnum.CREATE_SERVER;
   const router = useRouter();
   const { user } = useUser();
+  const { currentProfileData } = useCurrentProfile();
   console.log({ user });
   const form = useForm<z.infer<typeof formSchema>>();
   const isSubmitting = form.formState.isSubmitting;
@@ -48,11 +50,12 @@ const CreateServerModal = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       if (data.profile?.id) {
-        if (user?.id === data.profile.clerk_user_id)
+        if (currentProfileData?.id === data.profile.id)
           values.profile_id = data.profile.id;
         else {
           const profile = await currentProfile();
-          values.profile_id = profile?.id as string;
+          if (!profile) throw new Error("Profile not found from create-server-modal ");
+          values.profile_id = profile?.id;
         }
       }
       console.log(values);

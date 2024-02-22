@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registrationFormSchema } from '@/lib/validatiions/auth-schemas'
+import { registrationFormSchema } from '@/lib/validations/auth-schemas'
 
 import { cn } from "@/lib/utils";
 import { Button } from "@ui/components/ui/button";
@@ -12,9 +12,11 @@ import { Form, FormField } from "@ui/components/ui/form";
 
 import { useDebounce } from "use-debounce";
 import { useEffect, useState } from "react";
-import { checkUsernameAvailibility } from "@/lib/server-actions/user/actions";
+import { checkUsernameAvailibility, registerUser } from "@/lib/server-actions/user/actions";
 import DateInput from "@/components/form/date-input";
 import NormalInput from "@/components/form/normal-input";
+import { toast } from "sonner";
+import { BarLoader } from "react-spinners";
 
 
 const RegistrationBox = () => {
@@ -39,15 +41,16 @@ const RegistrationBox = () => {
     }
   }, [value]);
 
-  const onRegistrationFormSubmit = (
+  const onRegistrationFormSubmit = async (
     values: z.infer<typeof registrationFormSchema>
   ) => {
-    try {
-      
-    } catch (error) {
-      console.error(error);
+    const res = await registerUser(values);
+    if(res.status === 200) {
+      toast.success("Account activation link sent to your email");
     }
-    console.table(values);
+    else {
+      toast.error(res.message);
+    };
   };
 
   return (
@@ -121,7 +124,7 @@ const RegistrationBox = () => {
           type="submit"
           className="w-full mt-5 bg-discord_blurple rounded-[3px] hover:bg-discord_blurple text-white"
         >
-          Continue
+          {form.formState.isSubmitting ? <BarLoader color="#ffffff" width={69} />: "Register"}
         </Button>
         <p className="text-[0.70rem] text-white/40 py-1 pt-2">
           By registering, you agree to{" "}
