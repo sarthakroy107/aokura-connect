@@ -1,4 +1,4 @@
-import RegistrationBox from "@/components/auth/register";
+import RegistrationBox from "./register";
 
 const Page = () => {
   return <RegistrationBox />;

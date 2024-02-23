@@ -12,6 +12,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelClassName?: string;
   description?: string;
   error?: FieldError;
+  disabled?: boolean;
   children?: React.ReactNode;
 }
 
@@ -25,6 +26,7 @@ const NormalInput = forwardRef<HTMLInputElement, InputProps>(
       description,
       required = false,
       error,
+      disabled,
       children,
       ...props
     },
@@ -42,6 +44,7 @@ const NormalInput = forwardRef<HTMLInputElement, InputProps>(
             inputClassName,
             "bg-[#202225] rounded-[3px] outline-none focus-visible:ring-offset-0 focus-visible:ring-0 mt-1.5"
           )}
+          disabled={disabled}
           placeholder={description}
           {...props}
         />

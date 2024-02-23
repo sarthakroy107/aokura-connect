@@ -22,6 +22,27 @@
       "when": 1708612052942,
       "tag": "0002_fast_captain_america",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1708667012294,
+      "tag": "0003_ambitious_absorbing_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1708676321490,
+      "tag": "0004_hesitant_stick",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1708684898814,
+      "tag": "0005_shiny_shooting_star",
+      "breakpoints": true
     }
   ]
 }

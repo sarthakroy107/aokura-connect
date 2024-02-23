@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ui/components/ui/button";
 import { Calendar, TUISelectSingleEventHandler } from "@ui/components/ui/calendar";
 import {
   FormControl,
@@ -24,19 +24,21 @@ interface DateInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement
   required: boolean;
   error?: FieldError;
   value: Date;
+  disabled?: boolean;
   onChange: TUISelectSingleEventHandler
 };
 
 const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
-  ({ label, required, error, ...props }, ref) => {
+  ({ label, required, error, disabled, ...props }, ref) => {
     return (
-      <FormItem className="flex flex-col">
+      <FormItem className="flex flex-col w-full">
         <FormLabel>{label}<sup className="text-rose-500 px-0.5">*</sup></FormLabel>
         <Popover>
           <PopoverTrigger asChild>
             <FormControl>
               <Button
                 variant={"outline"}
+                disabled={disabled}
                 className={cn(
                   "w-full bg-discord_darkest hover:bg-white/05 pl-3 text-left font-normal rounded-[3px]",
                   !props.value && "text-muted-foreground"
@@ -51,7 +53,7 @@ const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
               </Button>
             </FormControl>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-full p-0" align="start">
             <Calendar
               mode="single"
               selected={props.value}
@@ -60,6 +62,7 @@ const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
                 date > new Date() || date < new Date("1900-01-01")
               }
               initialFocus
+              className="w-full"
             />
           </PopoverContent>
         </Popover>

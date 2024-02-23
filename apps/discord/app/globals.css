@@ -6,6 +6,9 @@
   .default-button {
     @apply bg-discord_default rounded-[2px] text-white hover:bg-discord_default;
   }
+  .auth-box {
+    @apply bg-discord h-[38rem] pb-10 rounded-[3px] w-[390px] md:w-[420px] lg:w-[480px] flex flex-col items-center py-10
+  }
 }
  
 @layer base {

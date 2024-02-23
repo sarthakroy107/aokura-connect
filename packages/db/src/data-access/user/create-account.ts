@@ -13,7 +13,7 @@ type TCreateAccount = {
 export const createProfile = async (data: TCreateAccount) => {
   try {
     return await db.transaction(async (trx) => {
-      const checkEmailAvailibility = await trx
+      const checkEmailAvailibility = await trx // Check if email is already in use
         .select()
         .from(Profile)
         .where(
@@ -24,7 +24,7 @@ export const createProfile = async (data: TCreateAccount) => {
           )
         );
 
-      if (checkEmailAvailibility && checkEmailAvailibility.length > 0) {
+      if (checkEmailAvailibility && checkEmailAvailibility.length > 0) {  // Check if email is already in use
         return {
           success: false,
           status: 400,
@@ -33,7 +33,7 @@ export const createProfile = async (data: TCreateAccount) => {
         };
       }
 
-      const checkUsernameAvailibility = await trx
+      const checkUsernameAvailibility = await trx   // Check if username is already in use
         .select()
         .from(Profile)
         .where(
@@ -44,7 +44,7 @@ export const createProfile = async (data: TCreateAccount) => {
           )
         );
 
-      if (checkUsernameAvailibility && checkUsernameAvailibility.length > 0) {
+      if (checkUsernameAvailibility && checkUsernameAvailibility.length > 0) { // Check if username is already in use
         return {
           success: false,
           status: 400,
@@ -53,7 +53,7 @@ export const createProfile = async (data: TCreateAccount) => {
         };
       }
 
-      const newUser = await trx.insert(Profile).values({
+      const newUser = await trx.insert(Profile).values({ // Create a new user
         name: data.name,
         email: data.email,
         password: data.password,

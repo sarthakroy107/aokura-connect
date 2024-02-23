@@ -102,7 +102,7 @@ export const Server = pgTable('server', {
   name:                  text('name').notNull(),
   avatar:                text('avatar').default('https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg'),
   description:           text('description').default(''),
-  invitation_code:       text('inviteCode').unique().notNull(),
+  invitation_code:       text('inviteCode').unique(),
   creator_profile_id:    uuid('creator_profile_id').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
   is_deleted:            boolean('deleted').default(false).notNull(),
   is_private:            boolean('is_private').default(false).notNull(),
@@ -203,7 +203,7 @@ export const memberToChannel = pgTable('member_to_channel', {
 export const Message = pgTable('message', {
 
   id:                  uuid('id').defaultRandom().primaryKey().notNull(),
-  sender_member_id:    uuid('sender_member_id').notNull().references(() => Member.id, { onDelete: 'cascade' }),
+  sender_member_id:    uuid('sender_member_id').notNull().references(() => Member.id, { onDelete: 'no action' }),
   channel_id:          uuid('channel_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
   content:             text('content'),
   file_url:            text('file_url'),
@@ -223,8 +223,9 @@ export const Message = pgTable('message', {
 })
 
 export const EmailActivationTokenTable = pgTable('email_activation_token', {
-  token: varchar('token', { length: 128 }).notNull().primaryKey(),
-  profile_id: uuid('profile_id').notNull().references(() => Profile.id, { onDelete: 'no action' }),
+  token:           varchar('token', { length: 140 }).notNull().primaryKey(),
+  profile_id:      uuid('profile_id').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
+  used:            boolean('used').default(false).notNull(),
   exipration_time: timestamp('expiration_time', { withTimezone: true, mode: 'string' }).notNull(),
 })
 
@@ -325,6 +326,13 @@ export const messageRelations = relations(Message, ({ one }) => ({
     references: [Message.id]
   })
 
+}))
+
+export const emailActivationTokenTableRelations = relations(EmailActivationTokenTable, ({ one }) => ({
+  profile: one(Profile, {
+    fields: [EmailActivationTokenTable.profile_id],
+    references: [Profile.id]
+  })
 }))
 
 
