@@ -12,7 +12,7 @@ import {
   LucideTrash2,
 } from "lucide-react";
 
-import { transformMessageData } from "@/lib/transformations/message";
+import { messageBodyDto } from "@/lib/transformations/message";
 import { useChatActions } from "@/lib/store/chat-store";
 import TooltipWrapper from "../common/tooltip-wrapper";
 import useCurrentServer from "../hooks/use-current-member";
@@ -24,7 +24,7 @@ const ChatActions = memo(
     setIsEditing,
     setIsDeleting,
   }: {
-    data: ReturnType<typeof transformMessageData>;
+    data: ReturnType<typeof messageBodyDto>;
     setIsEditing: Dispatch<SetStateAction<boolean>>;
     setIsDeleting: Dispatch<SetStateAction<boolean>>;
   }) => {

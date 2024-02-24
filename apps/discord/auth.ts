@@ -34,10 +34,8 @@ export const {
   callbacks: {
     authorized({ request, auth }) {
       const isLoggedIn = !!auth;
-      console.log({ auth, isLoggedIn });
+
       const { pathname } = request.nextUrl;
-      console.log({ pathname });
-      const acceptHeader = request.headers.get("accept");
 
       if (publicRoutes.includes(pathname)) return true;
       if (apiPublicRoutes.includes(pathname)) return true;

@@ -7,6 +7,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 import { cn } from "@/lib/utils";
+import { TMemberWithChannelIds } from "@db/dto/member/member-with-channel-ids";
 import {
   LucideChevronDown,
   LucideDoorOpen,
@@ -26,7 +27,7 @@ const ServersidebarNavbar = memo(
   }: {
     label: string;
     className: "";
-    member: TDBMember;
+    member: TMemberWithChannelIds;
   }) => {
     const [open, setOpen] = useState<boolean>(false);
     const params = useParams<{ serverId: string }>();

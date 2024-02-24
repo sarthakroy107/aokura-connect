@@ -1,7 +1,7 @@
 import { formatDate } from "./date-formater"
 
 
-export const transformMessageData = (data: TChatMessageData) => {
+export const messageBodyDto = (data: TChatMessageData) => {
 
   return {
     id:              data.id,

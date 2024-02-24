@@ -1,4 +1,5 @@
 'use client';
+import { TMemberWithChannelIds } from "@db/dto/member/member-with-channel-ids";
 import { create } from "zustand"
 
 
@@ -21,7 +22,7 @@ interface IModalDataType {
     channel?: TDBChannel,
     api_url?: string;
     profile?: TDBProfile,
-    member?: TDBMember
+    member?: TMemberWithChannelIds
     query?: Record<string, any>;
 }
 

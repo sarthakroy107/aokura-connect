@@ -1,0 +1,1 @@
+ALTER TABLE "category" DROP COLUMN IF EXISTS "is_private";

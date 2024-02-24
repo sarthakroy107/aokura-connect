@@ -7,6 +7,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { serverFormSchema } from "./validator";
+import { currentProfile } from "@/lib/auth/current-user";
+import { getServerDetails } from "@db/data-access/server/get-server-full-details";
+import { getMemberDetails } from "@db/data-access/member/get-member-details";
 
 const getCurrentServerData = z.object({
   serverId: z.string().min(1, { message: "Server ID is required" }),
@@ -14,23 +17,6 @@ const getCurrentServerData = z.object({
 });
 
 //*************** GET ***************//
-
-export const getServers = async (profileId: string) => {
-  try {
-    const servers = await db.query.Member.findMany({
-      columns: {
-        server_id: true,
-      },
-      where: eq(Member.profile_id, profileId),
-      with: { server: { columns: { avatar: true, name: true, id: true } } },
-    });
-
-    return servers;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 export const seacrhPublicServer = async (searchQuery: string) => {
   const result = z
     .string()
@@ -60,11 +46,35 @@ export const getServerAndMemberDetails = async (
   serverId: string,
   profileId: string
 ) => {
-  const result = getCurrentServerData.safeParse({ serverId, profileId });
+  const profile = await currentProfile();
+  const checkServerId = z.string().min(1, { message: "Server ID is required" });
+  const result = checkServerId.safeParse(serverId);
 
-  if (!result.success) {
-    throw new Error(result.error.message);
-  }
+  if (!result.success)
+    return {
+      status: 400,
+      success: false,
+      data: null,
+      error: "Server ID is required",
+    };
+
+  if (!profile || profile.status !== 200 || profile.data)
+    return {
+      status: profile.status,
+      success: false,
+      data: null,
+      error: "Profile not found",
+    };
+
+  const serverData = await getServerDetails(serverId);
+
+  if (serverData.status !== 200 || !serverData.data )
+    return {
+      status: serverData.status,
+      success: false,
+      data: null,
+      error: serverData.error,
+    };
 
   try {
     return await db.transaction(async (tx) => {
@@ -72,8 +82,13 @@ export const getServerAndMemberDetails = async (
         .select()
         .from(Server)
         .where(eq(Server.id, serverId));
-      console.log({ server });
-      if (!server || !server[0]) throw new Error("Server not found");
+      if (!server || !server[0])
+        return {
+          status: 404,
+          success: false,
+          data: null,
+          error: "Server not found",
+        };
 
       const member = await tx
         .select()
@@ -85,7 +100,13 @@ export const getServerAndMemberDetails = async (
           )
         );
 
-      if (!member || !member[0]) return;
+      if (!member || !member[0])
+        return {
+          status: 404,
+          success: false,
+          data: null,
+          error: "Member not found",
+        };
 
       const categories = await tx.query.Category.findMany({
         where: eq(Category.server_id, server[0].id),
@@ -103,7 +124,14 @@ export const getServerAndMemberDetails = async (
         },
       });
 
-      if (!memberToChannel) throw new Error("Server not found");
+      if (!memberToChannel)
+        return {
+          status: 404,
+          success: false,
+          data: null,
+          error: "Member to channel not found",
+          message: "Member to channel not found",
+        };
 
       const channel_members = await tx.query.memberToChannel.findMany({
         where: eq(memberToChannel.member_id, member[0].id),
@@ -120,14 +148,24 @@ export const getServerAndMemberDetails = async (
       });
 
       return {
-        server: server[0],
-        member: member[0],
-        categories,
+        status: 200 as const,
+        success: true as const,
+        data: {
+          server: server[0],
+          member: member[0],
+          categories,
+        },
+        error: null,
       };
     });
   } catch (error) {
     console.error(error);
-    return null;
+    return {
+      status: 500,
+      success: false,
+      error: "Error fetching server details from DB",
+      data: null,
+    };
   }
 };
 
@@ -242,7 +280,7 @@ type TServerDetailsForm = {
 export const updateServerDetails = async (data: TServerDetailsForm) => {
   try {
     serverFormSchema.parse(data.serverDetails);
-    if(!data.serverId) throw new Error("Server ID is required");
+    if (!data.serverId) throw new Error("Server ID is required");
     await db
       .update(Server)
       .set(data.serverDetails)

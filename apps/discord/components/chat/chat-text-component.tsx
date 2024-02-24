@@ -1,6 +1,6 @@
 "use client";
 
-import { transformMessageData } from "@/lib/transformations/message";
+import { messageBodyDto } from "@/lib/transformations/message";
 import { forwardRef } from "react";
 
 const ChatTextComponent = forwardRef(
@@ -10,7 +10,7 @@ const ChatTextComponent = forwardRef(
       setIsEditing,
       formIsSubmitting,
     }: {
-      data: ReturnType<typeof transformMessageData>;
+      data: ReturnType<typeof messageBodyDto>;
       setIsEditing: React.Dispatch<
         React.SetStateAction<boolean>
       >;

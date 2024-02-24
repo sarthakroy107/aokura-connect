@@ -1,6 +1,7 @@
 import { InferSelectModel, relations } from "drizzle-orm";
 import { text, timestamp, pgTable, pgEnum, uuid, varchar, primaryKey, boolean, AnyPgColumn, integer } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from '@auth/core/adapters'
+import { create } from "domain";
 
 
 export const memberRole  = pgEnum('role', ['admin', 'moderator', 'guest'])
@@ -157,7 +158,16 @@ export const Category = pgTable('category', {
   server_id:          uuid('server_id').notNull().references(() => Server.id, { onDelete: 'cascade' }),
   name:               varchar('name', { length: 64 }).notNull(),
   description:        text('description'),
-  is_private:         boolean('is_private').default(false).notNull(),
+
+  created_at: timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string'
+  }).defaultNow().notNull(),
+
+  updated_at: timestamp('updated_at', {
+    withTimezone: true,
+    mode: 'string'
+  }).defaultNow().notNull(),
 
 }, (t) => ({
   pk: primaryKey({ columns: [ t.id, t.server_id, t.creator_member_id] })
@@ -171,20 +181,20 @@ export const Channel = pgTable('channel', {
   name:                varchar('name', { length: 64 }).notNull(),
   server_id:           uuid('server_id').notNull().references(() => Server.id, { onDelete: 'cascade' }),
   category_id:         uuid('category_id').notNull().references(() => Category.id, { onDelete: 'cascade' }),
-  creator_member_id:   uuid('creator_member_id').notNull().references(() => Member.id, { onDelete: 'cascade' }),
+  creator_member_id:   uuid('creator_member_id').notNull().references(() => Member.id, { onDelete: 'no action' }),
   channel_type:        channelTypes('channel_type').notNull(),
   is_private:          boolean('is_private').default(false).notNull(),
-  
+
   created_at: timestamp('created_at', {
     withTimezone: true,
     mode: 'string'
   }).defaultNow().notNull(),
-  
+
   updated_at: timestamp('updated_at', {
     withTimezone: true,
     mode: 'string'
   }).defaultNow().notNull(),
-  
+
 })
 
 
@@ -193,6 +203,11 @@ export const memberToChannel = pgTable('member_to_channel', {
   id:               uuid('id').defaultRandom().notNull(),
   channel_id:       uuid('channel_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
   member_id:        uuid('member_id').notNull().references(() => Member.id, { onDelete: 'cascade' }),
+
+  created_at: timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string'
+  }).defaultNow().notNull(),
   
 }, (t) => ({
   pk: primaryKey({ columns: [ t.id, t.channel_id, t.member_id] })
@@ -227,6 +242,11 @@ export const EmailActivationTokenTable = pgTable('email_activation_token', {
   profile_id:      uuid('profile_id').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
   used:            boolean('used').default(false).notNull(),
   exipration_time: timestamp('expiration_time', { withTimezone: true, mode: 'string' }).notNull(),
+
+  created_at: timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string'
+  }).defaultNow().notNull(),
 })
 
 

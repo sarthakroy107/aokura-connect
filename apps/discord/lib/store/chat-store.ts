@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { shallow }  from "zustand/shallow";
-import { transformMessageData } from "@/lib/transformations/message";
+import { messageBodyDto } from "@/lib/transformations/message";
 
 type TChatReply = {
   inReply: true | null;
@@ -9,8 +9,8 @@ type TChatReply = {
   mediaContent: boolean | null;
   fobiddenState: null;
   isTextEditing: boolean;
-  setReply: (data: ReturnType<typeof transformMessageData>) => void;
-  setEditing: (data: ReturnType<typeof transformMessageData>) => void;
+  setReply: (data: ReturnType<typeof messageBodyDto>) => void;
+  setEditing: (data: ReturnType<typeof messageBodyDto>) => void;
   eraceReplyData: () => void;
 };
 

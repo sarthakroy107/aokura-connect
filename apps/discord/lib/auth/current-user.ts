@@ -1,32 +1,42 @@
 "use server";
 
 import { auth } from "@/auth";
-import { db } from "@db/db";
-import { eq } from "drizzle-orm";
-import { Profile } from "@db/schema";
-import { redirect } from "next/navigation";
+import { getProfile } from "@db/data-access/user/get-profile";
 
 export const currentProfile = async () => {
   const data = await auth();
 
   if (
     !data ||
-    !data.user ||
-    !data.user.id ||
-    !data.user.email ||
-    !data.user.name
+    !data.user || 
+    !data.user.email
   )
-    return null;
-  const profile = await db
-    .select()
-    .from(Profile)
-    .where(eq(Profile.email, data?.user?.email));
+    return {
+      status: 404,
+      success: false,
+      message: "User not found",
+      data: null,
+    };
 
-  if (profile.length === 0) {
-    
-    redirect("/register");
-    return null;
+  const res = await getProfile({
+    email: data.user.email,
+    is_email_verified: true,
+    is_deleted: false,
+  });
+
+  if (res.status !== 200 || !res.data) {
+    return {
+      status: res.status,
+      success: false,
+      message: res.message,
+      data: null,
+    }
   }
 
-  return profile[0];
+  return {
+    status: 200 as const,
+    success: true,
+    message: "Profile found",
+    data: res.data,
+  }
 };

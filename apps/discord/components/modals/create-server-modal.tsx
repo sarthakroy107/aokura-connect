@@ -43,6 +43,7 @@ const CreateServerModal = () => {
   const { currentProfileData } = useCurrentProfile();
   const form = useForm<z.infer<typeof formSchema>>();
   const isSubmitting = form.formState.isSubmitting;
+  if (!currentProfileData) return <p>Profile not found</p>;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -51,11 +52,11 @@ const CreateServerModal = () => {
           values.profile_id = data.profile.id;
         else {
           const profile = await currentProfile();
-          if (!profile) throw new Error("Profile not found from create-server-modal ");
-          values.profile_id = profile?.id;
+          if (!profile)
+            throw new Error("Profile not found from create-server-modal ");
+          values.profile_id = currentProfileData?.id;
         }
       }
-      console.log(values);
       formSchema.parse(values);
 
       await createServer(values.name, values.avatar, values.profile_id);
@@ -66,6 +67,7 @@ const CreateServerModal = () => {
       console.log(error);
     }
   };
+
 
   return (
     <Dialog open={isModalOpen} onOpenChange={() => onClose()}>

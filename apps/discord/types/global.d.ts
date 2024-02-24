@@ -3,7 +3,8 @@ import { Server as NetServer } from "http";
 import { NextApiResponse } from "next";
 import { Server as SocketIOServer } from "socket.io";
 import { TProfile, TServer, TMember, TCategory, TChannel, TMemberToChannel, TMessage, TEmailActivationTokenTable } from "@db/schema";
-import { transformMessageData } from "@/lib/transformations/message";
+import { messageBodyDto } from "@/lib/transformations/message";
+import { TCategoryWithChannelsDetailsDto } from "@db/dto/categories/categories-detils-dto";
 
 declare global {
   interface ICustomChannel {
@@ -15,14 +16,7 @@ declare global {
     is_private: boolean;
   }
 
-  interface ICategoriesWithChannels {
-    server_id: string;
-    name: string;
-    id: string;
-    creator_member_id: string;
-    description: string | null;
-    channels: ICustomChannel[];
-  }
+  type TCategoriesWithChannels =  TCategoryWithChannelsDetailsDto
 
   type NextApiResponseServerIo = NextApiResponse & {
     socket: Socket & {
@@ -46,7 +40,7 @@ declare global {
       profile: TDBProfile;
     }
   }
-  type TTransformedMessage = ReturnType<typeof transformMessageData>;
+  type TTransformedMessage = ReturnType<typeof messageBodyDto>;
   type TResponse = {
     status: number;
     success: boolean;

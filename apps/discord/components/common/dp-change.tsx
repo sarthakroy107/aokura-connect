@@ -23,7 +23,7 @@ const DisplayImageChange = ({ currentImage, endpoint, id, type }: TDisplayImageC
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const params = useParams<{ serverId: string }>()
 
-  const { refetchCurrentProfileData, refetchServerData } = useCurrentServer(params!.serverId);
+  const { refetchCurrentProfileData, refetchServerData } = useCurrentServer();
 
   return (
     <>

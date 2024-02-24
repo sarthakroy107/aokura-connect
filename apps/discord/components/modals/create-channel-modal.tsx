@@ -50,7 +50,7 @@ const CreateChannelModal = () => {
 
   const { isOpen, type, onClose, data } = useModal();
 
-  const { currentProfileData, member } = useCurrentServer(params?.serverId!);
+  const { currentProfileData, member } = useCurrentServer();
   console.log({ currentProfileData, member });
 
   //const { user } = useUser();

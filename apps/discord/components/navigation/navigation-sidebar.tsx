@@ -1,27 +1,31 @@
-import { currentProfile } from "@/lib/auth/current-user";
-import { ScrollArea } from "@ui/components/ui/scroll-area"
-import { getServers } from "@/lib/server-actions/server/actions";
-import SidebarServerIdon from "./sidebar-server-icon";
+import { ScrollArea } from "@ui/components/ui/scroll-area";
+import { getProfileJoinedServers } from "@/lib/server-actions/server/get-joined-servers";
 import { Separator } from "@ui/components/ui/separator";
-import CreateServerIcon from "@/app/(main)/create-server-icon";
-import JoinServer from "@/app/(main)/join-server-icon";
+import CreateServerIcon from "@/app/(protected)/channel/_components/create-server-icon";
+import JoinServer from "@/app/(protected)/channel/_components/join-server-icon";
+import SidebarServerIdon from "./sidebar-server-icon";
 
 const NavigationSidebar = async () => {
+  const data = await getProfileJoinedServers();
 
-  const profile = await currentProfile()
-  if (!profile) return null;
-  
-  const servers = await getServers(profile.id);
+  if (data.status !== 200 || !data.servers || !data.profile) {
+    return (
+      <p className="text-white/50 text-xs text-wrap">
+        status: {data.status} message: {data.message}
+      </p>
+    );
+  }
+
   return (
     <ScrollArea className="w-[72px] h-screen bg-[#1E1F22]">
-      {
-        servers?.map((server => { return <SidebarServerIdon key={server.server_id} server={server.server} /> }))
-      }
+      {data.servers?.map((server) => {
+        return <SidebarServerIdon key={server.id} server={server} />;
+      })}
       <Separator className="mx-1 w-[60px] bg-white/10" />
-      <CreateServerIcon profile={profile} />
+      <CreateServerIcon profile={data.profile} />
       <JoinServer />
     </ScrollArea>
-  )
-}
+  );
+};
 
-export default NavigationSidebar
+export default NavigationSidebar;

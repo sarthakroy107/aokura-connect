@@ -39,7 +39,7 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
   const { onOpen, file_url, data, setFileUrl } = useModal();
   const { inReply, senderName, messageId, eraceReplyData } = useChatActions();
 
-  const { member } = useCurrentServer(params!.serverId);
+  const { member } = useCurrentServer();
 
   const form = useForm<z.infer<typeof formSchema>>({
     //resolver: zodResolver(formSchema)

@@ -3,40 +3,40 @@ import ServersidebarNavbar from "./server-sidebar-nav";
 import ServerSearch from "./server-search";
 
 import { channelTypesEnum } from "@db/schema";
-import { getServerAndMemberDetails } from "@/lib/server-actions/server/actions";
+import { getServerAndMemberDetails } from "@/lib/server-actions/server/get-server-and-member-details";
 import { currentProfile } from "@/lib/auth/current-user";
 
 import { Hash, Shield, ShieldHalf, Speaker, Video } from "lucide-react";
 
 const ServerSidebar = async ({ server_id }: { server_id: string }) => {
-  
   const profile = await currentProfile();
 
   if (!profile) return null;
-  const data = await getServerAndMemberDetails(server_id, profile?.id);
+  const res = await getServerAndMemberDetails(server_id);
 
-  if (!data) return <div>Opps! Something wend wrong</div>;
+  if (!res || res.status !== 200 || !res.data)
+    return <div>Opps! Something wend wrong</div>;
 
   return (
     <div className="min-w-[220px] max-w-[220px] h-screen overflow-auto bg-[rgb(40,43,48)] text-white">
       <ServersidebarNavbar
-        label={data.server.name}
+        label={res.data.server.name}
         className=""
-        member={data.member}
+        member={res.data.member}
       />
       <ServerSearch
         data={[
           {
             label: "Channels",
             type: "channel",
-            data: data.categories.flatMap((category) =>
+            data: res.data.server.categories.flatMap((category) =>
               category.channels.map((channel) => ({
                 id: channel.id,
                 name: channel.name,
                 icon:
-                  channel.channel_type === channelTypesEnum.TEXT ? (
+                  channel.type === channelTypesEnum.TEXT ? (
                     <Hash />
-                  ) : channel.channel_type === channelTypesEnum.VOICE ? (
+                  ) : channel.type === channelTypesEnum.VOICE ? (
                     <Speaker />
                   ) : (
                     <Video />
@@ -49,12 +49,12 @@ const ServerSidebar = async ({ server_id }: { server_id: string }) => {
             type: "member",
             data: [
               {
-                id: data.member.id,
-                name: "Sarthak Roy",
+                id: res.data.member.id,
+                name: res.data.member.nickname || '',
                 icon:
-                  data.member.role === "admin" ? (
+                  res.data.member.role === "admin" ? (
                     <Shield />
-                  ) : data.member.role === "moderator" ? (
+                  ) : res.data.member.role === "moderator" ? (
                     <ShieldHalf />
                   ) : null,
               },
@@ -62,7 +62,7 @@ const ServerSidebar = async ({ server_id }: { server_id: string }) => {
           },
         ]}
       />
-      {data.categories.map((category, index) => (
+      {res.data.server.categories.map((category, index) => (
         <CategoryComp key={index} data={category} />
       ))}
     </div>

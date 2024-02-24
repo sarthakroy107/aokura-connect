@@ -3,7 +3,7 @@
 import { memo, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { transformMessageData } from "@/lib/transformations/message";
+import { messageBodyDto } from "@/lib/transformations/message";
 
 import ChatActions from "./chat-actions";
 import {
@@ -21,7 +21,7 @@ import ActualMessage from "./actual-message";
 import { ScrollArea } from "@ui/components/ui/scroll-area";
 
 const MessageComponent = memo(
-  (props: ReturnType<typeof transformMessageData>) => {
+  (props: ReturnType<typeof messageBodyDto>) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isMessageDeleting, setIsMessageDeleting] = useState(false);
 

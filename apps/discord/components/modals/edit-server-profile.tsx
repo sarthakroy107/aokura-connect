@@ -18,7 +18,7 @@ import { changeName } from "@/lib/server-actions/common/actions";
 const EditServerProfile = () => {
   const params = useParams<{ serverId: string }>();
   const { isOpen, type, onClose } = useModal();
-  const { member } = useCurrentServer(params!.serverId);
+  const { member } = useCurrentServer();
 
   const isModalOpen = isOpen && type === ModalEnum.EDIT_SERVER_PROFILE;
   const name: string = member?.nickname!;
@@ -50,7 +50,7 @@ const EditServerProfile = () => {
           Edit Sever Profile
         </DialogHeader>
         <DisplayImageChange
-          currentImage={member?.server_avatar!}
+          currentImage={member?.avatar || ""}
           endpoint="profileImage"
           id={member?.id!}
           type="member"

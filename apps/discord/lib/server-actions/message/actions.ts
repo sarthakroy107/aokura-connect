@@ -3,7 +3,7 @@
 import { asc, count, desc, eq } from "drizzle-orm";
 import { db } from "@db/db";
 import { Message } from "@db/schema";
-import { transformMessageData } from "../../transformations/message";
+import { messageBodyDto } from "../../transformations/message";
 
 const MESSAGE_BATCH = 10;
 
@@ -49,7 +49,7 @@ export const getMessages = async (channel_id: string, skip?: number , batchSize?
     const totalMessagesCount = await db.select({ value: count()}).from(Message).where(eq(Message.channel_id, channel_id));
 
     const transformedMessages = messages.map((message) =>
-      transformMessageData(message)
+      messageBodyDto(message)
     );
 
     return {

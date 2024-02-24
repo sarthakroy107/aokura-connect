@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 import { cn } from "@/lib/utils";
+import { TChannelDetailsDto } from "@db/dto/channel/channel-details-dto";
 import {
   LucideChevronDown,
   LucideHash,
@@ -21,7 +22,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-const CategoryComp = ({ data }: { data: ICategoriesWithChannels }) => {
+const CategoryComp = ({ data }: { data: TCategoriesWithChannels }) => {
   const { onOpen, isOpen, type, onClose } = useModal();
 
   const [open, setOpen] = useState<boolean>(true);
@@ -89,26 +90,26 @@ const CategoryComp = ({ data }: { data: ICategoriesWithChannels }) => {
 
 export default CategoryComp;
 
-const ChannelComp = ({ data }: { data: ICustomChannel }) => {
+const ChannelComp = ({ data: channel }: { data: TChannelDetailsDto }) => {
   const params = useParams();
   return (
     <Link
-      href={`/channel/${params!.serverId}/${data.id}`}
+      href={`/channel/${params!.serverId}/${channel.id}`}
       className={cn(
         "p-1.5 flex justify-between items-center gap-x-1 px-3 text-sm font-medium text-white text-opacity-65 hover:text-opacity-90 hover:bg-white/5 mx-1.5 rounded-sm",
-        params!.channelId === data.id &&
+        params!.channelId === channel.id &&
           "bg-white/10 hover:bg-white/10 text-opacity-95"
       )}
     >
       <div className="flex gap-x-1 items-center">
-        {data.channel_type === "text" ? (
+        {channel.type === "text" ? (
           <LucideHash className="h-4 w-4 font-semibold" />
-        ) : data.channel_type === "voice" ? (
+        ) : channel.type === "voice" ? (
           <LucideSpeaker className="h-4 w-4 font-semibold" />
         ) : (
           <LucideVideo className="h-5 w-5 mr-1" />
         )}
-        {data.name}
+        {channel.name}
       </div>
       <TooltipWrapper label="Invite People">
         {

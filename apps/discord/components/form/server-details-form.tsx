@@ -22,13 +22,14 @@ import { toast } from "sonner";
 import { BarLoader } from "react-spinners";
 import { FileUpload } from "@/components/file-upload";
 import NormalInput from "@/components/form/normal-input";
+import { TServerDetailsDto } from "@db/dto/server/server-details-dto";
 
 
 const ServerDetailsForm = ({
   data,
   newServer,
 }: {
-  data: TDBServer;
+  data: TServerDetailsDto;
   newServer: boolean;
 }) => {
   const { refetchServerData } = useCurrentServer();
