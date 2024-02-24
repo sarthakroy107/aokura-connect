@@ -10,7 +10,12 @@ const currentConfig: Config = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx,mdx}'
+    './src/**/*.{ts,tsx,mdx}',
+    // '../../packages/ui/src/*.{ts,tsx,mdx}',
+    // '../../packages/ui/src/**/*.{ts,tsx,mdx}',
+    // '../packages/ui/src/**/*.{ts,tsx}',
+    // '../packages/ui/**/*.{ts,tsx}',
+    // '../../packages/ui/**/*.{ts,tsx}',
   ],
   prefix: "",
   theme: {

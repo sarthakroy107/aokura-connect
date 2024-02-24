@@ -1,8 +1,13 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import { signIn } from "@/auth";
 
-const Page = () => {
+const Page = ({
+  searchParams,
+}: {
+  searchParams: { callbackUrl: string | undefined };
+}) => {
   return (
     <div className={cn("auth-box px-5", "h-fit")}>
       <Image
@@ -21,25 +26,35 @@ const Page = () => {
         We only support social logins
       </p>
       {loginProviderDetails.map((provider, index) => (
-        <button
+        <form
           key={index}
-          className="w-full min-h-11 bg-discord_darker hover:bg-discord_blurple transition duration-75 mb-3 rounded-full flex justify-center items-center gap-x-3 p-1.5 border border-discord_blurple"
+          className="w-full"
+          action={async () => {
+            "use server";
+            await signIn(provider.key);
+          }}
         >
-          <Image
-            src={provider.image}
-            alt={provider.name}
-            width={50}
-            height={50}
-            draggable={false}
-            className="object-cover w-10 bg-white p-1 rounded-full"
-          />
-          <p className="font-medium text-1xl">
-            {" "}
-            Login with <strong>{provider.name}</strong>
-          </p>
-        </button>
+          <button
+            type="submit"
+            className="w-full min-h-11 bg-discord_darker hover:bg-discord_blurple transition duration-75 mb-3 rounded-full 
+            flex justify-center items-center gap-x-4 p-1.5 border border-discord_blurple"
+          >
+            <Image
+              src={provider.image}
+              alt={provider.name}
+              width={50}
+              height={50}
+              draggable={false}
+              className="object-cover w-10 bg-white p-1 rounded-full"
+            />
+            <p className="font-medium text-1xl">
+              {" "}
+              Login with <strong>{provider.name}</strong>
+            </p>
+          </button>
+        </form>
       ))}
-      <p className="text-white/50 tex-xs">
+      <p className="text-white/50 text-sm">
         Don't have an account?{" "}
         <Link href={"/register"} className="text-discord_cyan hover:underline">
           Register

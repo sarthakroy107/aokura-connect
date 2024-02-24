@@ -25,7 +25,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { currentProfile } from "@/lib/auth/current-user";
-import { useUser } from "@clerk/nextjs";
 import { useCurrentProfile } from "../hooks/use-current-profile";
 
 const formSchema = z.object({
@@ -41,9 +40,7 @@ const CreateServerModal = () => {
   const { isOpen, type, onClose, data } = useModal();
   const isModalOpen = isOpen && type === ModalEnum.CREATE_SERVER;
   const router = useRouter();
-  const { user } = useUser();
   const { currentProfileData } = useCurrentProfile();
-  console.log({ user });
   const form = useForm<z.infer<typeof formSchema>>();
   const isSubmitting = form.formState.isSubmitting;
 

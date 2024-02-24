@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@db/db";
 import { eq } from "drizzle-orm";
 import { Profile } from "@db/schema";
+import { redirect } from "next/navigation";
 
 export const currentProfile = async () => {
   const data = await auth();
@@ -19,23 +20,12 @@ export const currentProfile = async () => {
   const profile = await db
     .select()
     .from(Profile)
-    .where(eq(Profile.next_auth_user_id, data?.user?.id));
+    .where(eq(Profile.email, data?.user?.email));
 
   if (profile.length === 0) {
-    const newProfile = await db
-      .insert(Profile)
-      .values({
-        next_auth_user_id: data.user.id,
-        username: data.user.name,
-        name: data.user.name,
-        email: data.user.email,
-        avatar: data.user.image,
-      })
-      .returning();
-
-    if (!newProfile || !newProfile[0]) return null;
-
-    return newProfile[0];
+    
+    redirect("/register");
+    return null;
   }
 
   return profile[0];
