@@ -31,20 +31,12 @@ export const SocketProvider = ({
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const socketInstance = io(process.env.NEXT_PUBLIC_SITE_URL!, {
-      path: "/api/socket/io",
-      addTrailingSlash: false,
-    });
+    console.log("Connecting to socket server");
+    const socketInstance = io("http://localhost:6700");
 
     socketInstance.on("connect", () => {
       setIsConnected(true);
       setSocket(socketInstance);
-      console.log("Sending Hi to server");
-      socket?.emit("hii", { message: "Hii server from client" })
-      socket?.on('hello', (data) => {
-        console.log("Received Hello from server");
-        console.log({ data })
-      })
     });
 
     socketInstance.on("disconnect", () => {

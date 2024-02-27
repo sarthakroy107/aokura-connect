@@ -38,12 +38,24 @@ const formSchema = z.object({
 
 const CreateServerModal = () => {
   const { isOpen, type, onClose, data } = useModal();
+
   const isModalOpen = isOpen && type === ModalEnum.CREATE_SERVER;
+
   const router = useRouter();
+
   const { currentProfileData } = useCurrentProfile();
+
   const form = useForm<z.infer<typeof formSchema>>();
+
   const isSubmitting = form.formState.isSubmitting;
-  if (!currentProfileData) return <p>Profile not found</p>;
+
+  if (!currentProfileData) {
+    return (
+      <Dialog open={false}>
+        <DialogContent>Profile not found</DialogContent>
+      </Dialog>
+    );
+  }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -57,6 +69,7 @@ const CreateServerModal = () => {
           values.profile_id = currentProfileData?.id;
         }
       }
+
       formSchema.parse(values);
 
       await createServer(values.name, values.avatar, values.profile_id);
@@ -67,7 +80,6 @@ const CreateServerModal = () => {
       console.log(error);
     }
   };
-
 
   return (
     <Dialog open={isModalOpen} onOpenChange={() => onClose()}>

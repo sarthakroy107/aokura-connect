@@ -5,7 +5,6 @@ import { PlusCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Input } from "@/components/ui/input";
-import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 import Image from "next/image";
@@ -14,6 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useCurrentServer from "../hooks/use-current-member";
 import InReply from "./in-reply";
 import { useChatActions } from "@/lib/store/chat-store";
+import { useSocket } from "@/components/provider/socket-provider";
+import useJWT from "../hooks/use-jwt";
 
 type TChatInputProps = {
   name: string;
@@ -24,20 +25,21 @@ type TChatInputProps = {
 
 const formSchema = z
   .object({
-    content: z.string().optional(),
-    file_url: z.string().optional(),
-    in_reply_to: z.string().optional(),
+    textMsg: z.string().optional(),
+    fileUrl: z.string().optional(),
+    inReplyTo: z.string().optional(),
   })
   .refine((data) => {
-    if (!data.content && !data.file_url) {
-      throw new Error("Message text content and file_url both are empty");
+    if (!data.textMsg && !data.fileUrl) {
+      return false;
     }
-  });
+  }, { path: ["textMsg"], message: "Message text content and file_url both are empty"});
 
 const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
-  const params = useParams<{ serverId: string; channelId: string }>();
   const { onOpen, file_url, data, setFileUrl } = useModal();
   const { inReply, senderName, messageId, eraceReplyData } = useChatActions();
+  const { socket: io } = useSocket();
+  const { token } = useJWT();
 
   const { member } = useCurrentServer();
 
@@ -55,28 +57,28 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
         throw new Error("Something went wrong in reply message");
       }
       else if(inReply && messageId) {
-        values.in_reply_to = messageId;
+        values.inReplyTo = messageId;
       }
 
-      file_url && (values.file_url = file_url);
+      file_url && (values.fileUrl = file_url);
 
       if (!member || !member.id) {
         throw new Error("Member not found");
       }
-      if(!values.content && !values.file_url) return;
 
-      await fetch(
-        `/api/socket/messages?c_id=${channelId}&s_m_id=${member?.id}`,
-        {
-          method: "POST",
-          body: JSON.stringify(values),
-        }
-      );
+      if(!values.textMsg && !values.fileUrl) return;
+      console.log({ token })
+      io?.emit("event:message", {
+        data: values,
+        channelId,
+        token
+      });
 
       form.reset({
-        content: "",
-        file_url: "",
+        textMsg: "",
+        fileUrl: "",
       });
+
       setFileUrl(null);
 
       toast.success("Message sent");
@@ -110,7 +112,7 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
         )}
         <FormField
           control={form.control}
-          name="content"
+          name="textMsg"
           render={({ field }) => (
             <FormItem
               className={cn(

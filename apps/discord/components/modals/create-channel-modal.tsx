@@ -51,9 +51,6 @@ const CreateChannelModal = () => {
   const { isOpen, type, onClose, data } = useModal();
 
   const { currentProfileData, member } = useCurrentServer();
-  console.log({ currentProfileData, member });
-
-  //const { user } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
