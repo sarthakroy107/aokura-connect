@@ -11,6 +11,7 @@ import MessageComponent from "./message-component";
 import useChatSocket from "@/components/hooks/useChatSocket";
 import MessageLoader from "../loaders/message-loader";
 import ChatWelcome from "./chat-welcome";
+import { useSocket } from "../provider/socket-provider";
 
 const ChatMessagesClient = () => {
   const { ref, inView } = useInView(); //This is used to detect when the user has reached the end of the messages and trigger a fetch for the next page of messages
@@ -21,6 +22,8 @@ const ChatMessagesClient = () => {
   const reactQueryKeys = ["messages", params?.channelId!];
 
   const scrollRef = useRef<HTMLDivElement>(null); //Create a ref for the last div
+
+  const { socket: io } = useSocket();
 
   const handleGetMessages = async (props: any) => {
     const messages = await getMessages(
@@ -53,6 +56,11 @@ const ChatMessagesClient = () => {
     refetchOnReconnect: false,
   });
 
+  io?.on('event:broadcast-message', (data) => {
+    console.log("Broadcast message from server: ", data);
+  
+  })
+
   //?This have to be changed
   useChatSocket({ socketEvent, reactQueryKeys, updateKey: "messages" });
 
@@ -70,6 +78,23 @@ const ChatMessagesClient = () => {
       scrollRef.current.scrollIntoView({ behavior: "instant", block: "end" });
     }
   }, []);
+
+  useEffect(() => {
+    if (io) {
+      io.emit("event:join", {
+        channel_id: params?.channelId,
+      });
+    }
+
+    return () => {
+      if (io) {
+        io.emit("event:leave", {
+          channel_id: params?.channelId,
+        });
+      }
+    };
+
+  }, [io, params?.channelId]);
 
   if (!data) return <div>Loading...</div>;
 

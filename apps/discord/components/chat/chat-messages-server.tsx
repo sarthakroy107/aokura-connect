@@ -14,6 +14,8 @@ const ChatMessages = async ({channel_id}: { channel_id: string}) => {
     initialPageParam: 0,
   })
 
+
+
   return (
     <ScrollArea className='w-full h-[89vh]'>
       <HydrationBoundary state={dehydrate(queryClient)}>

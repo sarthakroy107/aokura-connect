@@ -29,13 +29,13 @@ export default function RootLayout({
             defaultTheme="dark"
             enableSystem={false}
           >
-            <SocketProvider>
-              <ReactQueryProvider>
+            <ReactQueryProvider>
+              <SocketProvider>
                 <ModalProvider />
                 {children}
                 <Toaster richColors={true} />
-              </ReactQueryProvider>
-            </SocketProvider>
+              </SocketProvider>
+            </ReactQueryProvider>
           </ThemeProvider>
         </AppProvider>
       </body>

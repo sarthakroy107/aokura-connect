@@ -1,0 +1,14 @@
+{
+  "name": "@repo/jwt",
+  "version": "1.0.0",
+  "description": "JWT authentication for @repo",
+  "main": "index.ts",
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*"
+  },
+  "dependencies": {
+    "jose": "^5.2.2",
+    "server-only": "^0.0.1"
+  }
+}

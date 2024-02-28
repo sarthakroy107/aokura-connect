@@ -1,7 +1,6 @@
 import ChannelNavbar from "@/components/channel/channel-nav";
 import ChatInput from "@/components/chat/chat-input";
 import ChatMessages from "@/components/chat/chat-messages-server";
-import { generateJWT } from "@/lib/server-actions/auth/jwt-token";
 import { getChannelById } from "@/lib/server-actions/channel/actions";
 
 const Page = async ({

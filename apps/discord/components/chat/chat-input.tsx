@@ -33,6 +33,7 @@ const formSchema = z
     if (!data.textMsg && !data.fileUrl) {
       return false;
     }
+    return true;
   }, { path: ["textMsg"], message: "Message text content and file_url both are empty"});
 
 const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
@@ -44,7 +45,7 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
   const { member } = useCurrentServer();
 
   const form = useForm<z.infer<typeof formSchema>>({
-    //resolver: zodResolver(formSchema)
+    resolver: zodResolver(formSchema)
   });
 
   const isSubmitting = form.formState.isSubmitting;
@@ -56,6 +57,7 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
         toast.error("Something went wrong in reply message");
         throw new Error("Something went wrong in reply message");
       }
+
       else if(inReply && messageId) {
         values.inReplyTo = messageId;
       }
@@ -67,7 +69,7 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
       }
 
       if(!values.textMsg && !values.fileUrl) return;
-      console.log({ token })
+
       io?.emit("event:message", {
         data: values,
         channelId,
@@ -86,6 +88,7 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
       console.log(error);
       toast.error("something went wrong");
     }
+
     finally {
       form.reset();
       eraceReplyData();

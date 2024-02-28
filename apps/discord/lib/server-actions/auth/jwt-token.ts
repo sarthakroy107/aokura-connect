@@ -1,9 +1,17 @@
+'use server';
+
 import { currentProfile } from "@/lib/auth/current-user";
-import { SignJWT, jwtVerify } from "jose";
+import { JWTPayload, SignJWT, jwtVerify } from "jose";
 
 const key = new TextEncoder().encode(process.env.JWT_SECRET);
 
-const encode = async (payload: any) => {
+type TTokenPayload = {
+  id: string;
+  email: string;
+  username: string;
+} | JWTPayload
+
+export const encode = async (payload: TTokenPayload ) => {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -11,7 +19,7 @@ const encode = async (payload: any) => {
     .sign(key);
 };
 
-const decrypt = async (token: string) => {
+export const decrypt = async (token: string) => {
   const { payload } = await jwtVerify(token, key, {
     algorithms: ["HS256"],
   });
@@ -32,11 +40,13 @@ export const generateJWT = async ({
         message: message,
         token: null,
       };
+
     const payload = {
       id: data.id,
       email: data.email,
       username: data.usernaeme,
     };
+    
     return {
       status: 200,
       success: true,
@@ -45,6 +55,7 @@ export const generateJWT = async ({
   }
 
   const payload = await decrypt(token);
+
   console.log({ payload });
 
   if (!payload) {
@@ -70,3 +81,11 @@ export const generateJWT = async ({
     token: await encode(payload),
   };
 };
+
+
+export async function updateSession(token: string | undefined | null) {
+  if(!token) return null;
+  const parsed = await decrypt(token);
+  parsed.expires = new Date(Date.now() + 10 * 60 * 1000);
+  return await encode(parsed);
+}

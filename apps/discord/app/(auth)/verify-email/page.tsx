@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { verifyEmail } from "./_actions/verify-email";
 import { ShieldCheck, ShieldClose } from "lucide-react";
+import { delay } from "./_lib/artificial-delay";
 
 const Page = async ({
   searchParams,
 }: {
   searchParams: { token: string | undefined } | undefined;
 }) => {
-
   let res;
 
   if (!searchParams?.token) {
@@ -21,9 +21,8 @@ const Page = async ({
   res = await verifyEmail(searchParams?.token);
 
   if (res.redirectLink && res.success) {
-    setTimeout(function () {
-      redirect('/signin');
-    }, 3000);
+    await delay(2000);
+    redirect("/login");
   }
 
   return (
