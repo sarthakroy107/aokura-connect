@@ -23,18 +23,34 @@ type TChatInputProps = {
   channelId: string;
 };
 
+type TMessage = {
+  messageData: {
+    textMessage?: string | null | undefined;
+    fileUrl?: string | null | undefined;
+    inReplyTo?: string | null | undefined;
+  };
+  channelId: string;
+  token: string;
+};
+
 const formSchema = z
   .object({
     textMsg: z.string().optional(),
     fileUrl: z.string().optional(),
     inReplyTo: z.string().optional(),
   })
-  .refine((data) => {
-    if (!data.textMsg && !data.fileUrl) {
-      return false;
+  .refine(
+    (data) => {
+      if (!data.textMsg && !data.fileUrl) {
+        return false;
+      }
+      return true;
+    },
+    {
+      path: ["textMsg"],
+      message: "Message text content and file_url both are empty",
     }
-    return true;
-  }, { path: ["textMsg"], message: "Message text content and file_url both are empty"});
+  );
 
 const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
   const { onOpen, file_url, data, setFileUrl } = useModal();
@@ -45,20 +61,19 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
   const { member } = useCurrentServer();
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema)
+    resolver: zodResolver(formSchema),
   });
 
   const isSubmitting = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (isSubmitting) return;
-    try {
-      if(inReply && !messageId) {
-        toast.error("Something went wrong in reply message");
-        throw new Error("Something went wrong in reply message");
-      }
 
-      else if(inReply && messageId) {
+    try {
+      if (inReply && !messageId) {
+        toast.error("essage id not found in reply message");
+        throw new Error("Something went wrong in reply message");
+      } else if (inReply && messageId) {
         values.inReplyTo = messageId;
       }
 
@@ -68,13 +83,21 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
         throw new Error("Member not found");
       }
 
-      if(!values.textMsg && !values.fileUrl) return;
+      if (!values.textMsg && !values.fileUrl) return;
 
-      io?.emit("event:message", {
-        data: values,
+      if (!io) {
+        throw new Error("Socket not found");
+      }
+
+      io.emit("event:message", {
+        token,
+        messageData: {
+          textMessage: values.textMsg,
+          fileUrl: values.fileUrl,
+          inReplyTo: values.inReplyTo,
+        },
         channelId,
-        token
-      });
+      } as TMessage);
 
       form.reset({
         textMsg: "",
@@ -87,9 +110,7 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
     } catch (error) {
       console.log(error);
       toast.error("something went wrong");
-    }
-
-    finally {
+    } finally {
       form.reset();
       eraceReplyData();
     }
@@ -101,7 +122,9 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-[85%] fixed bottom-0 p-1 mb-3 px-3 rounded-xl"
       >
-        {inReply && messageId && senderName && <InReply senderName={senderName} messageId={messageId} />}
+        {inReply && messageId && senderName && (
+          <InReply senderName={senderName} messageId={messageId} />
+        )}
         {file_url && (
           <div className="w-full h-48 py-1 bg-disord_lighter">
             <Image

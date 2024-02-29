@@ -13,6 +13,17 @@ import MessageLoader from "../loaders/message-loader";
 import ChatWelcome from "./chat-welcome";
 import { useSocket } from "../provider/socket-provider";
 
+export type TMessage = {
+  messageData: {
+    textMessage?: string | null | undefined;
+    fileUrl?: string | null | undefined;
+    inReplyTo?: string | null | undefined;
+  };
+  channelId: string;
+  token: string;
+};
+
+
 const ChatMessagesClient = () => {
   const { ref, inView } = useInView(); //This is used to detect when the user has reached the end of the messages and trigger a fetch for the next page of messages
 
@@ -22,6 +33,8 @@ const ChatMessagesClient = () => {
   const reactQueryKeys = ["messages", params?.channelId!];
 
   const scrollRef = useRef<HTMLDivElement>(null); //Create a ref for the last div
+
+  const [socketMessages, setSocketMessages] = useState<TMessage[]>([]);
 
   const { socket: io } = useSocket();
 
@@ -56,11 +69,6 @@ const ChatMessagesClient = () => {
     refetchOnReconnect: false,
   });
 
-  io?.on('event:broadcast-message', (data) => {
-    console.log("Broadcast message from server: ", data);
-  
-  })
-
   //?This have to be changed
   useChatSocket({ socketEvent, reactQueryKeys, updateKey: "messages" });
 
@@ -84,6 +92,10 @@ const ChatMessagesClient = () => {
       io.emit("event:join", {
         channel_id: params?.channelId,
       });
+      io.on("event:broadcast-message", (data: TMessage) => {
+        console.log("Broadcast message from server: ", data);
+        setSocketMessages((prev) => [...prev, data]);
+      });
     }
 
     return () => {
@@ -93,7 +105,6 @@ const ChatMessagesClient = () => {
         });
       }
     };
-
   }, [io, params?.channelId]);
 
   if (!data) return <div>Loading...</div>;
@@ -110,6 +121,12 @@ const ChatMessagesClient = () => {
       {data.map((item) => (
         <MessageComponent key={item.id} {...item} />
       ))}
+      {
+        //This is used to display the messages from the socket
+        socketMessages.map((item, index) => (
+          <div key={index}>{item.messageData.textMessage}</div>
+        ))
+      }
       <div ref={scrollRef} />
     </div>
   );

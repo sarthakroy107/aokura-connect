@@ -1,15 +1,21 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "types/global.d.ts"],
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ESNext",
     "rootDir": "./src" ,
     "outDir": "./dist",
     "esModuleInterop": true ,
+    "declaration": true,
     "noImplicitAny": true,
+    "module": "NodeNext",
     "forceConsistentCasingInFileNames": true,
     "strict": true ,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+  },
+  "ts-node": {
+    "swc": true
   }
 }
