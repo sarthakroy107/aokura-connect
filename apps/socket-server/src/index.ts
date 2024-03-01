@@ -37,7 +37,7 @@ const socketServer = new Server(httpServer, {
   },
 });
 
-startMessageConsumer();
+startMessageConsumer()
 
 socketServer.use(async (socket, next) => {
   const token = socket.handshake.auth.token;
@@ -58,7 +58,6 @@ socketServer.on("connection", (io: Socket) => {
     io.emit("message", data);
   });
 
-
   io.on("disconnect", () => {
     console.log("Socket disconnected: ", io.id);
   });
@@ -70,7 +69,6 @@ socketServer.on("connection", (io: Socket) => {
   io.on("event:leave", (data) => {
     io.leave(`channel:${data.channel_id}`);
   });
-
 
   io.on("event:message", async (data: TMessage) => {
     await decrypt(data.token);

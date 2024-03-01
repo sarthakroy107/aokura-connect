@@ -21,5 +21,3 @@ export async function admin() {
   console.log("Disconnecting Admin..");
   await admin.disconnect();
 }
-
-admin().catch(console.error);

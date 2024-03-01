@@ -26,7 +26,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    if (session.data && session.data.jwt) {
+    if (session.data && session.data.jwt && !socket) {
       (async () => {
         console.log("Connecting to socket server");
         const socketInstance = io("http://localhost:6700", {
@@ -41,6 +41,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         socketInstance.on("disconnect", () => {
+          socketInstance.disconnect();
+          socketInstance.connect();
           setIsConnected(false);
         });
       })();

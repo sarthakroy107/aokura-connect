@@ -21,8 +21,8 @@ const useChatSocket = ({ socketEvent, updateKey, reactQueryKeys }: TProps) => {
     });
 
     return () => {
-      socket.off(socketEvent)
-    }
+      socket.off(socketEvent);
+    };
   }, [socket, socketEvent, updateKey, reactQueryKeys]);
 };
 

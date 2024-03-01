@@ -13,6 +13,7 @@ export async function createProducer() {
   return producer;
 }
 
+
 export async function produceMessage(message: TMessage) {
   try {
     const producer = await createProducer();
