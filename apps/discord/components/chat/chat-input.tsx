@@ -28,6 +28,7 @@ type TMessage = {
     textMessage?: string | null | undefined;
     fileUrl?: string | null | undefined;
     inReplyTo?: string | null | undefined;
+    memberId: string;
   };
   channelId: string;
   token: string;
@@ -95,6 +96,7 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
           textMessage: values.textMsg,
           fileUrl: values.fileUrl,
           inReplyTo: values.inReplyTo,
+          memberId: data.member?.id,
         },
         channelId,
       } as TMessage);

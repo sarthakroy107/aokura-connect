@@ -1,6 +1,6 @@
 import { Producer } from "kafkajs";
-import kafka from "./client";
-import { TMessage } from "..";
+import kafka from "./client.js";
+import { TMessage } from "../index.js";
 
 let producer: null | Producer = null;
 export async function createProducer() {

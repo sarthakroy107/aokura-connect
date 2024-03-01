@@ -1,7 +1,6 @@
 import { InferSelectModel, relations } from "drizzle-orm";
 import { text, timestamp, pgTable, pgEnum, uuid, varchar, primaryKey, boolean, AnyPgColumn, integer } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from '@auth/core/adapters'
-import { create } from "domain";
 
 
 export const memberRole  = pgEnum('role', ['admin', 'moderator', 'guest'])

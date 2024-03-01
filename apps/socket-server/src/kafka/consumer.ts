@@ -1,4 +1,4 @@
-import kafka from "./client";
+import kafka from "./client.js";
 
 export async function startMessageConsumer() {
   console.log("Consumer is running..");
