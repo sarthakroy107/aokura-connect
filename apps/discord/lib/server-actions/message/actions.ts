@@ -1,6 +1,6 @@
 "use server";
 
-import { asc, count, desc, eq } from "drizzle-orm";
+import { count, desc, eq } from "drizzle-orm";
 import { db } from "@db/db";
 import { Message } from "@db/schema";
 import { messageBodyDto } from "../../transformations/message";
@@ -14,7 +14,6 @@ export const createMessage = async (
   channel_id: string
 ) => {
   try {
-
     const newMessage = await db
       .insert(Message)
       .values({ content, file_url, sender_member_id, channel_id })
@@ -29,7 +28,6 @@ export const createMessage = async (
 
 export const getMessages = async (channel_id: string, skip?: number , batchSize?: number) => {
 
-  //console.table({channel_id, skip, batchSize});
   try {
     const messages = await db.query.Message.findMany({
       where: eq(Message.channel_id, channel_id),

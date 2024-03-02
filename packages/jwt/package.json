@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "jose": "^5.2.2",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "typescript": "^5.3.3"
   }
 }

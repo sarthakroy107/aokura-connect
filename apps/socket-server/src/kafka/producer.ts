@@ -1,6 +1,7 @@
 import { Producer } from "kafkajs";
 import kafka from "./client.js";
-import { TMessage } from "../index.js";
+import { TInsertMessage } from "@repo/db/src/data-access/messages/create-message.js";
+import { TMessageBodyDto } from "@repo/db/src/dto/messages/message-dto.js";
 
 let producer: null | Producer = null;
 export async function createProducer() {
@@ -13,8 +14,7 @@ export async function createProducer() {
   return producer;
 }
 
-
-export async function produceMessage(message: TMessage) {
+export async function produceMessage(message: TMessageBodyDto) {
   try {
     const producer = await createProducer();
     await producer.send({

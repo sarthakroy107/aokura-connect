@@ -5,13 +5,13 @@ import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
-import { getMessages } from "@/lib/server-actions/message/actions";
-
 import MessageComponent from "./message-component";
 import useChatSocket from "@/components/hooks/useChatSocket";
 import MessageLoader from "../loaders/message-loader";
 import ChatWelcome from "./chat-welcome";
 import { useSocket } from "../provider/socket-provider";
+import { getSavedMessages } from "@/lib/server-actions/message/get-messages";
+import { TMessageBodyDto } from "@db/dto/messages/message-dto";
 
 export type TMessage = {
   messageData: {
@@ -23,7 +23,6 @@ export type TMessage = {
   token: string;
 };
 
-
 const ChatMessagesClient = () => {
   const { ref, inView } = useInView(); //This is used to detect when the user has reached the end of the messages and trigger a fetch for the next page of messages
 
@@ -34,12 +33,12 @@ const ChatMessagesClient = () => {
 
   const scrollRef = useRef<HTMLDivElement>(null); //Create a ref for the last div
 
-  const [socketMessages, setSocketMessages] = useState<TMessage[]>([]);
+  const [socketMessages, setSocketMessages] = useState<TMessageBodyDto[]>([]);
 
   const { socket: io } = useSocket();
 
   const handleGetMessages = async (props: any) => {
-    const messages = await getMessages(
+    const messages = await getSavedMessages(
       params?.channelId!,
       props?.pageParam,
       20
@@ -92,7 +91,7 @@ const ChatMessagesClient = () => {
       io.emit("event:join", {
         channel_id: params?.channelId,
       });
-      io.on("event:broadcast-message", (data: TMessage) => {
+      io.on("event:broadcast-message", (data: TMessageBodyDto) => {
         console.log("Broadcast message from server: ", data);
         setSocketMessages((prev) => [...prev, data]);
       });
@@ -123,8 +122,8 @@ const ChatMessagesClient = () => {
       ))}
       {
         //This is used to display the messages from the socket
-        socketMessages.map((item, index) => (
-          <div key={index}>{item.messageData.textMessage}</div>
+        socketMessages.map((item) => (
+          <MessageComponent key={item.id} {...item} />
         ))
       }
       <div ref={scrollRef} />

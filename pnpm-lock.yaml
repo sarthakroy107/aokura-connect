@@ -387,6 +387,9 @@ importers:
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -10520,7 +10523,6 @@ packages:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /uglify-js@3.17.4:
     resolution: {integrity: sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==}

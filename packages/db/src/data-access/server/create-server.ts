@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { db } from "../../db";
 import {
   Server,
@@ -5,6 +6,7 @@ import {
   Member,
   Channel,
   memberToChannel,
+  Profile,
 } from "../../schema";
 
 type TCreateServer = {
@@ -17,6 +19,19 @@ type TCreateServer = {
 export const createServer = async (data: TCreateServer) => {
   try {
     return await db.transaction(async (trx) => {
+      // Check if the creator profile exists
+      const profile = await trx.query.Profile.findFirst({
+        where: eq(Profile.id, data.creatorProfileId),
+      });
+
+      if (!profile) {
+        return {
+          status: 404,
+          success: false,
+          message: "Profile not found",
+        };
+      };
+
       // Create a new server
       const server = await trx
         .insert(Server)
@@ -38,12 +53,14 @@ export const createServer = async (data: TCreateServer) => {
           success: false,
           message: "Server not created",
         };
-      }
+      };
 
       // Create a new member for the server and make the creator an admin
       const newMember = await trx
         .insert(Member)
         .values({
+          nickname: profile.name,
+          server_avatar: profile.avatar,
           profile_id: data.creatorProfileId,
           server_id: server[0].id,
           role: "admin",

@@ -25,6 +25,7 @@ export const getMemberDetails = async ({
         }
       }
     })
+
     if (!member) {
       return {
         status: 404,
@@ -32,12 +33,15 @@ export const getMemberDetails = async ({
         error: "Member not found",
       };
     }
+
     const transformedMember = memberWithChannelIdsDto(member);
+
     return {
       status: 200,
       success: true,
       data: transformedMember,
     };
+
   } catch (error) {
     console.error(error);
     return {

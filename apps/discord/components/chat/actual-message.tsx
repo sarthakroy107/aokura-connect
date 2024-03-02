@@ -24,7 +24,7 @@ const ActualMessage = memo(
     const {
       text_content,
       file_url,
-      sender: { name, avatar },
+      sender: { nickname: name, avatar },
       created_at,
       updated_at,
     } = form.getValues();

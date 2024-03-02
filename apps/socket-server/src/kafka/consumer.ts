@@ -1,4 +1,5 @@
 import kafka from "./client.js";
+import { TMessageBodyDto } from "@repo/db/src/dto/messages/message-dto.js";
 
 export async function startMessageConsumer() {
   console.log("Consumer is running..");
@@ -11,8 +12,13 @@ export async function startMessageConsumer() {
     autoCommitInterval: 100,
     eachMessage: async ({ message, pause }) => {
       if (!message.value) return;
+      console.log(message.value.toString());
       console.log(`New Message Received: {${message.value.toString()}}`);
       try {
+        const obj: TMessageBodyDto = JSON.parse(message.value.toString());
+        
+        console.log(obj);
+
         console.log("Consumer is running. Let's go!");
       } catch (err) {
         console.log("Something is wrong");

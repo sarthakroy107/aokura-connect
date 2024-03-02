@@ -17,6 +17,8 @@
     "strictNullChecks": true,
   },
   "ts-node": {
-    "swc": true
+    "esm": true,
+    "transpileOnly": true,
+    "experimentalSpecifierResolution": "node"
   }
 }
