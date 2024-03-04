@@ -1,8 +1,13 @@
 import kafka from "./client.js";
-import { TMessageBodyDto } from "@repo/db/src/dto/messages/message-dto.js";
+import { TMessageBodyDto } from "../../../../packages/db/src/dto/messages/message-dto.js";
+import { insertMessage } from "../../../../packages/db/src/data-access/messages/create-message.js";
+
+import { neonConfig } from '@neondatabase/serverless';
+import ws from 'ws';
+neonConfig.webSocketConstructor = ws; 
+
 
 export async function startMessageConsumer() {
-  console.log("Consumer is running..");
   const consumer = kafka.consumer({ groupId: "default" });
   await consumer.connect();
   await consumer.subscribe({ topic: "MESSAGES", fromBeginning: true });
@@ -12,20 +17,21 @@ export async function startMessageConsumer() {
     autoCommitInterval: 100,
     eachMessage: async ({ message, pause }) => {
       if (!message.value) return;
-      console.log(message.value.toString());
-      console.log(`New Message Received: {${message.value.toString()}}`);
       try {
-        const obj: TMessageBodyDto = JSON.parse(message.value.toString());
-        
-        console.log(obj);
 
-        console.log("Consumer is running. Let's go!");
+        console.log("Parsing message...");
+        const obj: TMessageBodyDto = await JSON.parse(message.value.toString());
+
+        console.log("Inserting message into database...");
+        await insertMessage(obj);
+
+        console.log("Message inserted into database");
       } catch (err) {
         console.log("Something is wrong");
         pause();
         setTimeout(() => {
           consumer.resume([{ topic: "MESSAGES" }]);
-        }, 60 * 1000);
+        }, 10 * 1000);
       }
     },
   });

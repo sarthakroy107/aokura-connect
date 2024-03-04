@@ -17,6 +17,14 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   transpilePackages: ["@repo/ui"],
+  webpack: (webpackConfig, { webpack }) => {
+    webpackConfig.resolve.extensionAlias = {
+      ".js": [".ts", ".tsx", ".js", ".jsx"],
+      ".mjs": [".mts", ".mjs"],
+      ".cjs": [".cts", ".cjs"],
+    };
+    return webpackConfig;
+  },
   images: {
     remotePatterns: [
       {

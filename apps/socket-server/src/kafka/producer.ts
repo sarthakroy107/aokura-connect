@@ -1,7 +1,6 @@
 import { Producer } from "kafkajs";
 import kafka from "./client.js";
-import { TInsertMessage } from "@repo/db/src/data-access/messages/create-message.js";
-import { TMessageBodyDto } from "@repo/db/src/dto/messages/message-dto.js";
+import { TMessageBodyDto } from "../../../../packages/db/src/dto/messages/message-dto.js";
 
 let producer: null | Producer = null;
 export async function createProducer() {
@@ -17,6 +16,7 @@ export async function createProducer() {
 export async function produceMessage(message: TMessageBodyDto) {
   try {
     const producer = await createProducer();
+    console.table("Producing message ");
     await producer.send({
       topic: "MESSAGES",
       messages: [

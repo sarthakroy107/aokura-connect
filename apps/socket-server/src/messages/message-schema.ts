@@ -1,4 +1,4 @@
-import { TInsertMessage } from "@repo/db/src/data-access/messages/create-message";
+import { TInsertMessage } from "../../../../packages/db/src/data-access/messages/create-message.js";
 import { string, z, ZodType } from "zod";
 
 export const messageSchema: ZodType<TInsertMessage> = z.object({

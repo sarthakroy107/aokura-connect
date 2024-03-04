@@ -1,5 +1,5 @@
-import { TMember, TMessage, TProfile } from "../../schema";
-import { formatDate } from "./date-formater";
+import { TMember, TMessage, TProfile } from "../../schema.js";
+import { formatDate } from "./date-formater.js";
 
 type TChatMessageData = TMessage & {
   sender: TMember & {

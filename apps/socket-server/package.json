@@ -4,24 +4,29 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node dist/index",
+    "start": "node dist/index.js",
     "build": "tsc -p .",
-    "dev": "tsc-watch --onSuccess \"node dist/index.js\""
+    "dev": "tsc-watch --onSuccess \"node dist/apps/socket-server/src/index.js\""
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/jwt": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20.11.17",
+    "@types/ws": "^8.5.10",
     "ts-node": "^10.9.2",
     "tsc-watch": "^6.0.4",
+    "tsimp": "^2.0.11",
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.8.1",
     "@repo/db": "workspace:*",
     "dotenv": "^16.4.1",
+    "drizzle-orm": "^0.29.3",
     "jose": "^5.2.2",
     "kafkajs": "^2.2.4",
+    "pg": "^8.11.3",
     "socket.io": "^4.7.4",
     "zod": "^3.22.4"
   }

@@ -1,17 +1,6 @@
 import { db } from "../../db.js";
-import { TMessageBodyDto, TMessageSenderDto, TReplingToMessageDto } from "../../dto/messages/message-dto.js";
+import { TMessageBodyDto } from "../../dto/messages/message-dto.js";
 import { Message } from "../../schema.js";
-
-export type TInsertMessage = {
-  textMessage?: string |undefined;
-  fileUrl?: string | null | undefined;
-  inReplyTo: null | TReplingToMessageDto
-
-  senderMemberDetails: TMessageSenderDto;
-
-  channelId: string;
-  token: string;
-};
 
 export const insertMessage = async (data: TMessageBodyDto) => {
   try {

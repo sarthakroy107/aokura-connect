@@ -1,7 +1,7 @@
 import { count, desc, eq } from "drizzle-orm";
-import { db } from "../../db";
-import { Message } from "../../schema";
-import { messageBodyDto } from "../../dto/messages/message-dto";
+import { db } from "../../db.js";
+import { Message } from "../../schema.js";
+import { messageBodyDto } from "../../dto/messages/message-dto.js";
 
 const MESSAGE_BATCH = 10;
 

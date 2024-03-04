@@ -1,0 +1,72 @@
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { decrypt, verifyToken } from "./verify-token";
+import { produceMessage } from "./kafka/producer";
+import { startMessageConsumer } from "./kafka/consumer";
+import { formateNewChatMessage } from "./messages/format-new-chat-message";
+import { messageSchema } from "./messages/message-schema";
+const httpServer = createServer();
+const socketServer = new Server(httpServer, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["*"],
+    },
+});
+socketServer.use(async (socket, next) => {
+    const token = socket.handshake.auth.token;
+    if (await verifyToken(token)) {
+        next();
+    }
+    else {
+        next(new Error("Invalid token"));
+    }
+});
+const PORT = 6700;
+socketServer.on("connection", (io) => {
+    console.log("Socket connected: ", io.id);
+    io.on("message", (data) => {
+        console.log("Message: ", data);
+        io.emit("message", data);
+    });
+    io.on("disconnect", () => {
+        console.log("Socket disconnected: ", io.id);
+    });
+    io.on("event:join", (data) => {
+        io.join(`channel:${data.channel_id}`);
+    });
+    io.on("event:leave", (data) => {
+        io.leave(`channel:${data.channel_id}`);
+    });
+    io.on("event:message", async (data) => {
+        console.log(data.token);
+        const result = messageSchema.safeParse(data);
+        if (result.success) {
+            try {
+                console.log(data.token);
+                await decrypt(data.token);
+                const message = result.data;
+                const formattedMessage = formateNewChatMessage(message);
+                const res = await produceMessage(formattedMessage);
+                if (res) {
+                    io.nsp
+                        .to(`channel:${message.channelId}`)
+                        .emit("event:broadcast-message", formattedMessage);
+                }
+            }
+            catch (error) {
+                console.log("Error: ", error);
+                return;
+            }
+        }
+        else {
+            console.log("Invalid message: ", result.error);
+        }
+    });
+});
+httpServer.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+//admin();
+startMessageConsumer();
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiL2hvbWUvc2FydGhhay9Db2RpbmcvcGVyc29uYWwtcHJvamVjdHMvZGlzY29yZC10dXJiby1vZy9hcHBzL3NvY2tldC1zZXJ2ZXIvIiwic291cmNlcyI6WyJzcmMvaW5kZXgudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsT0FBTyxFQUFFLFlBQVksRUFBRSxNQUFNLE1BQU0sQ0FBQztBQUNwQyxPQUFPLEVBQUUsTUFBTSxFQUFVLE1BQU0sV0FBVyxDQUFDO0FBQzNDLE9BQU8sRUFBRSxPQUFPLEVBQUUsV0FBVyxFQUFFLE1BQU0sZ0JBQWdCLENBQUM7QUFFdEQsT0FBTyxFQUFFLGNBQWMsRUFBRSxNQUFNLGtCQUFrQixDQUFDO0FBQ2xELE9BQU8sRUFBRSxvQkFBb0IsRUFBRSxNQUFNLGtCQUFrQixDQUFDO0FBQ3hELE9BQU8sRUFBRSxxQkFBcUIsRUFBRSxNQUFNLG9DQUFvQyxDQUFBO0FBQzFFLE9BQU8sRUFBRSxhQUFhLEVBQUUsTUFBTSwyQkFBMkIsQ0FBQztBQUkxRCxNQUFNLFVBQVUsR0FBRyxZQUFZLEVBQUUsQ0FBQztBQUVsQyxNQUFNLFlBQVksR0FBRyxJQUFJLE1BQU0sQ0FBQyxVQUFVLEVBQUU7SUFDMUMsSUFBSSxFQUFFO1FBQ0osTUFBTSxFQUFFLHVCQUF1QjtRQUMvQixPQUFPLEVBQUUsQ0FBQyxLQUFLLEVBQUUsTUFBTSxDQUFDO1FBQ3hCLGNBQWMsRUFBRSxDQUFDLEdBQUcsQ0FBQztLQUN0QjtDQUNGLENBQUMsQ0FBQztBQUVILFlBQVksQ0FBQyxHQUFHLENBQUMsS0FBSyxFQUFFLE1BQU0sRUFBRSxJQUFJLEVBQUUsRUFBRTtJQUN0QyxNQUFNLEtBQUssR0FBRyxNQUFNLENBQUMsU0FBUyxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUM7SUFDMUMsSUFBSSxNQUFNLFdBQVcsQ0FBQyxLQUFLLENBQUMsRUFBRSxDQUFDO1FBQzdCLElBQUksRUFBRSxDQUFDO0lBQ1QsQ0FBQztTQUFNLENB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

@@ -1,12 +1,12 @@
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import { decrypt, verifyToken } from "./verify-token.js";
-import { TInsertMessage } from "@repo/db/src/data-access/messages/create-message.js";
+import { TInsertMessage } from "../../../packages/db/src/data-access/messages/create-message.js";
 import { produceMessage } from "./kafka/producer.js";
 import { startMessageConsumer } from "./kafka/consumer.js";
-import { formateNewChatMessage } from "./messages/formate-new-chat-message.js";
+import { formateNewChatMessage } from "./messages/format-new-chat-message.js"
 import { messageSchema } from "./messages/message-schema.js";
-import { admin } from "./kafka/admin.js";
+
 
 const httpServer = createServer();
 
@@ -17,8 +17,6 @@ const socketServer = new Server(httpServer, {
     allowedHeaders: ["*"],
   },
 });
-
-startMessageConsumer();
 
 socketServer.use(async (socket, next) => {
   const token = socket.handshake.auth.token;
@@ -82,3 +80,4 @@ httpServer.listen(PORT, () => {
 });
 
 //admin();
+startMessageConsumer();

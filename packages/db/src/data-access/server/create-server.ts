@@ -7,7 +7,7 @@ import {
   Channel,
   memberToChannel,
   Profile,
-} from "../../schema";
+} from "../../schema.js";
 
 type TCreateServer = {
   serverName: string;
