@@ -243,9 +243,6 @@ importers:
       kafkajs:
         specifier: ^2.2.4
         version: 2.2.4
-      pg:
-        specifier: ^8.11.3
-        version: 8.11.3
       socket.io:
         specifier: ^4.7.4
         version: 4.7.4

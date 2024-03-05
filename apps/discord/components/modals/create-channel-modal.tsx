@@ -89,7 +89,7 @@ const CreateChannelModal = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={() => onClose()}>
       <DialogContent className="bg-discord rounded-[2px] p-0">
-        <DialogHeader className="text-2xl font-semibold mt-8 mb-0 pb-0 text-center pl-40">
+        <DialogHeader className="text-2xl font-semibold mt-8 mb-0 pb-0 text-center">
           Create Channel
         </DialogHeader>
         <DialogDescription className="text-center uppercase mt-0 pt-0">
@@ -148,11 +148,10 @@ const CreateChannelModal = () => {
                 </FormItem>
               )}
             />
-
-            <DialogFooter className="bg-discord_darker mt-4">
+            <DialogFooter className="bg-discord_darker mt-4 p-3">
               <Button
                 type="submit"
-                className="bg-discord_purple text-white m-3 hover:bg-discord_purple"
+                // className="bg-discord_purple text-white m-3 hover:bg-discord_purple"
               >
                 Create
               </Button>

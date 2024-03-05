@@ -63,7 +63,7 @@ const ServerSidebar = async ({ server_id }: { server_id: string }) => {
         ]}
       />
       {res.data.server.categories.map((category, index) => (
-        <CategoryComp key={index} data={category} />
+        <CategoryComp key={index} categoryData={category} />
       ))}
     </div>
   );

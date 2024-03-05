@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/provider/theme-provider";
 import ModalProvider from "@/components/provider/modal-provider";
 import { Toaster } from "sonner";
 import ReactQueryProvider from "@/components/provider/react-query-provider";
@@ -28,6 +28,7 @@ export default function RootLayout({
             attribute="class"
             defaultTheme="dark"
             enableSystem={false}
+            themes={["dark", "light", "system", "orange", "green", "blue"]}
           >
             <ReactQueryProvider>
               <SocketProvider>

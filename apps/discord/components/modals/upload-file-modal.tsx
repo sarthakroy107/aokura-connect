@@ -27,7 +27,6 @@ const UploadFileModal = () => {
 
   const { isOpen, type, onClose, setFileUrl } = useModal();
   const form = useForm<z.infer<typeof formSchema>>();
-
   const isModalOpen = isOpen && type === ModalEnum.UPLOAD_FILE;
   const isLoading = form.formState.isSubmitting;
 
@@ -70,7 +69,7 @@ const UploadFileModal = () => {
               <Button
                 disabled={isLoading}
                 type="submit"
-                className="bg-discord_purple text-white m-3 hover:bg-discord_purple"
+                className="m-3"
               >
                 Send
               </Button>

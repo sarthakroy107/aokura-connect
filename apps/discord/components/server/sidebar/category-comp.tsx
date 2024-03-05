@@ -2,10 +2,11 @@
 
 import TooltipWrapper from "@/components/common/tooltip-wrapper";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@ui/components/ui/dropdown-menu";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 import { cn } from "@/lib/utils";
 import { TChannelDetailsDto } from "@db/dto/channel/channel-details-dto";
@@ -22,9 +23,12 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-const CategoryComp = ({ data }: { data: TCategoriesWithChannels }) => {
-  const { onOpen, isOpen, type, onClose } = useModal();
-
+const CategoryComp = ({
+  categoryData,
+}: {
+  categoryData: TCategoriesWithChannels;
+}) => {
+  const { onOpen, openModalWithOptions } = useModal();
   const [open, setOpen] = useState<boolean>(true);
 
   const params = useParams<{ serverId: string; channelId: string }>();
@@ -32,12 +36,9 @@ const CategoryComp = ({ data }: { data: TCategoriesWithChannels }) => {
   const handleOpen = () => {
     onOpen(ModalEnum.CREATE_CHANNEL, {
       server: { id: params!.serverId },
-      category: { id: data.id, name: data.name },
+      category: { id: categoryData.id, name: categoryData.name },
     });
   };
-
-  const isPopoverOpenOpen = isOpen && type === ModalEnum.POPOVER;
-  console.log({ isPopoverOpenOpen });
 
   return (
     <>
@@ -49,25 +50,47 @@ const CategoryComp = ({ data }: { data: TCategoriesWithChannels }) => {
           <LucideChevronDown
             className={cn("h-3.5 w-3.5", open ? "" : "-rotate-90")}
           />
-          <p className="text-sm font-medium uppercase">{data.name}</p>
+          <p className="text-sm font-medium uppercase">{categoryData.name}</p>
         </div>
 
         <div className="flex gap-x-1.5">
-          <Popover open={isPopoverOpenOpen} onOpenChange={() => onClose()}>
-            {/* <PopoverTrigger> */}
-
-            {/* </PopoverTrigger> */}
-            <TooltipWrapper label="Edit Channel">
-              <PencilIcon
-                onContextMenu={() => console.log("Right Click")}
-                onClick={() => onOpen(ModalEnum.POPOVER, {})}
-                className="w-3.5 h-3.5 text-white text-opacity-60 hover:text-opacity-100"
-              />
-            </TooltipWrapper>
-            <PopoverTrigger></PopoverTrigger>
-            <PopoverContent>Hello jlsdnlcnsdlcnsld</PopoverContent>
-          </Popover>
-
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <TooltipWrapper label="Edit Channel">
+                <PencilIcon className="w-3.5 h-3.5 text-white text-opacity-60 hover:text-opacity-100 mx-0.5" />
+              </TooltipWrapper>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="rounded-[3px]">
+              <DropdownMenuItem
+                onClick={() =>
+                  openModalWithOptions({
+                    type: "modify-category",
+                    data: {
+                      categoryId: categoryData.id,
+                      categoryName: categoryData.name,
+                    },
+                  })
+                }
+                className="px-2"
+              >
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  openModalWithOptions({
+                    type: "delete-category",
+                    data: {
+                      categoryId: categoryData.id,
+                      categoryName: categoryData.name,
+                    },
+                  })
+                }
+                className="px-2 focus:bg-rose-600 text-rose-500 focus:text-white"
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <TooltipWrapper label="Create Channel">
             <LucidePlus
               onClick={handleOpen}
@@ -77,11 +100,11 @@ const CategoryComp = ({ data }: { data: TCategoriesWithChannels }) => {
         </div>
       </div>
       {open &&
-        data.channels.map((channel, index) => (
+        categoryData.channels.map((channel, index) => (
           <ChannelComp key={index} data={channel} />
         ))}
       {!open &&
-        data.channels
+        categoryData.channels
           .filter((obj) => obj.id === params!.channelId)
           .map((channel, index) => <ChannelComp key={index} data={channel} />)}
     </>

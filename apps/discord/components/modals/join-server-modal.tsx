@@ -163,7 +163,7 @@ const ViewSearchResults = memo(
         <ScrollArea className="h-64 bg-discord_darkest mx-6 rounded-sm">
           {data.map((server, index) => (
             <div
-              className="flex h-20 hover:bg-discord_purple_dark border-b border-white/10 cursor-pointer"
+              className="flex h-20 hover:bg-primary/75 border-b border-white/10 cursor-pointer"
               key={index}
               onClick={() =>
                 selectedServers.includes(server.id)
@@ -183,9 +183,9 @@ const ViewSearchResults = memo(
                 />
               </div>
               <div className="w-[70%] h-full pt-2.5 font-medium">
-                <p>
+                <h3>
                   {server.name.slice(0, 35)} {server.name.length > 35 && "..."}
-                </p>
+                </h3>
                 <p className="text-white/50 text-xs">
                   {server.description.slice(0, 101)}{" "}
                   {server.description.length >= 101 && "..."}
@@ -197,7 +197,7 @@ const ViewSearchResults = memo(
                     className={cn(
                       "w-3 h-3 rounded-full",
                       selectedServers.includes(server.id) &&
-                        "bg-discord_default"
+                        "bg-primary"
                     )}
                   />
                 </div>
@@ -211,7 +211,7 @@ const ViewSearchResults = memo(
           </p>
           <Button
             disabled={selectedServers.length === 0}
-            className="bg-discord_default rounded-[2px] text-white hover:bg-discord_default"
+            className=" rounded-[2px]"
           >
             {" "}
             Join

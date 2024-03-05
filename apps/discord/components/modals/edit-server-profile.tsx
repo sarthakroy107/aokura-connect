@@ -65,7 +65,7 @@ const EditServerProfile = () => {
         </div>
         <div className="w-full flex justify-end items-center h-16 bg-discord_darker rounded-b-md mt-3">
           <Button
-            className=" mr-4 bg-discord_purple text-white font-semibold"
+            className=" mr-4 font-semibold"
             onClick={form.handleSubmit(onSubmit)}
           >
             Save

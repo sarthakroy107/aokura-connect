@@ -173,7 +173,6 @@ export const Category = pgTable('category', {
 }));
 
 
-
 export const Channel = pgTable('channel', {
 
   id:                  uuid('id').defaultRandom().primaryKey().notNull(),

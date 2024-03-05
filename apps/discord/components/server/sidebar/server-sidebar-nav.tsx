@@ -1,13 +1,11 @@
 "use client";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
-import { ModalEnum, useModal } from "@/lib/store/modal-store";
-import { cn } from "@/lib/utils";
+
+import { useState, memo, useEffect } from "react";
+import { useParams } from "next/navigation";
+
 import { TMemberWithChannelIds } from "@db/dto/member/member-with-channel-ids";
+import { ModalEnum, useModal } from "@/lib/store/modal-store";
+
 import {
   LucideChevronDown,
   LucideDoorOpen,
@@ -16,8 +14,14 @@ import {
   LucideUser,
   LucideX,
 } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useState, memo, useEffect } from "react";
+import { Separator } from "@ui/components/ui/separator";
+import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "@ui/components/ui/dropdown-menu";
 
 const ServersidebarNavbar = memo(
   ({
@@ -38,8 +42,8 @@ const ServersidebarNavbar = memo(
     }, [member]);
 
     return (
-      <Popover onOpenChange={() => setOpen(!open)}>
-        <PopoverTrigger
+      <DropdownMenu onOpenChange={() => setOpen(!open)}>
+        <DropdownMenuTrigger
           className={cn(
             "w-full h-11 flex justify-between items-center shadow-sm shadow-black/30 px-3 mb-2 font-medium"
           )}
@@ -50,26 +54,26 @@ const ServersidebarNavbar = memo(
           ) : (
             <LucideX className="h-4 w-4" />
           )}
-        </PopoverTrigger>
-        <PopoverContent
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
           className={cn(
             "w-[220px] bg-[#09090b] p-2 py-3 rounded-[4px]",
             className
           )}
         >
-          <div className="flex justify-between items-center hover:bg-[#7289da] text-[#7289da] hover:text-white font-medium p-2 py-1 rounded-[2px] cursor-pointer">
+          <DropdownMenuItem className="flex justify-between items-center hover:bg-[#7289da] text-primary hover:text-white font-medium p-2 py-1 rounded-[2px] cursor-pointer">
             <p>Invite People</p>
             <LucideUser className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
-          </div>
+          </DropdownMenuItem>
           <Separator className="my-1" />
-          <div
+          <DropdownMenuItem
             onClick={() => onOpen(ModalEnum.MODIFY_SERVER, {})}
             className="flex justify-between items-center hover:bg-[#7289da] my-1 text-opacity-60 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"
           >
             <p>Edit Server</p>
             <LucidePencil className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
-          </div>
-          <div
+          </DropdownMenuItem>
+          <DropdownMenuItem
             onClick={() =>
               onOpen(ModalEnum.CREATE_CATEGORY, {
                 server: { id: params!.serverId },
@@ -79,19 +83,19 @@ const ServersidebarNavbar = memo(
           >
             <p>Create Category</p>
             <LucideFolderPlus className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
-          </div>
+          </DropdownMenuItem>
 
           <Separator className="my-1" />
 
-          <button
+          <DropdownMenuItem
             onClick={() => onOpen(ModalEnum.EDIT_SERVER_PROFILE, {})}
-            className="flex w-full justify-between items-center text-rose-500 hover:bg-rose-600 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"
+            className="flex w-full justify-between items-center text-rose-500 focus:bg-red-500 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"
           >
             <p>Edit Server Profile</p>
             <LucideDoorOpen className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
-          </button>
-        </PopoverContent>
-      </Popover>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 );

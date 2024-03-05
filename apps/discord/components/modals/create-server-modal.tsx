@@ -10,7 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@ui/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -18,9 +18,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+} from "@ui/components/ui/form";
+import { Input } from "@ui/components/ui/input";
+import { Button } from "@ui/components/ui/button";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
@@ -115,7 +115,7 @@ const CreateServerModal = () => {
               name="name"
               rules={{ required: true }}
               render={({ field }) => (
-                <FormItem className="mx-5 mb-3 rounded-[3px]">
+                <FormItem className="mx-5 m-3 rounded-[3px]">
                   <FormLabel className="uppercase font-medium text-white text-opacity-20">
                     Server Name
                   </FormLabel>
@@ -133,7 +133,7 @@ const CreateServerModal = () => {
             <DialogFooter className="bg-[#282b30] px-6 py-4">
               <Button
                 type="submit"
-                className="bg-discord_default rounded-[2px] text-white hover:bg-discord_default"
+                // className="bg-discord_default rounded-[2px] text-white hover:bg-discord_default"
                 disabled={isSubmitting}
               >
                 Create

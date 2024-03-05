@@ -4,6 +4,7 @@ import { Separator } from "@ui/components/ui/separator";
 import CreateServerIcon from "@/app/(protected)/channel/_components/create-server-icon";
 import JoinServer from "@/app/(protected)/channel/_components/join-server-icon";
 import SidebarServerIdon from "./sidebar-server-icon";
+import ThemeToggle from "../theme/theme-switcher";
 
 const NavigationSidebar = async () => {
   const data = await getProfileJoinedServers();
@@ -24,6 +25,7 @@ const NavigationSidebar = async () => {
       <Separator className="mx-1 w-[60px] bg-white/10" />
       <CreateServerIcon profile={data.profile} />
       <JoinServer />
+      <ThemeToggle />
     </ScrollArea>
   );
 };
