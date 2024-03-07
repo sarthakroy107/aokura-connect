@@ -6,14 +6,16 @@ import {
   VideoConference,
   GridLayout,
   ParticipantTile,
+  useTracks,
 } from '@livekit/components-react';
-import { Track } from 'livekit-client';
-import { useEffect, useState } from 'react';
+import { Room, Track } from 'livekit-client';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function Page() {
   // TODO: get user input for room and name
-  const room = "quickstart-room";
-  const name = "quickstart-user";
+  const room = useMemo(() => new Room(), [])
+  const name = "Sarthak";
   const [token, setToken] = useState("");
 
   useEffect(() => {
@@ -37,20 +39,21 @@ export default function Page() {
   return (
     <LiveKitRoom
       video={true}
-      audio={true}
+      audio={false}
       token={token}
       serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
       // Use the default LiveKit theme for nice styles.
       data-lk-theme="default"
-      style={{ height: '100dvh' }}
+      onDisconnected={() => toast.message('Disconnected from room')}
+      style={{ height: '95vh' }}
     >
       {/* Your custom component with basic video conferencing functionality. */}
       <MyVideoConference />
       {/* The RoomAudioRenderer takes care of room-wide audio for you. */}
-      <RoomAudioRenderer />
+      {/* <RoomAudioRenderer /> */}
       {/* Controls for the user to start/stop audio, video, and screen
       share tracks and to leave the room. */}
-      <ControlBar />
+      {/* <ControlBar /> */}
     </LiveKitRoom>
   );
 }
@@ -72,4 +75,8 @@ function MyVideoConference() {
       <ParticipantTile />
     </GridLayout>
   );
+}
+
+function VoiceChannel() {
+  return <div>VideoConference</div>;
 }

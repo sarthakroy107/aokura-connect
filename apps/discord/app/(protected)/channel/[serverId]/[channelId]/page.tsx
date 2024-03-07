@@ -2,6 +2,7 @@ import ChannelNavbar from "@/components/channel/channel-nav";
 import ChatInput from "@/components/chat/chat-input";
 import ChatMessages from "@/components/chat/chat-messages-server";
 import { getChannelById } from "@/lib/server-actions/channel/actions";
+import VoiceChannel from "./_components/voice-channel";
 
 const Page = async ({
   params,
@@ -18,14 +19,19 @@ const Page = async ({
         name={channel.name}
         type={channel.type}
       />
-      <ChatMessages channel_id={params.channelId} />
       {channel.type === "text" && (
-        <ChatInput
-          serverId={params.serverId}
-          channelId={params.channelId}
-          type="channel"
-          name={channel.name}
-        />
+        <>
+          <ChatMessages channel_id={params.channelId} />
+          <ChatInput
+            serverId={params.serverId}
+            channelId={params.channelId}
+            type="channel"
+            name={channel.name}
+          />
+        </>
+      )}
+      {channel.type === "voice" && (
+        <VoiceChannel channelId={channel.id}/>
       )}
     </div>
   );

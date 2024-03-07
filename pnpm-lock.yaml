@@ -34,7 +34,7 @@ importers:
         version: 3.3.4(react-hook-form@7.50.1)
       '@livekit/components-react':
         specifier: ^2.0.2
-        version: 2.0.2(livekit-client@2.0.4)(react-dom@18.2.0)(react@18.2.0)(tslib@2.6.2)
+        version: 2.0.2(livekit-client@2.0.5)(react-dom@18.2.0)(react@18.2.0)(tslib@2.6.2)
       '@livekit/components-styles':
         specifier: ^1.0.10
         version: 1.0.10
@@ -92,6 +92,9 @@ importers:
       '@uploadthing/react':
         specifier: ^6.2.2
         version: 6.2.4(next@14.1.0)(react@18.2.0)(uploadthing@6.4.1)
+      '@videosdk.live/react-sdk':
+        specifier: ^0.1.84
+        version: 0.1.84(react@18.2.0)
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -119,6 +122,9 @@ importers:
       jose:
         specifier: ^5.2.2
         version: 5.2.2
+      livekit-client:
+        specifier: ^2.0.5
+        version: 2.0.5
       livekit-server-sdk:
         specifier: ^2.0.4
         version: 2.0.4
@@ -152,6 +158,9 @@ importers:
       react-intersection-observer:
         specifier: ^9.8.0
         version: 9.8.1(react-dom@18.2.0)(react@18.2.0)
+      react-player:
+        specifier: ^2.15.1
+        version: 2.15.1(react@18.2.0)
       react-spinners:
         specifier: ^0.13.8
         version: 0.13.8(react-dom@18.2.0)(react@18.2.0)
@@ -1814,7 +1823,7 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@livekit/components-core@0.9.1(livekit-client@2.0.4)(tslib@2.6.2):
+  /@livekit/components-core@0.9.1(livekit-client@2.0.5)(tslib@2.6.2):
     resolution: {integrity: sha512-zD0TsiT+uW09GrHrsqEz9kzJ+raSXmu2YYgWrq5OEA7pO6ZbB8aGk2tPJthVTUwySOzW4rE7rNusOVEFvMkvxA==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -1823,13 +1832,13 @@ packages:
     dependencies:
       '@floating-ui/dom': 1.6.1
       email-regex: 5.0.0
-      livekit-client: 2.0.4
+      livekit-client: 2.0.5
       loglevel: 1.9.1
       rxjs: 7.8.1
       tslib: 2.6.2
     dev: false
 
-  /@livekit/components-react@2.0.2(livekit-client@2.0.4)(react-dom@18.2.0)(react@18.2.0)(tslib@2.6.2):
+  /@livekit/components-react@2.0.2(livekit-client@2.0.5)(react-dom@18.2.0)(react@18.2.0)(tslib@2.6.2):
     resolution: {integrity: sha512-7r7k7AO3GY+aR3AfO8EeTR/QYNc1NDfKJYwdbOapb5SZy9o+E23jlhKwUaxTWpSGHbZt/8qyHsOKZNROcgVUTg==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -1838,10 +1847,10 @@ packages:
       react-dom: '>=18'
       tslib: ^2.6.2
     dependencies:
-      '@livekit/components-core': 0.9.1(livekit-client@2.0.4)(tslib@2.6.2)
+      '@livekit/components-core': 0.9.1(livekit-client@2.0.5)(tslib@2.6.2)
       '@react-hook/latest': 1.0.3(react@18.2.0)
       clsx: 2.1.0
-      livekit-client: 2.0.4
+      livekit-client: 2.0.5
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       tslib: 2.6.2
@@ -4241,6 +4250,20 @@ packages:
       - jest
       - supports-color
     dev: true
+
+  /@videosdk.live/js-sdk@0.0.81:
+    resolution: {integrity: sha512-dpE/aZa4Bh7N2Kx7LMBap23i65vHImMaAhNvUiV4hx3Ep8e59lTl+1g7Yv/pgD5ppSy9OW0BGRnGyVdhCiSQjA==}
+    dev: false
+
+  /@videosdk.live/react-sdk@0.1.84(react@18.2.0):
+    resolution: {integrity: sha512-l+nXePuJ0nUeIpPI5n5nqxLWxZ118anqUszHdkj+gLWhM6Rfwp94lgGbbCwi0ioUXkDWU3PSVTMFgnyTlUm26w==}
+    peerDependencies:
+      react: ^16.13.1 || ^17 || ^18
+    dependencies:
+      '@videosdk.live/js-sdk': 0.0.81
+      events: 3.3.0
+      react: 18.2.0
+    dev: false
 
   /@webassemblyjs/ast@1.11.6:
     resolution: {integrity: sha512-IN1xI7PwOvLPgjcf180gC1bqn3q/QaOCwYUahIOhbYUu8KA/3tw2RT/T0Gidi1l7Hhj5D/INhJxiICObqpMu4Q==}
@@ -7873,8 +7896,8 @@ packages:
   /lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  /livekit-client@2.0.4:
-    resolution: {integrity: sha512-9TWHU2Gw0BXJi6SFkHXEizIZY2BEacDd2O6Qn4i9D0resjhMfq5+9EqoVlP/KjfYNIjt8+VdIoEZQ/v4bgU2tQ==}
+  /livekit-client@2.0.5:
+    resolution: {integrity: sha512-v8qGALpGc8hCKJGiNsMML5F7QB/QBJ1aeox14xkyGpIxhQC4lwIRXRktymTzlDnOiZu5fvgB2KxifiOAzWByzw==}
     dependencies:
       '@bufbuild/protobuf': 1.7.2
       events: 3.3.0
@@ -7893,6 +7916,10 @@ packages:
       '@bufbuild/protobuf': 1.7.2
       camelcase-keys: 7.0.2
       jose: 5.2.2
+    dev: false
+
+  /load-script@1.0.0:
+    resolution: {integrity: sha512-kPEjMFtZvwL9TaZo0uZ2ml+Ye9HUMmPwbYRJ324qF9tqMejwykJ5ggTyvzmrbBeapCAbk98BSbTeovHEEP1uCA==}
     dev: false
 
   /loader-runner@4.3.0:
@@ -8035,6 +8062,10 @@ packages:
       inherits: 2.0.4
       safe-buffer: 5.2.1
     dev: true
+
+  /memoize-one@5.2.1:
+    resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}
+    dev: false
 
   /memoizee@0.4.15:
     resolution: {integrity: sha512-UBWmJpLZd5STPm7PMUlOw/TSy972M+z8gcyQ5veOnSDRREz/0bmpyTfKt3/51DhEBqCZQn1udM/5flcSPYhkdQ==}
@@ -9289,6 +9320,10 @@ packages:
       - webpack-cli
     dev: false
 
+  /react-fast-compare@3.2.2:
+    resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
+    dev: false
+
   /react-hook-form@7.50.1(react@18.2.0):
     resolution: {integrity: sha512-3PCY82oE0WgeOgUtIr3nYNNtNvqtJ7BZjsbxh6TnYNbXButaD5WpjOmTjdxZfheuHKR68qfeFnEDVYoSSFPMTQ==}
     engines: {node: '>=12.22.0'}
@@ -9313,6 +9348,19 @@ packages:
 
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
+  /react-player@2.15.1(react@18.2.0):
+    resolution: {integrity: sha512-ni1XFuYZuhIKKdeFII+KRLmIPcvCYlyXvtSMhNOgssdfnSovmakBtBTW2bxowPvmpKy5BTR4jC4CF79ucgHT+g==}
+    peerDependencies:
+      react: '>=16.6.0'
+    dependencies:
+      deepmerge: 4.3.1
+      load-script: 1.0.0
+      memoize-one: 5.2.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-fast-compare: 3.2.2
+    dev: false
 
   /react-remove-scroll-bar@2.3.5(@types/react@18.2.58)(react@18.2.0):
     resolution: {integrity: sha512-3cqjOqg6s0XbOjWvmasmqHch+RLxIEk2r/70rzGXuz3iIGQsQheEQyqYCBb5EECoD01Vo2SIbDqW4paLeLTASw==}
