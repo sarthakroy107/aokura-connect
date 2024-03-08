@@ -1,45 +1,57 @@
 "use client";
 
-import {
-  LiveKitRoom,
-  VideoConference,
-  formatChatMessageLinks,
-} from "@livekit/components-react";
-import "@livekit/components-styles";
-import { RoomConnectOptions } from "livekit-client";
-import { Room } from "livekit-server-sdk";
-import { useMemo } from "react";
-import { toast } from "sonner";
+import { useState } from "react";
+import { MeetingProvider } from "@videosdk.live/react-sdk";
+import { authToken } from "@/app/videosdk/_lib/get-token";
+import { getVideoSDKRoomId } from "../_lib/video-sdk/get-room-id";
+import MeetingView from "./video-sdk/meeting-view";
+import JoinScreen from "./video-sdk/join-screen";
+import useCurrentServer from "@/components/hooks/use-current-member";
 
-export default function VoiceChannelClient({
-  username,
+function VideoChannelClient({
   roomId,
-  token,
+  channelName,
+  username,
 }: {
-  username: string;
   roomId: string;
-  token: string;
+  channelName: string;
+  username: string;
 }) {
-  const room = useMemo(() => new Room({}), []);
-  const connectOptions = useMemo((): RoomConnectOptions => {
-    return {
-      autoSubscribe: true,
-    };
-  }, []);
+  const [isJoined, setIsJoined] = useState(true);
+
+  const handleVoiceJoin = () => {
+    setIsJoined(true);
+    console.log("Joining voice call");
+    console.log(isJoined);
+  };
+
+  //Getting the meeting id by calling the api we just wrote
+  // const getMeetingAndToken = async (id?: string) => {
+  //   const roomId = await getVideoSDKRoomId({
+  //     customRoomId,
+  //   });
+  //   setMeetingId(roomId);
+  // };
+
+  // //This will set Meeting Id to null when meeting is left or ended
+  const onMeetingLeave = () => {
+    setIsJoined(false);
+  };
+  if (!roomId) return <div>Failed to create room</div>;
+  console.log("In Video Channel Client");
   return (
-    <div className="w-full flex justify-center">
-      <LiveKitRoom
-        token={token}
-        connectOptions={connectOptions}
-        video={true}
-        audio={false}
-        serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
-        data-lk-theme="default"
-        onDisconnected={() => toast.message("Disconnected from room")}
-        style={{ height: "92.5vh" }}
-      >
-        <VideoConference chatMessageFormatter={formatChatMessageLinks} />
-      </LiveKitRoom>
-    </div>
+    <MeetingProvider
+      config={{
+        meetingId: 'nztc-bzej-b4q9',
+        micEnabled: false,
+        webcamEnabled: false,
+        name: username,
+      }}
+      token={authToken}
+    >
+      <MeetingView meetingId={roomId} onMeetingLeave={onMeetingLeave} />
+    </MeetingProvider>
   );
 }
+
+export default VideoChannelClient;

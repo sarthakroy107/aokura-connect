@@ -31,7 +31,7 @@ const Page = async ({
         </>
       )}
       {channel.type === "voice" && (
-        <VoiceChannel channelId={channel.id}/>
+        <VoiceChannel channelId={channel.id} channelName={channel.name}/>
       )}
     </div>
   );
