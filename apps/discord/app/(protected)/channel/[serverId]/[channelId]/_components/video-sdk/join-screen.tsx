@@ -2,8 +2,12 @@
 
 import useCurrentServer from "@/components/hooks/use-current-member";
 import { Button } from "@ui/components/ui/button";
-import { useState } from "react";
-import Loading from "../../loading";
+import { useEffect, useState } from "react";
+import Loading from "../loading";
+import { useQuery } from "@tanstack/react-query";
+import { getServerAndMemberDetails } from "@/lib/server-actions/server/get-server-and-member-details";
+import { useParams } from "next/navigation";
+import { useCurrentProfile } from "@/components/hooks/use-current-profile";
 
 export default function JoinScreen({
   roomId,
@@ -18,23 +22,14 @@ export default function JoinScreen({
   const { member } = useCurrentServer();
 
   console.log("In Join Screen");
-  if (!member) return <Loading />;
-
+  if (!member) {
+    return <Loading />;
+  }
 
   return (
-    <div className="w-full h-[57.6rem] bg-black flex flex-col justify-center  items-center">
+    <div className="w-full h-[57.7rem] bg-black flex flex-col justify-center  items-center">
       <h2 className="text-3xl font-medium text-semibold">{channelName}</h2>
       <p className="text-xs my-2 text-white/70">No one is currently in voice</p>
-      {/* <input
-        type="text"
-        placeholder="Enter Meeting Id"
-        onChange={(e) => {
-          setMeetingId(e.target.value);
-        }}
-      />
-      <button onClick={onClick}>Join</button>
-      {" or "}
-      <button onClick={onClick}>Create Meeting</button> */}
       <Button type="button" onClick={joinVoiceCall}
         className="rounded-full w-24 text-lg py-5 font-semibold mt-4">
         JOIN

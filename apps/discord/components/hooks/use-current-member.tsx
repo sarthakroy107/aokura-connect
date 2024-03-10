@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCurrentProfile } from "@/components/hooks/use-current-profile";
 import { getServerAndMemberDetails } from "@/lib/server-actions/server/get-server-and-member-details";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 
 const useCurrentServer = () => {
   const {
@@ -13,15 +14,19 @@ const useCurrentServer = () => {
   const params = useParams<{ serverId: string }>();
 
   if (!params || !params.serverId) {
-    return {};
+    return {
+
+    };
   }
 
   const { data, refetch, error, isFetching } = useQuery({
-    queryKey: ["server", currentProfileData?.id, params.serverId],
+    queryKey: ["server", params.serverId],
     queryFn: () => getServerAndMemberDetails(params.serverId),
     refetchInterval: false,
     staleTime: 1000 * 60 * 10,
   });
+
+
 
   if (error) console.error(error);
 

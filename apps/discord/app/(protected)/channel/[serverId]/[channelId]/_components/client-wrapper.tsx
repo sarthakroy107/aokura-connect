@@ -1,6 +1,5 @@
-"use client";
+'use client';
 
-import React from "react";
 import VoiceChannelClient from "./voice-channel-client";
 
 const ClientWrapper = ({
@@ -12,6 +11,7 @@ const ClientWrapper = ({
   channelName: string;
   username: string;
 }) => {
+  //*This is a dummy client component to wrap the client so that VideoChannelClient does not give error
   return (
     <VoiceChannelClient
       roomId={roomId}

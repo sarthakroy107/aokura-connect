@@ -1,3 +1,4 @@
+
 import ChannelNavbar from "@/components/channel/channel-nav";
 import ChatInput from "@/components/chat/chat-input";
 import ChatMessages from "@/components/chat/chat-messages-server";
@@ -38,3 +39,15 @@ const Page = async ({
 };
 
 export default Page;
+
+
+// import Video from '@/app/videosdk/vide-component'
+// import React from 'react'
+
+// const Page = () => {
+//   return (
+//     <Video />
+//   )
+// }
+
+// export default Page

@@ -1,6 +1,8 @@
 import { currentProfile } from "@/lib/auth/current-user";
-import { getVideoSDKRoomId } from "../_lib/video-sdk/get-room-id";
-import ClientWrapper from "./client-wrapper";
+import { getLivekitToken } from "../../[channelId]/_lib/livekit/get-token";
+import VoiceChannelClient from "./voice-channel-client";
+import { getVideoSDKRoomId } from "../../[channelId]/_lib/video-sdk/get-room-id";
+import ClientWrapper from "@/app/(protected)/channel/[serverId]/[channelId]/_components/client-wrapper";
 
 export default async function VoiceChannel({
   channelId,
@@ -17,7 +19,7 @@ export default async function VoiceChannel({
   if (profile.status !== 200 || !profile.data) return <div>Not logged in</div>;
 
   return (
-    <ClientWrapper //*This is a important component which does nothing. Without it, VideoSDK react provider may give hydration error
+    <ClientWrapper
       channelName={channelName}
       roomId={roomId}
       username={profile.data.usernaeme}

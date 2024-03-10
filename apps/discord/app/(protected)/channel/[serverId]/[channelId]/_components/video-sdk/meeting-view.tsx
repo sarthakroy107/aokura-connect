@@ -1,67 +1,142 @@
-'use client';
+"use client";
 
 import ParticipantView from "@/app/videosdk/_components/participants-view";
 import { useMeeting } from "@videosdk.live/react-sdk";
 import { useState } from "react";
+import JoinScreen from "./join-screen";
+import { BarLoader } from "react-spinners";
+import { Button } from "@ui/components/ui/button";
+import {
+  LucideMic,
+  LucideMicOff,
+  LucideMonitorUp,
+  LucidePhone,
+  LucidePhoneOff,
+  LucideVideo,
+  LucideVideoOff,
+} from "lucide-react";
+import { cn } from "@ui/lib/utils";
 
 export default function MeetingView({
   onMeetingLeave,
-  meetingId,
+  channelName,
+  roomId,
 }: {
   onMeetingLeave: () => void;
-  meetingId: string;
+  channelName: string;
+  roomId: string;
 }) {
-  const [joined, setJoined] = useState<string | null>(null);
-  //Get the method which will be used to join the meeting.
-  //We will also get the participants list to display all participants
-  const { join, participants } = useMeeting({
-    //callback for when meeting is joined successfully
+  const [joinStatus, setJoinStatus] = useState<
+    "joining" | "joined" | "error" | "idle"
+  >("idle");
+
+  const { join, participants, leave } = useMeeting({
     onMeetingJoined: () => {
-      setJoined("JOINED");
+      setJoinStatus("joined");
     },
-    //callback for when meeting is left
     onMeetingLeft: () => {
-      onMeetingLeave();
+      setJoinStatus("idle");
     },
   });
-  const joinMeeting = () => {
-    setJoined("JOINING");
+  const handleVoiceJoin = () => {
+    setJoinStatus("joined");
     join();
   };
 
   return (
-    <div className="container">
-      <h3>Meeting Id: {meetingId}</h3>
-      {joined && joined == "JOINED" ? (
-        <div>
+    <>
+      {joinStatus === "joined" ? (
+        <div className="w-full h-[57.7rem] bg-black flex flex-col items-center">
+          <div className="w-full h-[92%] grid grid-cols-3 items-center justify-center p-1">
+            {[...participants.keys()].map((participantId) => (
+              <ParticipantView
+                participantId={participantId}
+                key={participantId}
+              />
+            ))}
+          </div>
           <Controls />
-          //For rendering all the participants in the meeting
-          {[...participants.keys()].map((participantId) => (
-            <ParticipantView
-              participantId={participantId}
-              key={participantId}
-            />
-          ))}
         </div>
-      ) : joined && joined == "JOINING" ? (
-        <p>Joining the meeting...</p>
+      ) : joinStatus === "joining" ? (
+        <div className="w-full h-[57.7rem] bg-black flex flex-col justify-center items-center">
+          <p className="text-3xl font-medium mb-3">JOINING</p>
+          <BarLoader color="#ffffff" />
+        </div>
       ) : (
-        <button onClick={joinMeeting}>Join</button>
+        <JoinScreen
+          roomId={roomId}
+          channelName={channelName}
+          joinVoiceCall={handleVoiceJoin}
+        />
       )}
-    </div>
+    </>
   );
 }
-
-
 
 function Controls() {
-  const { leave, toggleMic, toggleWebcam } = useMeeting();
+  const {
+    leave,
+    toggleMic,
+    toggleWebcam,
+    toggleScreenShare,
+    localMicOn,
+    localWebcamOn,
+    localScreenShareOn,
+
+  } = useMeeting();
+
   return (
-    <div>
-      <button onClick={() => leave()}>Leave</button>
-      <button onClick={() => toggleMic()}>toggleMic</button>
-      <button onClick={() => toggleWebcam()}>toggleWebcam</button>
+    <div className="mt-2 space-x-3 flex">
+      <div>
+        
+      </div>
+      <Button
+        className={cn(
+          "font-medium w-12 h-12 rounded-full flex justify-center items-center border-2",
+          localMicOn
+            ? "border-white bg-transparent hover:bg-transparent"
+            : "border-primary bg-primary"
+        )}
+        onClick={() => toggleMic()}
+      >
+        {localMicOn ? (
+          <LucideMic width={64} height={64} />
+        ) : (
+          <LucideMicOff width={64} height={64} />
+        )}
+      </Button>
+      <Button
+        className={cn(
+          "font-medium w-12 h-12 rounded-full flex justify-center items-center border-2",
+          localWebcamOn
+            ? "border-white bg-transparent hover:bg-transparent"
+            : "border-primary bg-primary"
+        )}
+        onClick={() => toggleWebcam()}
+      >
+        {localWebcamOn ? (
+          <LucideVideo width={64} height={64} />
+        ) : (
+          <LucideVideoOff width={64} height={64} />
+        )}
+      </Button>
+      <Button
+        className={cn(
+          "font-medium w-12 h-12 rounded-full flex justify-center items-center border-2",
+          localScreenShareOn
+            ? "border-primary bg-primary hover:bg-transparent"
+            : "border-white bg-transparent"
+        )}
+        onClick={() => toggleScreenShare()}
+      >
+        <LucideMonitorUp width={64} height={64} />
+      </Button>
+      <Button
+        onClick={() => leave()}
+        className="font-medium bg-red-600 w-12 h-12 rounded-full flex justify-center items-center"
+      >
+        <LucidePhone className="rotate-[135deg]" width={64} height={64} />
+      </Button>
     </div>
   );
 }
-

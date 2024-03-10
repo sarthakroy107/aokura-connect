@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { MeetingProvider } from "@videosdk.live/react-sdk";
 import { authToken } from "@/app/videosdk/_lib/get-token";
-import { getVideoSDKRoomId } from "../_lib/video-sdk/get-room-id";
-import MeetingView from "./video-sdk/meeting-view";
-import JoinScreen from "./video-sdk/join-screen";
+import { getVideoSDKRoomId } from "../../[channelId]/_lib/video-sdk/get-room-id";
+import MeetingView from "@/app/(protected)/channel/[serverId]/[channelId]/_components/video-sdk/meeting-view";
+import JoinScreen from "@/app/(protected)/channel/[serverId]/[channelId]/_components/video-sdk/join-screen"
 import useCurrentServer from "@/components/hooks/use-current-member";
 
 function VideoChannelClient({
@@ -17,9 +17,7 @@ function VideoChannelClient({
   channelName: string;
   username: string;
 }) {
-  const [isJoined, setIsJoined] = useState(false);
-
-  const { member } = useCurrentServer();
+  const [isJoined, setIsJoined] = useState(true);
 
   const handleVoiceJoin = () => {
     setIsJoined(true);
@@ -42,27 +40,17 @@ function VideoChannelClient({
   if (!roomId) return <div>Failed to create room</div>;
   console.log("In Video Channel Client");
   return (
-    <>
-      <MeetingProvider
-        config={{
-          meetingId: roomId,
-          micEnabled: false,
-          webcamEnabled: false,
-          name: username,
-          metaData: {
-            name: member?.nickname,
-            avatar: member?.avatar,
-          }
-        }}
-        token={authToken}
-      >
-        <MeetingView
-          roomId={roomId}
-          channelName={channelName}
-          onMeetingLeave={onMeetingLeave}
-        />
-      </MeetingProvider>
-    </>
+    <MeetingProvider
+      config={{
+        meetingId: 'nztc-bzej-b4q9',
+        micEnabled: false,
+        webcamEnabled: false,
+        name: username,
+      }}
+      token={authToken}
+    >
+      <MeetingView meetingId={roomId} onMeetingLeave={onMeetingLeave} />
+    </MeetingProvider>
   );
 }
 
