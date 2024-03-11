@@ -1,16 +1,18 @@
 "use client";
 
-import TooltipWrapper from "@/components/common/tooltip-wrapper";
+import { memo, useEffect, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useParticipant } from "@videosdk.live/react-sdk";
 import Image from "next/image";
-import { memo, useEffect, useMemo, useRef } from "react";
 import ReactPlayer from "react-player";
+import TooltipWrapper from "@/components/common/tooltip-wrapper";
 
 export default function ParticipantView({
   participantId,
+  className,
 }: {
   participantId: string;
+  className?: string;
 }) {
   const micRef = useRef<HTMLAudioElement>(null);
   const screenShareAudioRef = useRef<HTMLAudioElement>(null);
@@ -26,10 +28,10 @@ export default function ParticipantView({
     screenShareStream,
     screenShareAudioStream,
     //@ts-ignore
-    metaData,
+    metaData, //*metaData exists
   } = useParticipant(participantId); //metaData exists
 
-  console.log("Metadata", metaData);
+  //console.log("Metadata", metaData);
 
   const webcamVideoStream = useMemo(() => {
     if (webcamOn && webcamStream) {
@@ -83,7 +85,10 @@ export default function ParticipantView({
   return (
     <div
       key={participantId}
-      className="w-full aspect-video relative rounded-[3px] overflow-hidden"
+      className={cn(
+        "aspect-video max-h-[32rem] relative rounded-[3px] overflow-hidden z-10",
+        className
+      )}
     >
       <audio ref={micRef} autoPlay muted={isLocal} />
       {screenShareOn && (
@@ -147,7 +152,7 @@ const ParticipantWithAllVideoOffCard = memo(
           isActiveSpeaker ? "border-primary" : "border-white"
         )}
       >
-        <TooltipWrapper label={username}>
+        <TooltipWrapper label={`@${username}`}>
           <Image
             src={avatar}
             alt={name}
@@ -242,7 +247,7 @@ const ParticipantWithBothVideoOn = memo(
         <p className="absolute bottom-1 left-1 px-1 py-0.5 bg-black/20 rounded-[3px]">
           {name}
         </p>
-        <div className="w-16 aspect-video rounded-[2px] absolute right-1 bottom-1">
+        <div className="w-[15%] aspect-video rounded-[2px] absolute right-1 bottom-1">
           <ReactPlayer
             playsinline
             pip={false}

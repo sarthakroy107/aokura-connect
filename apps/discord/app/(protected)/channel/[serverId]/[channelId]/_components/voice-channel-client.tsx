@@ -21,21 +21,6 @@ function VideoChannelClient({
 
   const { member } = useCurrentServer();
 
-  const handleVoiceJoin = () => {
-    setIsJoined(true);
-    console.log("Joining voice call");
-    console.log(isJoined);
-  };
-
-  //Getting the meeting id by calling the api we just wrote
-  // const getMeetingAndToken = async (id?: string) => {
-  //   const roomId = await getVideoSDKRoomId({
-  //     customRoomId,
-  //   });
-  //   setMeetingId(roomId);
-  // };
-
-  // //This will set Meeting Id to null when meeting is left or ended
   const onMeetingLeave = () => {
     setIsJoined(false);
   };

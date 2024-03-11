@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import ReactQueryProvider from "@/components/provider/react-query-provider";
 import { SocketProvider } from "@/components/provider/socket-provider";
 import AppProvider from "@/components/provider/app-provider";
+import { cn } from "@ui/lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={cn(inter.className, "w-full h-full")}>
         <AppProvider>
           <ThemeProvider
             attribute="class"

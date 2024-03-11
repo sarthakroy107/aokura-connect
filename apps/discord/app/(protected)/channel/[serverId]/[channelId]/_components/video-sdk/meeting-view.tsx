@@ -2,7 +2,7 @@
 
 import ParticipantView from "@/app/videosdk/_components/participants-view";
 import { useMeeting } from "@videosdk.live/react-sdk";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import JoinScreen from "./join-screen";
 import { BarLoader } from "react-spinners";
 import { Button } from "@ui/components/ui/button";
@@ -43,13 +43,23 @@ export default function MeetingView({
     join();
   };
 
+  const participantCount = useMemo(() => participants.size, [participants]);
+
   return (
     <>
       {joinStatus === "joined" ? (
-        <div className="w-full h-[57.7rem] bg-black flex flex-col items-center">
-          <div className="w-full h-[92%] grid grid-cols-3 items-center justify-center p-1">
+        <div className={"w-full h-[95.4%] z-30 bg-black flex flex-col items-center"}>
+          <div
+            className={cn(
+              "w-full h-[92%] grid items-center justify-center p-5",
+              participantCount === 1 && "grid-cols-1",
+              participantCount === 2 && "grid-cols-2",
+              participantCount >= 3 && "grid-cols-3",
+            )}
+          >
             {[...participants.keys()].map((participantId) => (
               <ParticipantView
+                className={cn(participantCount === 1 ? "min-h-[95%] mx-auto" : "w-full")}
                 participantId={participantId}
                 key={participantId}
               />
@@ -58,7 +68,7 @@ export default function MeetingView({
           <Controls />
         </div>
       ) : joinStatus === "joining" ? (
-        <div className="w-full h-[57.7rem] bg-black flex flex-col justify-center items-center">
+        <div className="w-full h-[95.4%] bg-black flex flex-col justify-center items-center">
           <p className="text-3xl font-medium mb-3">JOINING</p>
           <BarLoader color="#ffffff" />
         </div>
@@ -82,14 +92,11 @@ function Controls() {
     localMicOn,
     localWebcamOn,
     localScreenShareOn,
-
   } = useMeeting();
 
   return (
-    <div className="mt-2 space-x-3 flex">
-      <div>
-        
-      </div>
+    <div className="space-x-3 pt-2 flex">
+      <div></div>
       <Button
         className={cn(
           "font-medium w-12 h-12 rounded-full flex justify-center items-center border-2",
