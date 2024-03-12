@@ -23,6 +23,7 @@ import { BarLoader } from "react-spinners";
 import { FileUpload } from "@/components/file-upload";
 import NormalInput from "@/components/form/normal-input";
 import { TServerDetailsDto } from "@db/dto/server/server-details-dto";
+import { useParams } from "next/navigation";
 
 
 const ServerDetailsForm = ({
@@ -32,7 +33,10 @@ const ServerDetailsForm = ({
   data: TServerDetailsDto;
   newServer: boolean;
 }) => {
-  const { refetchServerData } = useCurrentServer();
+
+  const { serverId } = useParams<{ serverId: string }>();
+
+  const { refetchServerData } = useCurrentServer(serverId);
   const { onClose } = useModal();
   const form = useForm<Omit<TDBServer, "created_at" | "updated_at" | "id">>({
     defaultValues: data,

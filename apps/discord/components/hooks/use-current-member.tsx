@@ -1,32 +1,19 @@
 "use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentProfile } from "@/components/hooks/use-current-profile";
 import { getServerAndMemberDetails } from "@/lib/server-actions/server/get-server-and-member-details";
-import { useParams } from "next/navigation";
-import { useEffect } from "react";
 
-const useCurrentServer = () => {
-  const {
-    currentProfileData,
-    refetchCurrentProfileData,
-    isCurrentProfileDataFetching,
-  } = useCurrentProfile();
-  const params = useParams<{ serverId: string }>();
+const useCurrentServer = (serverId: string) => {
 
-  if (!params || !params.serverId) {
-    return {
-
-    };
-  }
+  //if(!serverId) throw new Error("Server ID is required");
 
   const { data, refetch, error, isFetching } = useQuery({
-    queryKey: ["server", params.serverId],
-    queryFn: () => getServerAndMemberDetails(params.serverId),
+    queryKey: ["server", serverId],
+    queryFn: () => getServerAndMemberDetails(serverId),
     refetchInterval: false,
     staleTime: 1000 * 60 * 10,
   });
-
-
 
   if (error) console.error(error);
 
@@ -36,9 +23,6 @@ const useCurrentServer = () => {
       server: null,
       channel_categories: null,
       refetchServerData: refetch,
-      refetchCurrentProfileData,
-      currentProfileData,
-      isCurrentProfileDataFetching,
       isServerDataFetching: isFetching,
     };
   }
@@ -48,9 +32,6 @@ const useCurrentServer = () => {
     server: data.data.server || null,
     channel_categories: data.data.server.categories,
     refetchServerData: refetch,
-    refetchCurrentProfileData,
-    currentProfileData,
-    isCurrentProfileDataFetching,
     isServerDataFetching: isFetching,
   };
 };

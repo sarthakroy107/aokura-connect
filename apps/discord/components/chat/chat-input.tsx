@@ -28,7 +28,7 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
   const { socket: io } = useSocket();
   const { token } = useJWT();
 
-  const { member } = useCurrentServer();
+  const { member } = useCurrentServer(serverId);
 
   const form = useForm<TInsertMessage>();
 
@@ -59,10 +59,10 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
       if (!io) {
         throw new Error("Socket not found");
       }
-      if(!token) {
+      if (!token) {
         throw new Error("Token not found");
       }
-      console.log({token})
+      console.log({ token });
       io.emit("event:message", {
         token: token || "",
         textMessage: values.textMessage,

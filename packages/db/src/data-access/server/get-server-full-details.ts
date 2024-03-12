@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
-import { db } from "../../db";
-import { Server } from "../../schema";
-import { serverDetailsDto } from "../../dto/server/server-details-dto";
+import { db } from "../../db.js";
+import { Server } from "../../schema.js";
+import { serverDetailsDto } from "../../dto/server/server-details-dto.js";
 
 export const getServerDetails = async (serverId: string) => {
   try {

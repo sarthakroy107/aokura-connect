@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { db } from "../../db";
-import { Member } from "../../schema";
-import { memberWithChannelIdsDto } from "../../dto/member/member-with-channel-ids";
+import { db } from "../../db.js";
+import { Member } from "../../schema.js";
+import { memberWithChannelIdsDto } from "../../dto/member/member-with-channel-ids.js";
 
 export const getMemberDetails = async ({
   serverId,

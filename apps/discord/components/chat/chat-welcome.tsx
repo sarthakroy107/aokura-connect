@@ -1,11 +1,14 @@
 "use client";
 
 import useCurrentServer from "@/components/hooks/use-current-member";
+import { useParams } from "next/navigation";
 
 //*This component is used to display a welcome message when a user enters a channel for the first time or reaches the end of the channel's messages
 
 const ChatWelcome = () => {
-  const { server } = useCurrentServer();
+  const { serverId } = useParams<{serverId: string}>();
+  if(!serverId) return <div>Loading...</div>
+  const { server } = useCurrentServer(serverId);
 
   return (
     <main className="w-full text-4xl font-semibold text-center border-b border-white/10 space-y-1 pt-7">

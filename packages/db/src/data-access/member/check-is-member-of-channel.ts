@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
-import { db } from "../../db";
-import { Member, memberToChannel } from "../../schema";
+import { db } from "../../db.js";
+import { Member, memberToChannel } from "../../schema.js";
 
 export type TValidMemberDetailsProps = {
   profileId: string;

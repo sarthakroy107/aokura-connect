@@ -2,16 +2,19 @@
 
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 import { Dialog, DialogContent, DialogHeader } from "@ui/components/ui/dialog";
-import { PuffLoader } from 'react-spinners'
+import { PuffLoader } from "react-spinners";
 
 import useCurrentServer from "@/components/hooks/use-current-member";
 import ServerDetailsForm from "@/components/form/server-details-form";
+import { useParams } from "next/navigation";
+import Loading from "@/components/loaders/loading";
 
 const ModifyServerModal = () => {
+  const { serverId } = useParams<{ serverId: string }>();
   const { isOpen, onClose, type } = useModal();
 
   const { isServerDataFetching, refetchServerData, server } =
-    useCurrentServer();
+    useCurrentServer(serverId);
 
   //*IF SERVER DATA REFTCHING IS NEEDED
   // useEffect(() => {
@@ -28,15 +31,15 @@ const ModifyServerModal = () => {
         <DialogHeader className="text-2xl font-medium mt-5">
           Modify Server
         </DialogHeader>
-        {
-          isServerDataFetching ? (
-            <div className="w-full flex justify-center items-center h-56">
-              <PuffLoader color="#5865F2" />
-            </div>
-          ) : !server ? <div>Error</div> : (
-            <ServerDetailsForm data={server} newServer={false} />
-          )
-        }
+        {isServerDataFetching ? (
+          <div className="w-full flex justify-center items-center h-56">
+            <PuffLoader color="#5865F2" />
+          </div>
+        ) : !server ? (
+          <div>Error</div>
+        ) : (
+          <ServerDetailsForm data={server} newServer={false} />
+        )}
       </DialogContent>
     </Dialog>
   );

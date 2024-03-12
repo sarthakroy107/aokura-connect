@@ -21,17 +21,20 @@ import {
 
 import { Button } from "@ui/components/ui/button";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { BarLoader } from "react-spinners";
 import useCurrentServer from "../hooks/use-current-member";
 import NormalInput from "@/components/form/normal-input";
 import { createCategorySchema } from "@/lib/validations/category/create-category-validation";
-import { ZodType, z } from "zod";
+import { z } from "zod";
 import { createCategoryAction } from "@/lib/server-actions/category/create-category";
+import Loading from "@/components/loaders/loading";
 
 const CreateCategoryModal = () => {
+  const { serverId } = useParams<{ serverId: string }>();
   const { isOpen, onClose, type } = useModal();
-  const { server, member } = useCurrentServer();
+
+  const { server, member, isServerDataFetching } = useCurrentServer(serverId);
   const form = useForm<{ name: string }>();
 
   const isModalOpen = isOpen && type === ModalEnum.CREATE_CATEGORY;
@@ -69,45 +72,49 @@ const CreateCategoryModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={() => onClose()}>
-      <DialogContent className="bg-discord text-white p-0 overflow-hidden sm:rounded-[3px]">
-        <DialogHeader className="pt-8 px-6">
-          <DialogTitle className="text-2xl font-bold">
-            Create Category
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="space-y-8 px-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <NormalInput
-                        label="CATEGORY NAME"
-                        disabled={isLoading}
-                        placeholder="ENTER CATEGORY NAME"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DialogFooter className="bg-[#282b30] px-6 py-4">
-              <Button
-                type="submit"
-                className="text-white uppercase w-20"
-                disabled={isLoading}
-              >
-                {isLoading ? <BarLoader color="#fff" /> : "Create"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
+      {isServerDataFetching ? (
+        <DialogContent>Loading...</DialogContent>
+      ) : (
+        <DialogContent className="bg-discord text-white p-0 overflow-hidden sm:rounded-[3px]">
+          <DialogHeader className="pt-8 px-6">
+            <DialogTitle className="text-2xl font-bold">
+              Create Category
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="space-y-8 px-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <NormalInput
+                          label="CATEGORY NAME"
+                          disabled={isLoading}
+                          placeholder="ENTER CATEGORY NAME"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <DialogFooter className="bg-[#282b30] px-6 py-4">
+                <Button
+                  type="submit"
+                  className="text-white uppercase w-20"
+                  disabled={isLoading}
+                >
+                  {isLoading ? <BarLoader color="#fff" /> : "Create"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      )}
     </Dialog>
   );
 };

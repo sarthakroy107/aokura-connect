@@ -7,6 +7,7 @@ import { getVideoSDKRoomId } from "../_lib/video-sdk/get-room-id";
 import MeetingView from "./video-sdk/meeting-view";
 import JoinScreen from "./video-sdk/join-screen";
 import useCurrentServer from "@/components/hooks/use-current-member";
+import { useParams } from "next/navigation";
 
 function VideoChannelClient({
   roomId,
@@ -17,9 +18,12 @@ function VideoChannelClient({
   channelName: string;
   username: string;
 }) {
-  const [isJoined, setIsJoined] = useState(false);
+  const { serverId } = useParams<{ serverId: string }>();
 
-  const { member } = useCurrentServer();
+  if (!serverId) return <div>Loading...</div>;
+
+  const { member } = useCurrentServer(serverId);
+  const [isJoined, setIsJoined] = useState(false);
 
   const onMeetingLeave = () => {
     setIsJoined(false);
@@ -37,7 +41,7 @@ function VideoChannelClient({
           metaData: {
             name: member?.nickname,
             avatar: member?.avatar,
-          }
+          },
         }}
         token={authToken}
       >

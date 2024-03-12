@@ -18,11 +18,17 @@ import { modifyCategoryDetailsAction } from "@/lib/server-actions/category/edit-
 import { categoryDetailsSchema } from "@/lib/validations/category/edit-category-validation";
 import { z } from "zod";
 import { BarLoader } from "react-spinners";
+import { useParams } from "next/navigation";
+import Loading from "@/components/loaders/loading";
 
 const ModifyCategoryModal = () => {
   const { isOpen, onClose, options } = useModal();
+  const { serverId } = useParams<{ serverId: string }>();
+
+  const { member, server } = useCurrentServer(serverId);
+
   const isDialogOpen = isOpen && options.type === "modify-category";
-  const { member, server } = useCurrentServer();
+
   const {
     register,
     handleSubmit,

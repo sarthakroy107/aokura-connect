@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
-import { db } from "../../db";
-import { Member } from "../../schema";
-import { TServerDetailsDto } from "../../dto/server/server-details-dto";
+import { db } from "../../db.js";
+import { Member } from "../../schema.js";
+import { TServerDetailsDto } from "../../dto/server/server-details-dto.js";
 
 export const getJoinedServers = async (profileId: string) => {
   try {

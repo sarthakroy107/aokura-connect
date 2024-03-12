@@ -18,10 +18,14 @@ import { useState } from "react";
 import { deleteCategoryAction } from "@/lib/server-actions/category/delete-category";
 import { deleteCategorySchema } from "@/lib/validations/category/delete-category-validation";
 import { BarLoader } from "react-spinners";
+import { useParams } from "next/navigation";
+import Loading from "@/components/loaders/loading";
 
 const DeleteCategoryModal = () => {
   const { isOpen, options, onClose } = useModal();
-  const { member, server } = useCurrentServer();
+  const { serverId } = useParams<{ serverId: string }>();
+
+  const { member, server } = useCurrentServer(serverId);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isModalOpen = isOpen && options.type === "delete-category";

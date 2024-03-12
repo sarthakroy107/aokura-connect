@@ -3,6 +3,7 @@
 import useCurrentServer from "@/components/hooks/use-current-member";
 import { Button } from "@ui/components/ui/button";
 import Loading from "../loading";
+import { useParams } from "next/navigation";
 
 export default function JoinScreen({
   roomId,
@@ -13,7 +14,8 @@ export default function JoinScreen({
   channelName: string;
   joinVoiceCall: () => void;
 }) {
-  const { member } = useCurrentServer();
+  const { serverId } = useParams<{ serverId: string }>();
+  const { member } = useCurrentServer(serverId);
 
   console.log("In Join Screen");
   if (!member) {

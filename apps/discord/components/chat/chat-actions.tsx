@@ -16,7 +16,7 @@ import { TMessageBodyDto } from "@db/dto/messages/message-dto";
 import { useChatActions } from "@/lib/store/chat-store";
 import TooltipWrapper from "../common/tooltip-wrapper";
 import useCurrentServer from "../hooks/use-current-member";
-
+import { useParams } from "next/navigation";
 
 const ChatActions = memo(
   ({
@@ -24,11 +24,14 @@ const ChatActions = memo(
     setIsEditing,
     setIsDeleting,
   }: {
-    data: TMessageBodyDto ;
+    data: TMessageBodyDto;
     setIsEditing: Dispatch<SetStateAction<boolean>>;
     setIsDeleting: Dispatch<SetStateAction<boolean>>;
   }) => {
-    const { member } = useCurrentServer();
+    const { serverId } = useParams<{ serverId: string }>();
+    if (!serverId) return <div>Loading...</div>;
+
+    const { member } = useCurrentServer(serverId);
     const setReply = useChatActions(useShallow((state) => state.setReply));
 
     return (

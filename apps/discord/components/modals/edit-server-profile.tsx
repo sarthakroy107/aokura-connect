@@ -14,11 +14,12 @@ import useCurrentServer from "@/components/hooks/use-current-member";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { changeName } from "@/lib/server-actions/common/actions";
+import Loading from "@/components/loaders/loading";
 
 const EditServerProfile = () => {
-  const params = useParams<{ serverId: string }>();
+  const { serverId } = useParams<{ serverId: string }>();
   const { isOpen, type, onClose } = useModal();
-  const { member } = useCurrentServer();
+  const { member } = useCurrentServer(serverId);
 
   const isModalOpen = isOpen && type === ModalEnum.EDIT_SERVER_PROFILE;
   const name: string = member?.nickname!;

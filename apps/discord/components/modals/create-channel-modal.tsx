@@ -34,10 +34,13 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import useCurrentServer from "../hooks/use-current-member";
+import Loading from "@/components/loaders/loading";
+import { useCurrentProfile } from "../hooks/use-current-profile";
 
 const CreateChannelModal = () => {
   const router = useRouter();
-  const params = useParams<{ serverId: string }>();
+  const { serverId } = useParams<{ serverId: string }>();
+  const { isOpen, type, onClose, data } = useModal();
 
   const formSchema = z.object({
     name: z
@@ -48,9 +51,8 @@ const CreateChannelModal = () => {
     member_id: z.string(),
   });
 
-  const { isOpen, type, onClose, data } = useModal();
-
-  const { currentProfileData, member } = useCurrentServer();
+  const { currentProfileData } =  useCurrentProfile();
+  const { member } = useCurrentServer(serverId);
 
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -71,7 +73,7 @@ const CreateChannelModal = () => {
       await createChannel(
         values.name,
         values.type,
-        params!.serverId,
+        serverId,
         data.category?.id as string,
         values.member_id
       );
