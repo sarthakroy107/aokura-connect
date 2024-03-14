@@ -1,20 +1,21 @@
 "use client";
 
+import { useDebounce } from "use-debounce";
+import { memo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
+import Image from "next/image";
+
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
 } from "@ui/components/ui/dialog";
-import { useForm } from "react-hook-form";
-import { useDebounce } from "use-debounce";
-import NormalInput from "../form/normal-input";
 import { ScrollArea } from "@ui/components/ui/scroll-area";
-import { memo, useState } from "react";
-import Image from "next/image";
 import { cn } from "@ui/lib/utils";
 import { Button } from "@ui/components/ui/button";
+import NormalInput from "../form/normal-input";
 
 const constants: {
   id: number;
@@ -120,11 +121,12 @@ const constants: {
 ];
 
 const JoinServerModal = () => {
+
   const { isOpen, type, onClose } = useModal();
-  const isModalOpen = isOpen && type === ModalEnum.JOIN_SERVER;
   const { register, watch } = useForm<{ search: string }>();
   const search = watch("search");
   const [value] = useDebounce(search, 1000);
+  const isModalOpen = isOpen && type === ModalEnum.JOIN_SERVER;
 
   return (
     <Dialog open={isModalOpen} onOpenChange={() => onClose()}>

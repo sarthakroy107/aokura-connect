@@ -4,12 +4,16 @@ import { db } from "@db/db";
 import { Channel, channelTypesEnum, memberToChannel } from "@db/schema";
 import { eq } from "drizzle-orm";
 
+type TCreateChannel = {
+  name: string;
+  type: channelTypesEnum;
+  memberId: string;
+  serverId: string;
+  categoryId: string;
+}
+
 export const createChannel = async (
-  name: string,
-  type: channelTypesEnum,
-  serverId: string,
-  categoryId: string,
-  memberId: string
+  { name, type, memberId, serverId, categoryId }: TCreateChannel
 ) => {
   try {
     const newChannel = await db

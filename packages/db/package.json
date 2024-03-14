@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "generate": "drizzle-kit generate:pg",
-    "push": "node -r esbuild-register src/migrate.ts",
+    "push": "drizzle-kit push:pg",
     "migrate": "node -r esbuild-register src/migrate.ts",
     "studio": "drizzle-kit studio"
   },

@@ -1,15 +1,16 @@
 "use client";
 
-import { changeImage } from "@/lib/server-actions/common/actions";
 import { UploadDropzone } from "@/lib/uploadthing";
-import Image from "next/image";
+import { changeImage } from "@/lib/server-actions/common/actions";
 import { useState } from "react";
 import { useCurrentProfile } from "@/components/hooks/use-current-profile";
-import useCurrentServer from "../hooks/use-current-member";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
+
+import Image from "next/image";
 import ClipLoader from "react-spinners/ClipLoader";
+import useCurrentServer from "../hooks/use-current-member";
 
 type TDisplayImageChange = {
   currentImage: string;
@@ -17,6 +18,7 @@ type TDisplayImageChange = {
   id: string;
   type: "server" | "profile" | "member";
 };
+
 
 const DisplayImageChange = ({
   currentImage,
@@ -29,9 +31,7 @@ const DisplayImageChange = ({
   const { serverId } = useParams<{ serverId: string }>();
 
   const { refetchCurrentProfileData} = useCurrentProfile();
-
-  const { refetchServerData } =
-    useCurrentServer(serverId);
+  const { refetchServerData } = useCurrentServer(serverId);
 
   return (
     <>

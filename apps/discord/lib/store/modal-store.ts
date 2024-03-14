@@ -31,11 +31,10 @@ export type TEditCategoryData = {
   categoryName: string;
 };
 
-export type TDeleteCategoryData = & {
+export type TDeleteCategoryData = {
   categoryId: string;
   categoryName: string;
-}
-
+};
 
 type TOptionsData =
   | {
@@ -56,6 +55,10 @@ type TOptionsData =
   | {
       type: "delete-category";
       data: TDeleteCategoryData;
+    }
+  | {
+      type: "create-inviation-link";
+      data: null;
     };
 
 //Need category.id in create-channel-modal.tsx

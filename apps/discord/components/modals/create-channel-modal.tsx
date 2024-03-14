@@ -1,12 +1,15 @@
 "use client";
 
-import { createChannel } from "@/lib/server-actions/channel/actions";
-
 import * as z from "zod";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { channelTypesEnum } from "@db/schema";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
+import { createChannel } from "@/lib/server-actions/channel/actions";
+import { useCurrentProfile } from "@/components/hooks/use-current-profile";
+import useCurrentServer from "@/components/hooks/use-current-member";
+import { LucideIcon, LucideVolume2 } from "lucide-react";
+
+import { channelTypesEnum } from "@db/schema";
 
 import {
   Dialog,
@@ -14,44 +17,38 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-} from "@/components/ui/dialog";
+} from "@ui/components/ui/dialog";
+
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+} from "@ui/components/ui/form";
+import { Input } from "@ui/components/ui/input";
+import { Button } from "@ui/components/ui/button";
 import { toast } from "sonner";
-import useCurrentServer from "../hooks/use-current-member";
-import Loading from "@/components/loaders/loading";
-import { useCurrentProfile } from "../hooks/use-current-profile";
+import { LucideHash } from "lucide-react";
+import { cn } from "@ui/lib/utils";
+import { Label } from "@ui/components/ui/label";
+import { BarLoader } from "react-spinners";
+
+const formSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: "Name is rquired" })
+    .max(16, { message: "Name must be less than 16 characters" }),
+  type: z.nativeEnum(channelTypesEnum),
+  member_id: z.string(),
+});
 
 const CreateChannelModal = () => {
   const router = useRouter();
   const { serverId } = useParams<{ serverId: string }>();
   const { isOpen, type, onClose, data } = useModal();
 
-  const formSchema = z.object({
-    name: z
-      .string()
-      .min(1, { message: "Name is rquired" })
-      .max(16, { message: "Name must be less than 16 characters" }),
-    type: z.nativeEnum(channelTypesEnum),
-    member_id: z.string(),
-  });
-
-  const { currentProfileData } =  useCurrentProfile();
+  const { currentProfileData } = useCurrentProfile();
   const { member } = useCurrentServer(serverId);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -70,13 +67,13 @@ const CreateChannelModal = () => {
       console.log({ currentProfileData, member });
       console.log(values);
       formSchema.parse(values);
-      await createChannel(
-        values.name,
-        values.type,
+      await createChannel({
+        name: values.name,
+        type: values.type,
         serverId,
-        data.category?.id as string,
-        values.member_id
-      );
+        categoryId: data.category?.id as string,
+        memberId: values.member_id,
+      });
 
       toast.success("Channel created");
       form.reset();
@@ -91,7 +88,7 @@ const CreateChannelModal = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={() => onClose()}>
       <DialogContent className="bg-discord rounded-[2px] p-0">
-        <DialogHeader className="text-2xl font-semibold mt-8 mb-0 pb-0 text-center">
+        <DialogHeader className="text-2xl font-semibold mt-8 mb-0 pb-0 text-center uppercase">
           Create Channel
         </DialogHeader>
         <DialogDescription className="text-center uppercase mt-0 pt-0">
@@ -115,47 +112,33 @@ const CreateChannelModal = () => {
                 </FormItem>
               )}
             />
-            <FormField
-              name="type"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <FormItem className="px-5 flex flex-col">
-                  <FormLabel className="uppercase">Channel Type</FormLabel>
-                  <Select
-                    disabled={isLoading}
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl className="bg-discord_darkest">
-                      <SelectTrigger className="border-discord_darker text-white focus:ring-0 ring-offset-0 focus:ring-offset-0 capitalize outline-none">
-                        <SelectValue
-                          className="bg-discord_darkest"
-                          placeholder="Select a channel type"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="mb-5 bg-discord_darker">
-                      {Object.values(channelTypesEnum).map((type) => (
-                        <SelectItem
-                          key={type}
-                          value={type}
-                          className="capitalize"
-                        >
-                          {type.toLowerCase()}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter className="bg-discord_darker mt-4 p-3">
-              <Button
-                type="submit"
-                // className="bg-discord_purple text-white m-3 hover:bg-discord_purple"
-              >
-                Create
+
+            <Label className="uppercase mx-6">Type</Label>
+            <div className="mx-6 mt-2 space-y-4">
+              <ChannelTypeButton
+                hanedleClick={() =>
+                  form.setValue("type", channelTypesEnum.TEXT)
+                }
+                label="Text"
+                selected={form.watch("type") === channelTypesEnum.TEXT}
+                LucideIconComponent={LucideHash}
+                isLoading={isLoading}
+              />
+              <ChannelTypeButton
+                hanedleClick={() =>
+                  form.setValue("type", channelTypesEnum.VOICE)
+                }
+                label="Voice"
+                selected={form.watch("type") === channelTypesEnum.VOICE}
+                LucideIconComponent={LucideVolume2}
+                isLoading={isLoading}
+              />
+            </div>
+            <DialogFooter className="bg-discord_darker mt-4 p-4">
+              <Button type="submit" className="w-20">
+                {
+                  isLoading ? <BarLoader color="#fff" /> : "CREATE"
+                }
               </Button>
             </DialogFooter>
           </form>
@@ -166,3 +149,35 @@ const CreateChannelModal = () => {
 };
 
 export default CreateChannelModal;
+
+function ChannelTypeButton({
+  label,
+  selected,
+  hanedleClick,
+  LucideIconComponent,
+  isLoading,
+}: {
+  label: string;
+  hanedleClick: () => void;
+  selected: boolean;
+  LucideIconComponent: LucideIcon;
+  isLoading: boolean;
+}) {
+  return (
+    <button
+      disabled={isLoading}
+      onClick={hanedleClick}
+      type="button"
+      className={cn(
+        "border hover:border-primary/60 py-2.5 rounded-[3px] flex font-medium text-xl items-center space-x-1 px-3 bg-discord_darkest w-full disabled:bg-discord_darker",
+        selected && "border-primary hover:border-primary disabled:border-primary/50",
+      )}
+    >
+      <div className="p-0.5 border border-primary rounded-full mr-2">
+        <div className={cn("p-1 rounded-full", selected && "bg-primary")} />
+      </div>
+      <LucideIconComponent width={22} /> &nbsp;
+      {label}
+    </button>
+  );
+}

@@ -1,4 +1,4 @@
-import ServerSidebar from "@/components/server/sidebar/ServerSidebar";
+import ServerSidebar from "@/components/server/sidebar/server-sidebar";
 import hasJoinedServer from "@/lib/server-actions/server/has-joined-server";
 
 const ServersidebarLayout = async ({

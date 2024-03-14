@@ -18,10 +18,11 @@ import {
   LucideUser,
   LucideVideo,
   PencilIcon,
+  Settings,
 } from "lucide-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 const CategoryComp = ({
   categoryData,
@@ -99,10 +100,13 @@ const CategoryComp = ({
           </TooltipWrapper>
         </div>
       </div>
-      {open &&
-        categoryData.channels.map((channel, index) => (
-          <ChannelComp key={index} data={channel} />
-        ))}
+      {open && (
+        <div className="space-y-0.5">
+          {categoryData.channels.map((channel, index) => (
+            <ChannelComp key={index} data={channel} />
+          ))}
+        </div>
+      )}
       {!open &&
         categoryData.channels
           .filter((obj) => obj.id === params!.channelId)
@@ -115,11 +119,12 @@ export default CategoryComp;
 
 const ChannelComp = ({ data: channel }: { data: TChannelDetailsDto }) => {
   const params = useParams();
+  const { openModalWithOptions } = useModal();
   return (
     <Link
       href={`/channel/${params!.serverId}/${channel.id}`}
       className={cn(
-        "p-1.5 flex justify-between items-center gap-x-1 px-3 text-sm font-medium text-white text-opacity-65 hover:text-opacity-90 hover:bg-white/5 mx-1.5 rounded-sm",
+        "group p-1.5 flex justify-between items-center gap-x-1 px-3 text-sm font-medium text-white text-opacity-65 hover:text-opacity-90 hover:bg-white/5 mx-1.5 rounded-sm",
         params!.channelId === channel.id &&
           "bg-white/10 hover:bg-white/10 text-opacity-95"
       )}
@@ -132,16 +137,30 @@ const ChannelComp = ({ data: channel }: { data: TChannelDetailsDto }) => {
         ) : (
           <LucideVideo className="h-5 w-5 mr-1" />
         )}
-        {channel.name}
+        <p className="">
+          {channel.name.length > 14
+            ? channel.name.slice(0, 14) + "..."
+            : channel.name}
+        </p>
       </div>
-      <TooltipWrapper label="Invite People">
-        {
-          <LucideUser
-            onClick={(e) => e.preventDefault()}
-            className="w-4 h-5 text-white text-opacity-60 hover:text-opacity-100"
-          />
-        }
-      </TooltipWrapper>
+      <div className="flex items-center gap-1.5 invisible group-hover:visible">
+        <TooltipWrapper label="Edit Channel">
+          <Settings className="w-3.5 h-3.5 text-white text-opacity-60 hover:text-opacity-100" />
+        </TooltipWrapper>
+        <TooltipWrapper label="Invite People">
+          {
+            <LucideUser
+              onClick={() =>
+                openModalWithOptions({
+                  type: "create-inviation-link",
+                  data: null,
+                })
+              }
+              className="w-4 h-5 text-white text-opacity-60 hover:text-opacity-100"
+            />
+          }
+        </TooltipWrapper>
+      </div>
     </Link>
   );
 };

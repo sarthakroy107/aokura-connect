@@ -57,6 +57,27 @@
       "when": 1708787048901,
       "tag": "0007_fancy_eternity",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1710348913370,
+      "tag": "0008_magical_vulture",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1710350918677,
+      "tag": "0009_public_arclight",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1710351037165,
+      "tag": "0010_big_ultron",
+      "breakpoints": true
     }
   ]
 }
