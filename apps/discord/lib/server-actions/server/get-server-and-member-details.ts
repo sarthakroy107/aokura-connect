@@ -6,6 +6,7 @@ import { getServerDetails } from "@db/data-access/server/get-server-full-details
 import { z } from "zod";
 
 export const getServerAndMemberDetails = async (serverId: string) => {
+  console.log("serverId", serverId);
   const profile = await currentProfile();
   const checkServerId = z.string().min(1, { message: "Server ID is required" });
   const result = checkServerId.safeParse(serverId);

@@ -153,7 +153,10 @@ const ChannelComp = ({ data: channel }: { data: TChannelDetailsDto }) => {
               onClick={() =>
                 openModalWithOptions({
                   type: "create-inviation-link",
-                  data: null,
+                  data: {
+                    channelId: channel.id,
+                    serverId: params!.serverId as string,
+                  },
                 })
               }
               className="w-4 h-5 text-white text-opacity-60 hover:text-opacity-100"

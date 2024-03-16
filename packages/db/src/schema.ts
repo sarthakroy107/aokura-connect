@@ -247,11 +247,12 @@ export const EmailActivationTokenTable = pgTable('email_activation_token', {
   }).defaultNow().notNull(),
 })
 
-export const InviteTokenTable = pgTable('invite_token', {
+export const InviteToken = pgTable('invite_token', {
   token:              varchar('token', { length: 140 }).notNull().primaryKey(),
   server_id:          uuid('server_id').notNull().references(() => Server.id, { onDelete: 'cascade' }),
-  creator_member_id:  uuid('creator_profile_id').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
-  expiration:         timestamp('expiration', { withTimezone: true, mode: 'date', }).notNull(),
+  channel_id:         uuid('channel_id').references(() => Channel.id, { onDelete: 'cascade' }),
+  creator_member_id:  uuid('creator_profile_id').notNull().references(() => Profile.id, { onDelete: 'no action' }),
+  expiration:         timestamp('expiration', { withTimezone: true, mode: 'date', }),
   has_limit:          boolean('has_limit').default(false).notNull(),
   limit:              integer('limit'),
   is_active:          boolean('is_active').default(true).notNull(),
@@ -372,13 +373,17 @@ export const emailActivationTokenTableRelations = relations(EmailActivationToken
   })
 }))
 
-export const inviteTokenTableRelations = relations(InviteTokenTable, ({ one }) => ({
+export const inviteTokenTableRelations = relations(InviteToken, ({ one }) => ({
   server: one(Server, {
-    fields: [InviteTokenTable.server_id],
+    fields: [InviteToken.server_id],
     references: [Server.id]
   }),
+  channel: one(Channel, {
+    fields: [InviteToken.channel_id],
+    references: [Channel.id]
+  }),
   creator: one(Member, {
-    fields: [InviteTokenTable.creator_member_id],
+    fields: [InviteToken.creator_member_id],
     references: [Member.id]
   })
 }))
@@ -394,4 +399,4 @@ export type TChannel                   = InferSelectModel<typeof Channel>
 export type TMemberToChannel           = InferSelectModel<typeof memberToChannel>
 export type TMessage                   = InferSelectModel<typeof Message>
 export type TEmailActivationTokenTable = InferSelectModel<typeof EmailActivationTokenTable>
-export type TInviteTokenTable          = InferSelectModel<typeof InviteTokenTable>
+export type TInviteTokenTable          = InferSelectModel<typeof InviteToken>

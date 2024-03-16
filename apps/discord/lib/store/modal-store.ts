@@ -58,7 +58,10 @@ type TOptionsData =
     }
   | {
       type: "create-inviation-link";
-      data: null;
+      data: {
+        serverId: string;
+        channelId: string | null;
+      };
     };
 
 //Need category.id in create-channel-modal.tsx

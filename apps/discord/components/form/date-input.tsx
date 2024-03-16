@@ -71,4 +71,7 @@ const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
     );
   }
 );
+
+DateInput.displayName = "DateInput";
+
 export default DateInput;
