@@ -23,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(inter.className, "w-full min-h-screen")}>
+      <body className={cn(inter.className, "w-full h-screen")}>
         <AppProvider>
           <ThemeProvider
             attribute="class"

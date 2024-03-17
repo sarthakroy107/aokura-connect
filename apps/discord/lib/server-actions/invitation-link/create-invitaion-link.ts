@@ -81,6 +81,7 @@ export const createInvitationLinkAction = async ({
     success: true,
     data: {
       token,
+      message: `Link valid for next ${data.validity.replaceAll("-", " ")}`,
     },
   };
 };

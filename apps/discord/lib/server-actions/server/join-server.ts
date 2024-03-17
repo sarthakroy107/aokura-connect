@@ -1,6 +1,7 @@
 "use server";
 
 import { currentProfile } from "@/lib/auth/current-user";
+import joinChannelOperation from "@db/data-access/channel/join-channel";
 import { joinServerOperation } from "@db/data-access/server/join-server";
 import { redirect } from "next/navigation";
 export default async function joinServerAction({
@@ -10,6 +11,14 @@ export default async function joinServerAction({
   serverId: string;
   channelId?: string;
 }) {
+  if (!serverId) {
+    return {
+      status: 400,
+      success: false,
+      message: "Bad Request, serverId is required",
+    };
+  }
+
   const profile = await currentProfile();
 
   if (!profile.data) {
@@ -20,20 +29,7 @@ export default async function joinServerAction({
     };
   }
 
-  //const res = await isMemberOfServer({ profileId: profile.data.id, serverId });
-
-  // if (res.status !== 200) {
-  //   return {
-  //     status: res.status,
-  //     success: false,
-  //     message: res.error,
-  //   };
-  // }
-
-  // if (res.status === 200 && res.isMember) {
-  //   if (channelId) redirect(`/channels/${serverId}/${channelId}`);
-  //   else redirect(`/channels/${serverId}`);
-  // }
+  console.log("Before Join Server Res");
 
   const joinServerRes = await joinServerOperation({
     profile: {
@@ -46,19 +42,41 @@ export default async function joinServerAction({
     serverId,
   });
 
-  if (joinServerRes.success) {
-    if (channelId) redirect(`/channel/${serverId}/${channelId}`);
-    else redirect(`/channel/${serverId}`);
+  if (joinServerRes.status !== 200 || !joinServerRes.memberId) {
+    return {
+      status: joinServerRes.status,
+      success: false,
+      message: joinServerRes.message,
+    };
+  }
+
+  if (!channelId) {
     return {
       status: joinServerRes.status,
       success: true,
       message: joinServerRes.message,
     };
   }
+  
+  console.log("Before Join Channel Res");
+  const joinChannelRes = await joinChannelOperation({
+    channelId,
+    memberId: joinServerRes.memberId,
+  });
+
+  if (!joinChannelRes.success || !joinChannelRes.joined) {
+    return {
+      status: 400,
+      success: false,
+      message: joinChannelRes.message,
+    };
+  }
+
+  redirect(`/channel/${serverId}/${channelId}`);
 
   return {
-    status: joinServerRes.status,
-    success: false,
-    message: joinServerRes.message,
+    status: 200,
+    success: true,
+    message: "Joined successfully",
   };
 }

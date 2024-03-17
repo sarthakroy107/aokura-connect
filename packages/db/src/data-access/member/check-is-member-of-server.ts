@@ -21,12 +21,14 @@ export async function isMemberOfServer({
         status: 200 as const,
         success: true as const,
         isMember: false,
+        memberDetails: null,
       };
     else
       return {
         status: 200 as const,
         success: true as const,
         isMember: true,
+        memberDetails: member[0],
       };
   } catch (error) {
     console.error(error);
@@ -34,6 +36,8 @@ export async function isMemberOfServer({
       status: 500,
       success: false,
       error: `Error in DB while checking if member is part of server: ${error}`,
+      isMember: undefined,
+      memberDetails: null,
     };
   }
 }

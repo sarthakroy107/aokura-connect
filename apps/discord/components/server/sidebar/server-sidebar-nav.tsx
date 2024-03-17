@@ -35,7 +35,7 @@ const ServersidebarNavbar = memo(
   }) => {
     const [open, setOpen] = useState<boolean>(false);
     const params = useParams<{ serverId: string }>();
-    const { onOpen, setData } = useModal();
+    const { onOpen, setData, openModalWithOptions } = useModal();
 
     useEffect(() => {
       setData({ member });
@@ -85,14 +85,25 @@ const ServersidebarNavbar = memo(
             <LucideFolderPlus className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
           </DropdownMenuItem>
 
-          <Separator className="my-1" />
-
           <DropdownMenuItem
             onClick={() => onOpen(ModalEnum.EDIT_SERVER_PROFILE, {})}
-            className="flex w-full justify-between items-center text-rose-500 focus:bg-red-500 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"
+            className="flex justify-between items-center hover:bg-[#7289da] my-1 text-opacity-60 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"
           >
             <p>Edit Server Profile</p>
             <LucideDoorOpen className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
+          </DropdownMenuItem>
+          <Separator className="my-1" />
+          <DropdownMenuItem
+            onClick={() =>
+              openModalWithOptions({
+                type: "leave-server",
+                data: { serverId: member.server_id },
+              })
+            }
+            className="flex w-full justify-between items-center text-rose-500 focus:bg-red-500 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"
+          >
+            <p>Leave Server</p>
+            <LucideFolderPlus className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

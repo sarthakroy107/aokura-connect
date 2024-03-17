@@ -251,7 +251,7 @@ export const InviteToken = pgTable('invite_token', {
   token:              varchar('token', { length: 140 }).notNull().primaryKey(),
   server_id:          uuid('server_id').notNull().references(() => Server.id, { onDelete: 'cascade' }),
   channel_id:         uuid('channel_id').references(() => Channel.id, { onDelete: 'cascade' }),
-  creator_member_id:  uuid('creator_profile_id').notNull().references(() => Profile.id, { onDelete: 'no action' }),
+  creator_member_id:  uuid('creator_member_id').notNull().references(() => Member.id, { onDelete: 'no action' }),
   expiration:         timestamp('expiration', { withTimezone: true, mode: 'date', }),
   has_limit:          boolean('has_limit').default(false).notNull(),
   limit:              integer('limit'),

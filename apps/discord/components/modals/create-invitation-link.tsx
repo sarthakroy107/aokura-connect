@@ -59,14 +59,17 @@ const CreateInvitaionLinkModal = () => {
   const { serverId } = useParams<{ serverId: string }>();
   const { isOpen, options, onClose } = useModal();
   const { member, isServerDataFetching } = useCurrentServer(serverId);
-  const [link, setLink] = useState<string | null>(null);
+  const [inviteData, setInviteData] = useState<{
+    link: string;
+    message: string;
+  } | null>(null);
 
   const {
     setValue,
     watch,
     handleSubmit,
     setError,
-    formState: { isLoading, errors },
+    formState: { isSubmitting, errors },
   } = useForm<TNewInvitationLink>({
     defaultValues: {
       validity: "7-days",
@@ -104,19 +107,22 @@ const CreateInvitaionLinkModal = () => {
       toast.error(res.message);
       return;
     }
-    setLink(`${process.env.NEXT_PUBLIC_SITE_URL}/invite/${res.data.token}`);
+    setInviteData({
+      link: `${process.env.NEXT_PUBLIC_SITE_URL}/invite/${res.data.token}`,
+      message: res.data.message,
+    });
   };
 
-  console.log({ member })
+  console.log({ member });
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
       {isServerDataFetching || !member ? (
-        <DialogContent className="rounded-[2px] w-[26rem] bg-discord flex justify-center items-center h-72">
+        <DialogContent className="rounded-[2px] w-[28rem] bg-discord flex justify-center items-center h-72">
           <PuffLoader color="#fff" />
         </DialogContent>
-      ) : link ? (
-        <DialogContent className="bg-discord px-5">
+      ) : inviteData ? (
+        <DialogContent className="bg-discord px-5 w-[28rem]">
           <DialogHeader className="text-xl font-medium uppercase">
             INVITATION LINK
           </DialogHeader>
@@ -125,12 +131,10 @@ const CreateInvitaionLinkModal = () => {
               Send this link to a friend
             </Label>
             <div className="flex items-center justify-between bg-discord_darkest p-1 rounded-[3px]">
-              <p className="pl-2 text-sm">
-                {"https://aokura-connect.vercel.app/invite/asdfghjklo"}
-              </p>
+              <p className="pl-2 text-sm">{inviteData.link}</p>
               <Button
                 onClick={() => {
-                  copy(link || "sdck");
+                  copy(inviteData.link);
                   toast.success("Link copied to clipboard");
                 }}
                 className="ml-2"
@@ -140,14 +144,19 @@ const CreateInvitaionLinkModal = () => {
             </div>
             <div className="flex gap-x-1">
               <p className="text-xs font-medium text-white/50">
-                This link is valid for next 7 days.
+                {inviteData.message}
               </p>
-              <button className="text-xs text-discord_default hover:underline">Edit</button>
+              <button
+                onClick={() => setInviteData(null)}
+                className="text-xs text-discord_default hover:underline"
+              >
+                Edit
+              </button>
             </div>
           </div>
         </DialogContent>
       ) : (
-        <DialogContent className="rounded-[2px] bg-discord w-[26rem]">
+        <DialogContent className="rounded-[2px] bg-discord w-[28rem]">
           <DialogHeader className="text-xl font-medium uppercase">
             CREATE INVITE LINK
           </DialogHeader>
@@ -156,6 +165,7 @@ const CreateInvitaionLinkModal = () => {
             className="flex flex-col gap-y-2"
           >
             <DropdownGeneric<TInvitationLinkValidityKeys>
+              disabled={isSubmitting}
               currentValue={validity}
               selectHandler={(value) => setValue("validity", value)}
               values={validLinkDatesKeys}
@@ -163,14 +173,15 @@ const CreateInvitaionLinkModal = () => {
               hasError={errors.validity?.message ? true : false}
             />
             <DropdownGeneric<TInvitationLinkMaxUsersKeys>
+              disabled={isSubmitting}
               currentValue={users}
               selectHandler={(value) => setValue("maxUsers", value)}
               values={maxUsersCountArray}
               label="Max users"
               hasError={errors.maxUsers?.message ? true : false}
             />
-            <Button type="submit" className="mt-3">
-              {isLoading ? <BarLoader color="#fff" /> : "GENERATE"}
+            <Button type="submit" disabled={isSubmitting} className="mt-3">
+              {isSubmitting ? <BarLoader color="#fff" /> : "GENERATE"}
             </Button>
           </form>
         </DialogContent>
@@ -185,6 +196,7 @@ type TDropdownGeneric<T> = {
   currentValue: string | number | null;
   label: string;
   hasError: boolean;
+  disabled: boolean;
   values: {
     key: T;
     value: string | number;
@@ -197,6 +209,7 @@ const DropdownGeneric = <T extends string | number>({
   values,
   label,
   hasError,
+  disabled,
   selectHandler,
 }: TDropdownGeneric<T>) => {
   return (
@@ -209,7 +222,10 @@ const DropdownGeneric = <T extends string | number>({
       >
         {label}
       </Label>
-      <DropdownMenuTrigger className="bg-discord_darker px-3 py-2 rounded-[3px] text-start">
+      <DropdownMenuTrigger
+        disabled={disabled}
+        className="bg-discord_darker px-3 py-2 rounded-[3px] text-start"
+      >
         {values.find((item) => item.key === currentValue)?.value || "SELECT"}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[23rem] rounded-[3px]">

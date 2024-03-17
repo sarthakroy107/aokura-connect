@@ -8,6 +8,7 @@ import ModifyServerModal from "@/components/modals/modify-server-modal";
 import ModifyCategoryModal from "@/components/modals/edit-category-modal";
 import DeleteCategoryModal from "@/components/modals/delete-category";
 import CreateInvitaionLinkModal from "@/components/modals/create-invitation-link";
+import LeaveServerModal from "@/components/modals/leave-server";
 
 const ModalProvider = () => {
   return (
@@ -22,6 +23,7 @@ const ModalProvider = () => {
       <ModifyCategoryModal />
       <DeleteCategoryModal />
       <CreateInvitaionLinkModal />
+      <LeaveServerModal />
     </>
   );
 };

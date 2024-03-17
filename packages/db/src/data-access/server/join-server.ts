@@ -27,6 +27,7 @@ export async function joinServerOperation({
           status: 200 as const,
           success: true as const,
           message: "Already joined",
+          memberId: member.id,
         };
       }
 
@@ -39,10 +40,11 @@ export async function joinServerOperation({
           status: 400 as const,
           success: false as const,
           message: "Server not found",
+          memberId: null,
         };
       }
 
-      await trx
+      const newMember = await trx
         .insert(Member)
         .values({
           profile_id: profile.id,
@@ -50,12 +52,22 @@ export async function joinServerOperation({
           role: "guest",
           nickname: profile.name,
           server_avatar: profile.id,
-        });
+        })
+        .returning();
 
+      if (!newMember || !newMember[0]) {
+        return {
+          status: 500 as const,
+          success: false as const,
+          message: "Internal Server Error",
+          memberId: null,
+        };
+      }
       return {
         status: 200 as const,
         success: true as const,
         message: "Joined successfully",
+        memberId: newMember[0].id,
       };
     });
   } catch (error) {
@@ -64,6 +76,7 @@ export async function joinServerOperation({
       status: 500,
       success: false,
       message: "Internal Server Error - joinServerOperation",
+      memberId: null,
     };
   }
 }

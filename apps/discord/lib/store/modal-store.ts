@@ -62,6 +62,12 @@ type TOptionsData =
         serverId: string;
         channelId: string | null;
       };
+    }
+  | {
+      type: "leave-server";
+      data: {
+        serverId: string;
+      };
     };
 
 //Need category.id in create-channel-modal.tsx
