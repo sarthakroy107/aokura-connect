@@ -11,6 +11,7 @@ export default async function joinServerAction({
   serverId: string;
   channelId?: string;
 }) {
+
   if (!serverId) {
     return {
       status: 400,
@@ -29,7 +30,7 @@ export default async function joinServerAction({
     };
   }
 
-  console.log("Before Join Server Res");
+  //console.log("Before Join Server Res");
 
   const joinServerRes = await joinServerOperation({
     profile: {
@@ -58,7 +59,8 @@ export default async function joinServerAction({
     };
   }
   
-  console.log("Before Join Channel Res");
+  //console.log("Before Join Channel Res");
+
   const joinChannelRes = await joinChannelOperation({
     channelId,
     memberId: joinServerRes.memberId,

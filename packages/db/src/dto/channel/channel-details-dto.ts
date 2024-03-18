@@ -1,4 +1,4 @@
-import { TChannel } from "../../schema";
+import { TChannel } from "../../schema.js";
 
 export const channelDetailsDto = (data: TChannel) => {
   return {
@@ -6,6 +6,7 @@ export const channelDetailsDto = (data: TChannel) => {
     name: data.name,
     type: data.channel_type,
     isPrivate: data.is_private,
+    isBlocked: data.is_blocked,
     channelType: data.channel_type,
     categoryId: data.category_id,
     creatorMemberId: data.creator_member_id,

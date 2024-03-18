@@ -9,6 +9,7 @@ import ModifyCategoryModal from "@/components/modals/edit-category-modal";
 import DeleteCategoryModal from "@/components/modals/delete-category";
 import CreateInvitaionLinkModal from "@/components/modals/create-invitation-link";
 import LeaveServerModal from "@/components/modals/leave-server";
+import ModifyChannelModal from "@/components/modals/modify-channel-modal";
 
 const ModalProvider = () => {
   return (
@@ -24,6 +25,7 @@ const ModalProvider = () => {
       <DeleteCategoryModal />
       <CreateInvitaionLinkModal />
       <LeaveServerModal />
+      <ModifyChannelModal />
     </>
   );
 };

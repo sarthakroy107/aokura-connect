@@ -33,6 +33,7 @@ import { LucideHash } from "lucide-react";
 import { cn } from "@ui/lib/utils";
 import { Label } from "@ui/components/ui/label";
 import { BarLoader } from "react-spinners";
+import ChannelTypeButton from "../channel/select-channel-type";
 
 const formSchema = z.object({
   name: z
@@ -123,6 +124,7 @@ const CreateChannelModal = () => {
                 selected={form.watch("type") === channelTypesEnum.TEXT}
                 LucideIconComponent={LucideHash}
                 isLoading={isLoading}
+                disabled={false}
               />
               <ChannelTypeButton
                 hanedleClick={() =>
@@ -132,6 +134,7 @@ const CreateChannelModal = () => {
                 selected={form.watch("type") === channelTypesEnum.VOICE}
                 LucideIconComponent={LucideVolume2}
                 isLoading={isLoading}
+                disabled={false}
               />
             </div>
             <DialogFooter className="bg-discord_darker mt-4 p-4">
@@ -149,35 +152,3 @@ const CreateChannelModal = () => {
 };
 
 export default CreateChannelModal;
-
-function ChannelTypeButton({
-  label,
-  selected,
-  hanedleClick,
-  LucideIconComponent,
-  isLoading,
-}: {
-  label: string;
-  hanedleClick: () => void;
-  selected: boolean;
-  LucideIconComponent: LucideIcon;
-  isLoading: boolean;
-}) {
-  return (
-    <button
-      disabled={isLoading}
-      onClick={hanedleClick}
-      type="button"
-      className={cn(
-        "border hover:border-primary/60 py-2.5 rounded-[3px] flex font-medium text-xl items-center space-x-1 px-3 bg-discord_darkest w-full disabled:bg-discord_darker",
-        selected && "border-primary hover:border-primary disabled:border-primary/50",
-      )}
-    >
-      <div className="p-0.5 border border-primary rounded-full mr-2">
-        <div className={cn("p-1 rounded-full", selected && "bg-primary")} />
-      </div>
-      <LucideIconComponent width={22} /> &nbsp;
-      {label}
-    </button>
-  );
-}

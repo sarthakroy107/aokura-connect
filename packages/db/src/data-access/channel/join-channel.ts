@@ -10,7 +10,7 @@ export default async function joinChannelOperation({
   memberId: string;
 }) {
   try {
-    console.log("In Join Channel Operation");
+    //console.log("In Join Channel Operation");
     return await db.transaction(async (trx) => {
       const isPrivate = await db.query.Channel.findFirst({
         where: eq(Channel.id, channelId),

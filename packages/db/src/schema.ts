@@ -182,6 +182,7 @@ export const Channel = pgTable('channel', {
   creator_member_id:   uuid('creator_member_id').notNull().references(() => Member.id, { onDelete: 'no action' }),
   channel_type:        channelTypes('channel_type').notNull(),
   is_private:          boolean('is_private').default(false).notNull(),
+  is_blocked:          boolean('is_blocked').default(false).notNull(),
 
   created_at: timestamp('created_at', {
     withTimezone: true,

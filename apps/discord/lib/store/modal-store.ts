@@ -68,6 +68,14 @@ type TOptionsData =
       data: {
         serverId: string;
       };
+    }
+  | {
+      type: "modify-channel";
+      data: {
+        channelId: string;
+        channelName: string;
+        channelType: "text" | "voice" | "video";
+      };
     };
 
 //Need category.id in create-channel-modal.tsx

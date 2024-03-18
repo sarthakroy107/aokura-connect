@@ -145,23 +145,33 @@ const ChannelComp = ({ data: channel }: { data: TChannelDetailsDto }) => {
       </div>
       <div className="flex items-center gap-1.5 invisible group-hover:visible">
         <TooltipWrapper label="Edit Channel">
-          <Settings className="w-3.5 h-3.5 text-white text-opacity-60 hover:text-opacity-100" />
+          <Settings
+            onClick={() => {
+              openModalWithOptions({
+                type: "modify-channel",
+                data: {
+                  channelId: channel.id,
+                  channelName: channel.name,
+                  channelType: channel.type,
+                },
+              });
+            }}
+            className="w-3.5 h-3.5 text-white text-opacity-60 hover:text-opacity-100"
+          />
         </TooltipWrapper>
         <TooltipWrapper label="Invite People">
-          {
-            <LucideUser
-              onClick={() =>
-                openModalWithOptions({
-                  type: "create-inviation-link",
-                  data: {
-                    channelId: channel.id,
-                    serverId: params!.serverId as string,
-                  },
-                })
-              }
-              className="w-4 h-5 text-white text-opacity-60 hover:text-opacity-100"
-            />
-          }
+          <LucideUser
+            onClick={() =>
+              openModalWithOptions({
+                type: "create-inviation-link",
+                data: {
+                  channelId: channel.id,
+                  serverId: params!.serverId as string,
+                },
+              })
+            }
+            className="w-4 h-5 text-white text-opacity-60 hover:text-opacity-100"
+          />
         </TooltipWrapper>
       </div>
     </Link>

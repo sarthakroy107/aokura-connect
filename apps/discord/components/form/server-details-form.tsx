@@ -25,7 +25,6 @@ import NormalInput from "@/components/form/normal-input";
 import { TServerDetailsDto } from "@db/dto/server/server-details-dto";
 import { useParams } from "next/navigation";
 
-
 const ServerDetailsForm = ({
   data,
   newServer,
@@ -33,7 +32,6 @@ const ServerDetailsForm = ({
   data: TServerDetailsDto;
   newServer: boolean;
 }) => {
-
   const { serverId } = useParams<{ serverId: string }>();
 
   const { refetchServerData } = useCurrentServer(serverId);
@@ -47,8 +45,8 @@ const ServerDetailsForm = ({
     values: Omit<TDBServer, "created_at" | "updated_at" | "id">
   ) => {
     try {
-      if (newServer) {} 
-      else {
+      if (newServer) {
+      } else {
         if (!data.id) throw new Error("Refresh page and try again.");
         await updateServerDetails({ serverDetails: values, serverId: data.id });
         toast.success("Server details updated");
@@ -152,9 +150,7 @@ const ServerDetailsForm = ({
             disabled={form.formState.isSubmitting}
             className="mr-4 bg-discord_blurple hover:bg-discord_blurple text-white font-semibold rounded-[3px] w-20 h-9"
           >
-            {
-              form.formState.isSubmitting ? <BarLoader color="#fff" /> : "Save"
-            }
+            {form.formState.isSubmitting ? <BarLoader color="#fff" /> : "Save"}
           </Button>
         </div>
       </form>
