@@ -75,6 +75,8 @@ type TOptionsData =
         channelId: string;
         channelName: string;
         channelType: "text" | "voice" | "video";
+        isPrivate: boolean;
+        serverId: string;
       };
     };
 

@@ -17,11 +17,12 @@ export async function EditChannelAction({
   isPrivate: boolean;
   serverId: string;
 }) {
+
   if (!channelId || !channelName || typeof isPrivate !== "boolean") {
     return {
       status: 400,
       success: false,
-      message: "Invalid input",
+      message: "Bad request, missing required fields",
       data: null,
     };
   }

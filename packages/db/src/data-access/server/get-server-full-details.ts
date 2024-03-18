@@ -1,15 +1,18 @@
-import { eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { db } from "../../db.js";
-import { Server } from "../../schema.js";
+import { Channel, Server } from "../../schema.js";
 import { serverDetailsDto } from "../../dto/server/server-details-dto.js";
 
 export const getServerDetails = async (serverId: string) => {
   try {
     const server = await db.query.Server.findFirst({
       where: eq(Server.id, serverId),
+      orderBy: asc(Server.created_at),
       with: {
         categories: true,
-        channels: true,
+        channels: {
+          orderBy: asc(Channel.created_at),
+        }
       },
     });
     

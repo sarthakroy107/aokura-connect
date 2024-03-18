@@ -103,21 +103,37 @@ const CategoryComp = ({
       {open && (
         <div className="space-y-0.5">
           {categoryData.channels.map((channel, index) => (
-            <ChannelComp key={index} data={channel} />
+            <ChannelComp
+              key={index}
+              data={channel}
+              serverId={categoryData.server_id}
+            />
           ))}
         </div>
       )}
       {!open &&
         categoryData.channels
           .filter((obj) => obj.id === params!.channelId)
-          .map((channel, index) => <ChannelComp key={index} data={channel} />)}
+          .map((channel, index) => (
+            <ChannelComp
+              key={index}
+              data={channel}
+              serverId={categoryData.server_id}
+            />
+          ))}
     </>
   );
 };
 
 export default CategoryComp;
 
-const ChannelComp = ({ data: channel }: { data: TChannelDetailsDto }) => {
+const ChannelComp = ({
+  data: channel,
+  serverId,
+}: {
+  data: TChannelDetailsDto;
+  serverId: string;
+}) => {
   const params = useParams();
   const { openModalWithOptions } = useModal();
   return (
@@ -150,9 +166,11 @@ const ChannelComp = ({ data: channel }: { data: TChannelDetailsDto }) => {
               openModalWithOptions({
                 type: "modify-channel",
                 data: {
+                  serverId: params!.serverId as string,
                   channelId: channel.id,
                   channelName: channel.name,
                   channelType: channel.type,
+                  isPrivate: channel.isPrivate,
                 },
               });
             }}

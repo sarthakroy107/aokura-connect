@@ -12,12 +12,18 @@ import SwitchInput from "../form/switch-imput";
 import { Form, FormField } from "@ui/components/ui/form";
 import { Button } from "@ui/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { EditChannelAction } from "@/lib/server-actions/channel/edit-channel";
+import { useRouter } from "next/navigation";
+import { BarLoader } from "react-spinners";
 
 const ModifyChannelModal = () => {
   const { isOpen, options, onClose } = useModal();
   const [viewing, setViewing] = useState<"details" | "delete" | "block">(
     "details"
   );
+
+  const router = useRouter();
   const isModalOpen = isOpen && options.type === "modify-channel";
 
   if (!isModalOpen) return null;
@@ -34,7 +40,8 @@ const ModifyChannelModal = () => {
               onClick={() => setViewing("details")}
               className={cn(
                 "py-1 text-center hover:bg-slate-300/10 w-20 rounded-[3px]",
-                viewing === "details" && "bg-slate-300/20 py-1 hover:bg-slate-300/20"
+                viewing === "details" &&
+                  "bg-slate-300/20 py-1 hover:bg-slate-300/20"
               )}
             >
               DETAILS
@@ -61,9 +68,11 @@ const ModifyChannelModal = () => {
           <Separator className="ml-1.5 mr-4 h-52" orientation="vertical" />
           {viewing === "details" ? (
             <ChangeChannelDetails
-              channelId={options.data.channelId}
-              channelName={options.data.channelName}
-              channelType={options.data.channelType}
+              {...options.data}
+              successHandler={() => {
+                router.refresh();
+                onClose();
+              }}
             />
           ) : viewing === "block" ? (
             <BlockChannel />
@@ -81,16 +90,22 @@ export default ModifyChannelModal;
 type TModifyChannelForm = {
   channelName: string;
   private: boolean;
-}
+};
 
 const ChangeChannelDetails = ({
+  serverId,
   channelId,
   channelName,
   channelType,
+  isPrivate,
+  successHandler,
 }: {
+  serverId: string;
   channelId: string;
   channelName: string;
   channelType: "text" | "voice" | "video";
+  isPrivate: boolean;
+  successHandler: () => void;
 }) => {
   const form = useForm<TModifyChannelForm>({
     defaultValues: {
@@ -100,7 +115,31 @@ const ChangeChannelDetails = ({
   });
 
   const onSubmit = async (value: TModifyChannelForm) => {
-    console.table(value);
+    if (!value.channelName) {
+      toast.error("Channel name is required");
+      return;
+    }
+
+    if (value.channelName === channelName && value.private === isPrivate) {
+      toast.success("No changes detected");
+      return;
+    }
+
+    const res = await EditChannelAction({
+      channelId,
+      channelName: value.channelName,
+      isBlocked: false,
+      isPrivate: value.private,
+      serverId,
+    });
+
+    if (res.status !== 200) {
+      toast.error(res.message);
+      return;
+    }
+
+    toast.success("Channel updated successfully");
+    successHandler();
   };
 
   return (
@@ -114,6 +153,7 @@ const ChangeChannelDetails = ({
               label="CHANNEL NAME"
               placeholder="Channel name"
               {...field}
+              disabled={form.formState.isSubmitting}
             />
           )}
         />
@@ -140,8 +180,8 @@ const ChangeChannelDetails = ({
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit" className="mt-2 w-14 h-7 text-sm">
-            SAVE
+          <Button disabled={form.formState.isSubmitting} type="submit" className="mt-2 w-14 h-7 text-sm">
+            {form.formState.isSubmitting ? <BarLoader color="#fff" width={25} /> : "SAVE"}
           </Button>
         </div>
       </form>
