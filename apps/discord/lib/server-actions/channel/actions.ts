@@ -47,6 +47,7 @@ export const getChannelById = async (id: string) => {
         id: Channel.id,
         name: Channel.name,
         type: Channel.channel_type,
+        isBlocked: Channel.is_blocked,
       })
       .from(Channel)
       .where(eq(Channel.id, id));

@@ -87,13 +87,19 @@ const ChatMessagesClient = () => {
   }, []);
 
   useEffect(() => {
+    if (!io || !params || !params.channelId) return;
     if (io) {
       io.emit("event:join", {
-        channel_id: params?.channelId,
+        channel_id: params.channelId,
       });
       io.on("event:broadcast-message", (data: TMessageBodyDto) => {
         console.log("Broadcast message from server: ", data);
         setSocketMessages((prev) => [...prev, data]);
+      });
+      io.on("event:channel-status-changed", (data: boolean) => {
+        console.log("channel-status-changed, in CHAT INPUT");
+        console.log(" NEW state: " + data);
+        //setInputDisabled(data);
       });
     }
 

@@ -171,6 +171,7 @@ const ChannelComp = ({
                   channelName: channel.name,
                   channelType: channel.type,
                   isPrivate: channel.isPrivate,
+                  isBlocked: channel.isBlocked,
                 },
               });
             }}

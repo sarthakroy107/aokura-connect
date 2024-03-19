@@ -1,4 +1,3 @@
-
 import ChannelNavbar from "@/components/channel/channel-nav";
 import ChatInput from "@/components/chat/chat-input";
 import ChatMessages from "@/components/chat/chat-messages-server";
@@ -28,6 +27,7 @@ const Page = async ({
             channelId={params.channelId}
             type="channel"
             name={channel.name}
+            isBlocked={channel.isBlocked}
           />
         </>
       )}

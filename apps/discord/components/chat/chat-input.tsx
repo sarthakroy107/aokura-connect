@@ -14,25 +14,43 @@ import useCurrentServer from "../hooks/use-current-member";
 import InReply from "./in-reply";
 import useJWT from "../hooks/use-jwt";
 import { TInsertMessage } from "@db/data-access/messages/create-message";
+import { useEffect, useState } from "react";
 
 type TChatInputProps = {
   name: string;
   type: "channel" | "me";
   serverId: string;
   channelId: string;
+  isBlocked: boolean;
 };
 
-const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
+const ChatInput = ({
+  name,
+  type,
+  serverId,
+  channelId,
+  isBlocked,
+}: TChatInputProps) => {
   const { onOpen, file_url, data, setFileUrl } = useModal();
   const { inReply, replingToMessageData, eraceReplyData } = useChatActions();
   const { socket: io } = useSocket();
   const { token } = useJWT();
-
   const { member } = useCurrentServer(serverId);
+  const [inputDisabled, setInputDisabled] = useState(isBlocked);
 
   const form = useForm<TInsertMessage>();
 
   const isSubmitting = form.formState.isSubmitting;
+
+  useEffect(() => {
+    if (!io) return;
+    io.on("event:channel-status-changed", (data: boolean) => {
+      console.log("channel-status-changed, in CHAT INPUT");
+      console.log("OLD state: " + inputDisabled + " NEW state: " + data);
+      setInputDisabled(data);
+    });
+    
+  }, []);
 
   const onSubmit = async (values: TInsertMessage) => {
     if (isSubmitting) return;
@@ -132,7 +150,9 @@ const ChatInput = ({ name, type, serverId, channelId }: TChatInputProps) => {
                     <PlusCircle />
                   </button>
                   <Input
-                    disabled={isSubmitting || !member}
+                    disabled={
+                      isSubmitting || !member || isBlocked || inputDisabled
+                    }
                     {...field}
                     className="w-[80%] bg-disord_lighter border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                     placeholder={`Message #${name} as ${data.member?.id}`}

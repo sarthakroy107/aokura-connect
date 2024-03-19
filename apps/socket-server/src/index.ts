@@ -4,9 +4,12 @@ import { decrypt, verifyToken } from "./verify-token.js";
 import { TInsertMessage } from "../../../packages/db/src/data-access/messages/create-message.js";
 import { produceMessage } from "./kafka/producer.js";
 import { startMessageConsumer } from "./kafka/consumer.js";
-import { formateNewChatMessage } from "./messages/format-new-chat-message.js"
+import { formateNewChatMessage } from "./messages/format-new-chat-message.js";
 import { messageSchema } from "./messages/message-schema.js";
-
+import {
+  TChangeChannelStatus,
+  chnageChannelStatus,
+} from "./channel/block-channel.js";
 
 const httpServer = createServer();
 
@@ -55,7 +58,7 @@ socketServer.on("connection", (io: Socket) => {
 
     if (result.success) {
       try {
-        console.log(data.token)
+        console.log(data.token);
         await decrypt(data.token);
         const message = result.data;
         const formattedMessage = formateNewChatMessage(message);
@@ -73,6 +76,19 @@ socketServer.on("connection", (io: Socket) => {
       console.log("Invalid message: ", result.error);
     }
   });
+
+  io.on(
+    "event:change-channel-status",
+    async (data: TChangeChannelStatus) => {
+      console.log("Channel status changing: ", data);
+      const res = await chnageChannelStatus({
+        newState: data.newState,
+        channelId: data.channelId,
+      });
+      console.log("Channel status changed, emitting new event ", res, data.newState);
+      io.nsp.to(`channel:${data.channelId}`).emit("event:channel-status-changed", data.newState);
+    }
+  );
 });
 
 httpServer.listen(PORT, () => {
@@ -80,4 +96,4 @@ httpServer.listen(PORT, () => {
 });
 
 //admin();
-startMessageConsumer();
+//startMessageConsumer();

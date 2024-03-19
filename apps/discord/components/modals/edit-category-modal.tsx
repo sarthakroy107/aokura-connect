@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -34,16 +34,18 @@ const ModifyCategoryModal = () => {
     handleSubmit,
     reset,
     formState: { isSubmitting },
-  } = useForm<TEditCategoryData>({
+  } = useForm<Omit<TEditCategoryData, "categoryId">>({
     defaultValues: {
-      categoryId: options.data?.categoryId,
-      categoryName: options.data?.categoryName,
+      categoryName: options.type === "modify-category" ? options.data?.categoryName : "",
     },
   });
 
-  const onSubmit = async (data: TEditCategoryData) => {
+  useEffect(() => {}, [options.data])
+  if(options.type !== "modify-category") return null;
+
+  const onSubmit = async (data: Omit<TEditCategoryData, "categoryId">) => {
     const parsingObject: z.infer<typeof categoryDetailsSchema> = {
-      categoryId: options.data?.categoryId!,
+      categoryId: options.data.categoryId!,
       categoryName: data.categoryName,
       serverId: server?.id!,
       memberId: member?.id!,
@@ -65,6 +67,7 @@ const ModifyCategoryModal = () => {
     reset({});
     onClose();
   };
+
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={() => onClose()}>

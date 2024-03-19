@@ -28,7 +28,9 @@ const DeleteCategoryModal = () => {
   const { member, server } = useCurrentServer(serverId);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  
   const isModalOpen = isOpen && options.type === "delete-category";
+  if(options.type !== "delete-category") return null;
 
   const handleDelete = async () => {
     setIsSubmitting(true);

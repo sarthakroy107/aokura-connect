@@ -4,11 +4,8 @@ import { useModal } from "@/lib/store/modal-store";
 import { Dialog, DialogContent, DialogHeader } from "@ui/components/ui/dialog";
 import { Separator } from "@ui/components/ui/separator";
 import { useState } from "react";
-import NormalInput from "../form/normal-input";
 import { useForm } from "react-hook-form";
-import ChannelTypeButton from "../channel/select-channel-type";
 import { LucideHash, LucideVolume2 } from "lucide-react";
-import SwitchInput from "../form/switch-imput";
 import { Form, FormField } from "@ui/components/ui/form";
 import { Button } from "@ui/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -16,6 +13,12 @@ import { toast } from "sonner";
 import { EditChannelAction } from "@/lib/server-actions/channel/edit-channel";
 import { useRouter } from "next/navigation";
 import { BarLoader } from "react-spinners";
+import NormalInput from "../form/normal-input";
+import ChannelTypeButton from "../channel/select-channel-type";
+import deleteChannelAction from "@/lib/server-actions/channel/delete-channel";
+import SwitchInput from "../form/switch-imput";
+import { useSocket } from "../provider/socket-provider";
+import useCurrentServer from "../hooks/use-current-member";
 
 const ModifyChannelModal = () => {
   const { isOpen, options, onClose } = useModal();
@@ -75,9 +78,19 @@ const ModifyChannelModal = () => {
               }}
             />
           ) : viewing === "block" ? (
-            <BlockChannel />
+            <ChangeChannelStatus
+              channelId={options.data.channelId}
+              currentState={options.data.isBlocked}
+              serverId={options.data.serverId}
+            />
           ) : (
-            <DeleteChannel />
+            <DeleteChannel
+              {...options.data}
+              successHandler={() => {
+                router.refresh();
+                onClose();
+              }}
+            />
           )}
         </div>
       </DialogContent>
@@ -180,8 +193,16 @@ const ChangeChannelDetails = ({
           )}
         />
         <div className="flex justify-end">
-          <Button disabled={form.formState.isSubmitting} type="submit" className="mt-2 w-14 h-7 text-sm">
-            {form.formState.isSubmitting ? <BarLoader color="#fff" width={25} /> : "SAVE"}
+          <Button
+            disabled={form.formState.isSubmitting}
+            type="submit"
+            className="mt-2 w-14 h-7 text-sm"
+          >
+            {form.formState.isSubmitting ? (
+              <BarLoader color="#fff" width={25} />
+            ) : (
+              "SAVE"
+            )}
           </Button>
         </div>
       </form>
@@ -189,21 +210,91 @@ const ChangeChannelDetails = ({
   );
 };
 
-function BlockChannel() {
+function ChangeChannelStatus({
+  channelId,
+  currentState,
+  serverId,
+}: {
+  channelId: string;
+  currentState: boolean;
+  serverId: string;
+}) {
+  const { socket: io } = useSocket();
+  const { member } = useCurrentServer(serverId);
+
+  const handleChangeStatus = () => {
+    console.table(member);
+    if (!member) {
+      toast.error("You are not a member of this server");
+      return;
+    }
+    if (member.role === "guest") {
+      toast.error("You are not allowed to perform this action");
+      return;
+    }
+    if (!io) {
+      toast.error("Socket not connected");
+      return;
+    }
+    const obj = {
+      channelId,
+      newState: !currentState,
+    };
+    io.emit("event:change-channel-status", obj);
+    console.log("emitted");
+  };
+
   return (
     <div className="flex flex-col gap-y-2 items-center h-56">
       <p>Are you sure you want to block this channel?</p>
-      <Button className="mt-2 w-20 h-7 text-sm">BLOCK</Button>
+      <Button
+        type="button"
+        onClick={handleChangeStatus}
+        className="mt-2 w-20 h-7 text-sm"
+      >
+        BLOCK
+      </Button>
     </div>
   );
 }
 
-function DeleteChannel() {
+function DeleteChannel({
+  channelId,
+  serverId,
+  successHandler,
+}: {
+  channelId: string;
+  serverId: string;
+  successHandler: () => void;
+}) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsSubmitting(true);
+    const res = await deleteChannelAction({
+      channelId,
+      serverId,
+    });
+
+    setIsSubmitting(false);
+
+    if (res.status !== 200) {
+      toast.error(res.message);
+      return;
+    }
+    toast.success("Channel deleted successfully");
+    successHandler();
+  };
+
   return (
     <div className="flex flex-col gap-y-2 items-center h-56">
       <p>Are you sure you want to delete this channel?</p>
-      <Button className="mt-2 w-20 h-7 text-sm bg-red-600 hover:bg-red-600/80">
-        DELETE
+      <Button
+        disabled={isSubmitting}
+        onClick={handleDelete}
+        className="mt-2 w-20 h-7 text-sm bg-red-600 hover:bg-red-600/80"
+      >
+        {isSubmitting ? <BarLoader color="#fff" width={25} /> : "DELETE"}
       </Button>
     </div>
   );
