@@ -15,6 +15,7 @@ import InReply from "./in-reply";
 import useJWT from "../hooks/use-jwt";
 import { TInsertMessage } from "@db/data-access/messages/create-message";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type TChatInputProps = {
   name: string;
@@ -35,8 +36,9 @@ const ChatInput = ({
   const { inReply, replingToMessageData, eraceReplyData } = useChatActions();
   const { socket: io } = useSocket();
   const { token } = useJWT();
-  const { member } = useCurrentServer(serverId);
+  const { member, refetchServerData } = useCurrentServer(serverId);
   const [inputDisabled, setInputDisabled] = useState(isBlocked);
+  const router = useRouter();
 
   const form = useForm<TInsertMessage>();
 
@@ -44,13 +46,19 @@ const ChatInput = ({
 
   useEffect(() => {
     if (!io) return;
+    io.emit("event:chat-input-join", {
+      channel_id: channelId,
+    });
     io.on("event:channel-status-changed", (data: boolean) => {
       console.log("channel-status-changed, in CHAT INPUT");
-      console.log("OLD state: " + inputDisabled + " NEW state: " + data);
+      console.log("OLD state: "  + " NEW state: " + data);
       setInputDisabled(data);
+      refetchServerData();
+      router.refresh();
     });
-    
-  }, []);
+  }, [io]);
+
+  useEffect(() => {}, [inputDisabled])
 
   const onSubmit = async (values: TInsertMessage) => {
     if (isSubmitting) return;

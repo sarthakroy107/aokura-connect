@@ -48,6 +48,11 @@ socketServer.on("connection", (io: Socket) => {
     io.join(`channel:${data.channel_id}`);
   });
 
+  io.on("event:chat-input-join", (data) => {
+    console.log("Chat input joined: ", data);
+    io.join(`channel-input:${data.channel_id}`);
+  });
+
   io.on("event:leave", (data) => {
     io.leave(`channel:${data.channel_id}`);
   });
@@ -86,7 +91,7 @@ socketServer.on("connection", (io: Socket) => {
         channelId: data.channelId,
       });
       console.log("Channel status changed, emitting new event ", res, data.newState);
-      io.nsp.to(`channel:${data.channelId}`).emit("event:channel-status-changed", data.newState);
+      io.nsp.to(`channel-input:${data.channelId}`).emit("event:channel-status-changed", data.newState);
     }
   );
 });
@@ -96,4 +101,4 @@ httpServer.listen(PORT, () => {
 });
 
 //admin();
-//startMessageConsumer();
+startMessageConsumer();

@@ -3,8 +3,6 @@ import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogClose,
-  DialogTitle,
   DialogFooter,
   DialogHeader,
 } from "@ui/components/ui/dialog";
@@ -19,7 +17,6 @@ import { categoryDetailsSchema } from "@/lib/validations/category/edit-category-
 import { z } from "zod";
 import { BarLoader } from "react-spinners";
 import { useParams } from "next/navigation";
-import Loading from "@/components/loaders/loading";
 
 const ModifyCategoryModal = () => {
   const { isOpen, onClose, options } = useModal();

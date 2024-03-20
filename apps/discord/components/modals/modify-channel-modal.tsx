@@ -221,9 +221,10 @@ function ChangeChannelStatus({
 }) {
   const { socket: io } = useSocket();
   const { member } = useCurrentServer(serverId);
+  const [isBlocked, setIsBlocked] = useState(currentState);
 
   const handleChangeStatus = () => {
-    console.table(member);
+    //console.table(member);
     if (!member) {
       toast.error("You are not a member of this server");
       return;
@@ -238,9 +239,10 @@ function ChangeChannelStatus({
     }
     const obj = {
       channelId,
-      newState: !currentState,
+      newState: !isBlocked,
     };
     io.emit("event:change-channel-status", obj);
+    setIsBlocked((prev) => !prev);
     console.log("emitted");
   };
 
@@ -251,8 +253,9 @@ function ChangeChannelStatus({
         type="button"
         onClick={handleChangeStatus}
         className="mt-2 w-20 h-7 text-sm"
+
       >
-        BLOCK
+        {isBlocked ? "UNBLOCK" : "BLOCK"}
       </Button>
     </div>
   );
