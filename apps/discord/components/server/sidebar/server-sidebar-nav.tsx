@@ -61,14 +61,14 @@ const ServersidebarNavbar = memo(
             className
           )}
         >
-          <DropdownMenuItem className="flex justify-between items-center hover:bg-[#7289da] text-primary hover:text-white font-medium p-2 py-1 rounded-[2px] cursor-pointer">
+          <DropdownMenuItem className="flex justify-between items-center hover:bg-[#7289da] text-primary hover:text-primary-foreground font-medium p-2 py-1 rounded-[2px] cursor-pointer">
             <p>Invite People</p>
             <LucideUser className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
           </DropdownMenuItem>
           <Separator className="my-1" />
           <DropdownMenuItem
             onClick={() => onOpen(ModalEnum.MODIFY_SERVER, {})}
-            className="flex justify-between items-center hover:bg-[#7289da] my-1 text-opacity-60 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"
+            className="flex justify-between items-center hover:bg-[#7289da] my-1 text-opacity-60 hover:text-opacity-100 hover:text-primary-foreground p-2 py-1 rounded-[2px] cursor-pointer"
           >
             <p>Edit Server</p>
             <LucidePencil className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
@@ -79,7 +79,7 @@ const ServersidebarNavbar = memo(
                 server: { id: params!.serverId },
               })
             }
-            className="flex justify-between items-center hover:bg-[#7289da] my-1 text-opacity-60 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"
+            className="flex justify-between items-center hover:bg-[#7289da] my-1 text-opacity-60 hover:text-opacity-100 hover:text-primary-foreground p-2 py-1 rounded-[2px] cursor-pointer"
           >
             <p>Create Category</p>
             <LucideFolderPlus className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
@@ -87,7 +87,7 @@ const ServersidebarNavbar = memo(
 
           <DropdownMenuItem
             onClick={() => onOpen(ModalEnum.EDIT_SERVER_PROFILE, {})}
-            className="flex justify-between items-center hover:bg-[#7289da] my-1 text-opacity-60 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"
+            className="flex justify-between items-center hover:bg-[#7289da] my-1 text-opacity-60 hover:text-opacity-100 hover:text-primary-foreground p-2 py-1 rounded-[2px] cursor-pointer"
           >
             <p>Edit Server Profile</p>
             <LucideDoorOpen className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />

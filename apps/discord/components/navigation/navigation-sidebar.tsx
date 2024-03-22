@@ -5,6 +5,7 @@ import CreateServerIcon from "@/app/(protected)/channel/_components/create-serve
 import JoinServer from "@/app/(protected)/channel/_components/join-server-icon";
 import SidebarServerIdon from "./sidebar-server-icon";
 import ThemeToggle from "../theme/theme-switcher";
+import SignOutButton from "@/app/(protected)/channel/_components/signout";
 
 const NavigationSidebar = async () => {
   const data = await getProfileJoinedServers();
@@ -18,15 +19,20 @@ const NavigationSidebar = async () => {
   }
 
   return (
-    <ScrollArea className="w-[72px] h-screen bg-[#1E1F22]">
-      {data.servers?.map((server) => {
-        return <SidebarServerIdon key={server.id} server={server} />;
-      })}
-      <Separator className="mx-1 w-[60px] bg-white/10" />
-      <CreateServerIcon profile={data.profile} />
-      <JoinServer />
-      <ThemeToggle />
-    </ScrollArea>
+    <div className="w-[72px] h-screen bg-[#1E1F22] flex flex-col justify-between">
+      <ScrollArea className="w-[72px] h-[88%] bg-[#1E1F22]">
+        {data.servers?.map((server) => {
+          return <SidebarServerIdon key={server.id} server={server} />;
+        })}
+        <Separator className="mx-1 w-[60px] bg-white/10" />
+        <CreateServerIcon profile={data.profile} />
+        <JoinServer />
+      </ScrollArea>
+      <div className="pb-2">
+        <ThemeToggle />
+        <SignOutButton />
+      </div>
+    </div>
   );
 };
 

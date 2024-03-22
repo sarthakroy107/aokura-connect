@@ -101,4 +101,4 @@ httpServer.listen(PORT, () => {
 });
 
 //admin();
-startMessageConsumer();
+//startMessageConsumer();

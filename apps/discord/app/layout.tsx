@@ -27,9 +27,9 @@ export default function RootLayout({
         <AppProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="default"
             enableSystem={false}
-            themes={["dark", "light", "system", "orange", "green", "blue"]}
+            themes={["default", "orange", "green", "blue", "zinc", "violet", "yellow" ]}
           >
             <ReactQueryProvider>
               <SocketProvider>
