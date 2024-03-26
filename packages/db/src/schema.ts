@@ -215,7 +215,7 @@ export const memberToChannel = pgTable('member_to_channel', {
 
 
 export const Message = pgTable('message', {
-
+  
   id:                  uuid('id').defaultRandom().primaryKey().notNull(),
   sender_member_id:    uuid('sender_member_id').notNull().references(() => Member.id, { onDelete: 'no action' }),
   channel_id:          uuid('channel_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
@@ -223,17 +223,58 @@ export const Message = pgTable('message', {
   file_url:            text('file_url'),
   is_deleted:          boolean('deleted').default(false).notNull(),
   in_reply_to:         uuid('in_reply_to').references((): AnyPgColumn => Message.id, { onDelete: 'no action' }),
-
+  
   created_at:  timestamp('created_at', {
     withTimezone: true,
     mode: 'string'
   }).defaultNow().notNull(),
-
+  
   updated_at:  timestamp('updated_at', {
     withTimezone: true,
     mode: 'string'
   }).defaultNow().notNull(),
+})
 
+export const Conversation = pgTable('coversation', {
+
+  id:                  uuid('id').defaultRandom().primaryKey().notNull(),
+  memberOne:           uuid('member_one').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
+  memberTwo:           uuid('member_two').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
+  invitationAccepted:  boolean('invitation_accepted').default(false).notNull(), //Member Two will accept the invitation
+  isDeleted:           boolean('deleted').default(false).notNull(),
+  isBlocked:           boolean('is_blocked').default(false).notNull(),
+  blockedBy:           uuid('blocked_by').references(() => Profile.id, { onDelete: 'no action' }),
+
+  createdAt:           timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string'
+  }).defaultNow().notNull(),
+
+  updatedAt:           timestamp('updated_at', {
+    withTimezone: true,
+    mode: 'string'
+  }).defaultNow().notNull(),
+})
+
+export const DirectMessage = pgTable('direct_message', {
+  
+  id:                     uuid('id').defaultRandom().primaryKey().notNull(),
+  senderProfileId:        uuid('sender_profile_id').notNull().references(() => Member.id, { onDelete: 'no action' }),
+  conversationId:         uuid('conversation_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
+  content:                text('content'),
+  files:                  text('files').array(),
+  isDeleted:              boolean('deleted').default(false).notNull(),
+  inReplyTo:              uuid('in_reply_to').references((): AnyPgColumn => Message.id, { onDelete: 'no action' }),
+
+  createdAt:  timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string'
+  }).defaultNow().notNull(),
+
+  updatedAt:  timestamp('updated_at', {
+    withTimezone: true,
+    mode: 'string'
+  }).defaultNow().notNull(),
 })
 
 export const EmailActivationTokenTable = pgTable('email_activation_token', {
@@ -401,3 +442,5 @@ export type TMemberToChannel           = InferSelectModel<typeof memberToChannel
 export type TMessage                   = InferSelectModel<typeof Message>
 export type TEmailActivationTokenTable = InferSelectModel<typeof EmailActivationTokenTable>
 export type TInviteTokenTable          = InferSelectModel<typeof InviteToken>
+export type TConversation              = InferSelectModel<typeof Conversation>
+export type TDirectMessage             = InferSelectModel<typeof DirectMessage>
