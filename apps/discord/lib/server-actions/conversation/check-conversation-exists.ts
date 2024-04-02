@@ -11,21 +11,17 @@ export default async function checkConversationExistsAction({
 }) {
   //*Make sure profileId1 starts the conversation
   try {
-    let conversationId: string;
     const hasConversation = await checkConversationExistsOperation({
       profileId1,
       profileId2,
     });
-    if(!hasConversation.success ||  hasConversation.status !== 200 || !hasConversation.data) {
-      const newConversation = await createConversationOperation({ profileId1, profileId2 });
-      if(!newConversation.success || !newConversation.data) {
-        throw new Error("Failed to create conversation");
-      }
-      conversationId = newConversation.data.id;
-    }
-    else conversationId = hasConversation.data.id;
 
-    
+    if(hasConversation.data) {
+      return {
+        success: true,
+        
+      }
+    }
 
   } catch (error) {
     console.error(error);

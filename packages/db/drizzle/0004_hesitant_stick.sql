@@ -1,1 +1,0 @@
-ALTER TABLE "server" ALTER COLUMN "inviteCode" DROP NOT NULL;

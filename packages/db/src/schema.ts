@@ -259,8 +259,8 @@ export const Conversation = pgTable('coversation', {
 export const DirectMessage = pgTable('direct_message', {
   
   id:                     uuid('id').defaultRandom().primaryKey().notNull(),
-  senderProfileId:        uuid('sender_profile_id').notNull().references(() => Member.id, { onDelete: 'no action' }),
-  conversationId:         uuid('conversation_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
+  senderProfileId:        uuid('sender_profile_id').notNull().references(() => Profile.id, { onDelete: 'no action' }),
+  conversationId:         uuid('conversation_id').notNull().references(() => Conversation.id, { onDelete: 'cascade' }),
   content:                text('content'),
   files:                  text('files').array(),
   isDeleted:              boolean('deleted').default(false).notNull(),

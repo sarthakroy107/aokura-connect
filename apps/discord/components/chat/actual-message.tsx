@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, memo, useEffect, useState } from "react";
+import { Dispatch, memo, useEffect } from "react";
 import Image from "next/image";
 import { Textarea } from "@ui/components/ui/textarea";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -13,15 +13,16 @@ import {
 } from "@ui/components/ui/popover";
 import { TMessageBodyDto } from "@db/dto/messages/message-dto";
 import { Separator } from "@ui/components/ui/separator";
-import {
-  formatDate,
-  formatJoinedOnDate,
-} from "@/lib/transformations/date-formater";
+import { formatJoinedOnDate } from "@/lib/transformations/date-formater";
 import { Input } from "@ui/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import getProfileFromMemberIdAction from "@/lib/member/get-profile-from -member";
-import Loading from "@/app/(protected)/channel/[serverId]/[channelId]/_components/loading";
 import { MoonLoader } from "react-spinners";
+import dmFromServerChannelAction from "@/lib/server-actions/conversation/dm-from-group";
+import { toast } from "sonner";
+import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import useCurrentServer from "../hooks/use-current-member";
 
 const ActualMessage = memo(
   ({
@@ -180,19 +181,34 @@ const NameHoverCard = ({
   avatar,
   created_at,
 }: TNameHoverCard) => {
-  const { register, handleSubmit } = useForm<{ textMessage: string }>();
+  const params = useParams<{ serverId: string; channelId: string }>();
+  const router = useRouter();
+  const { register, handleSubmit, reset } = useForm<{ textMessage: string }>();
+  const member = useCurrentServer(params.serverId);
   const { data } = useQuery({
     queryKey: ["profile", id],
     queryFn: () => getProfileFromMemberIdAction(id),
     staleTime: 1000 * 60 * 10,
   });
 
-  const onSubmit = ({ textMessage }: {textMessage: string}) => {
+  const onSubmit = async ({ textMessage }: { textMessage: string }) => {
+    if (!textMessage) return;
+    if(!data?.data?.id) return;
     console.log(textMessage);
+    const res = await dmFromServerChannelAction({
+      receiverProfileId: data.data.id,
+      textContent: textMessage,
+    });
+    if (!res.data || res.status !== 200) {
+      toast.error(res.error as string);
+      return;
+    }
+    reset({});
+    router.push(`/channel/me/${res.data.conversationId}`);
   };
 
   return (
-    <Popover>
+    <Popover onOpenChange={() => reset({})}>
       <PopoverTrigger className="text-sm font-medium hover:underline cursor-pointer">
         {nickname}
       </PopoverTrigger>
@@ -229,12 +245,16 @@ const NameHoverCard = ({
                   {formatJoinedOnDate(created_at)}
                 </p>
               </div>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <Input
-                  placeholder={`Message @${data.data.username}`}
-                  {...register("textMessage")}
-                />
-              </form>
+              {member &&
+                member.member &&
+                member.member.id !== id && (
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <Input
+                      placeholder={`Message @${data.data.username}`}
+                      {...register("textMessage")}
+                    />
+                  </form>
+                )}
             </div>
           </>
         )}

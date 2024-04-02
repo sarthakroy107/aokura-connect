@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS "category" (
 	"server_id" uuid NOT NULL,
 	"name" varchar(64) NOT NULL,
 	"description" text,
-	"is_private" boolean DEFAULT false NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "category_id_server_id_creator_member_id_pk" PRIMARY KEY("id","server_id","creator_member_id"),
 	CONSTRAINT "category_id_unique" UNIQUE("id")
 );
@@ -29,6 +30,52 @@ CREATE TABLE IF NOT EXISTS "channel" (
 	"creator_member_id" uuid NOT NULL,
 	"channel_type" "type" NOT NULL,
 	"is_private" boolean DEFAULT false NOT NULL,
+	"is_blocked" boolean DEFAULT false NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "coversation" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"member_one" uuid NOT NULL,
+	"member_two" uuid NOT NULL,
+	"invitation_accepted" boolean DEFAULT false NOT NULL,
+	"deleted" boolean DEFAULT false NOT NULL,
+	"is_blocked" boolean DEFAULT false NOT NULL,
+	"blocked_by" uuid,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "direct_message" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"sender_profile_id" uuid NOT NULL,
+	"conversation_id" uuid NOT NULL,
+	"content" text,
+	"files" text[],
+	"deleted" boolean DEFAULT false NOT NULL,
+	"in_reply_to" uuid,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "email_activation_token" (
+	"token" varchar(140) PRIMARY KEY NOT NULL,
+	"profile_id" uuid NOT NULL,
+	"used" boolean DEFAULT false NOT NULL,
+	"expiration_time" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "invite_token" (
+	"token" varchar(140) PRIMARY KEY NOT NULL,
+	"server_id" uuid NOT NULL,
+	"channel_id" uuid,
+	"creator_member_id" uuid NOT NULL,
+	"expiration" timestamp with time zone,
+	"has_limit" boolean DEFAULT false NOT NULL,
+	"limit" integer,
+	"is_active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -73,7 +120,6 @@ CREATE TABLE IF NOT EXISTS "profile" (
 	"phone" varchar(13),
 	"avatar" text DEFAULT 'https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg',
 	"deleted" boolean DEFAULT false NOT NULL,
-	"active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "profile_phone_unique" UNIQUE("phone")
@@ -84,7 +130,7 @@ CREATE TABLE IF NOT EXISTS "server" (
 	"name" text NOT NULL,
 	"avatar" text DEFAULT 'https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg',
 	"description" text DEFAULT '',
-	"inviteCode" text NOT NULL,
+	"inviteCode" text,
 	"creator_profile_id" uuid NOT NULL,
 	"deleted" boolean DEFAULT false NOT NULL,
 	"is_private" boolean DEFAULT false NOT NULL,
@@ -113,6 +159,7 @@ CREATE TABLE IF NOT EXISTS "member_to_channel" (
 	"id" uuid DEFAULT gen_random_uuid() NOT NULL,
 	"channel_id" uuid NOT NULL,
 	"member_id" uuid NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "member_to_channel_id_channel_id_member_id_pk" PRIMARY KEY("id","channel_id","member_id")
 );
 --> statement-breakpoint
@@ -162,7 +209,67 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "channel" ADD CONSTRAINT "channel_creator_member_id_member_id_fk" FOREIGN KEY ("creator_member_id") REFERENCES "member"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "channel" ADD CONSTRAINT "channel_creator_member_id_member_id_fk" FOREIGN KEY ("creator_member_id") REFERENCES "member"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "coversation" ADD CONSTRAINT "coversation_member_one_profile_id_fk" FOREIGN KEY ("member_one") REFERENCES "profile"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "coversation" ADD CONSTRAINT "coversation_member_two_profile_id_fk" FOREIGN KEY ("member_two") REFERENCES "profile"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "coversation" ADD CONSTRAINT "coversation_blocked_by_profile_id_fk" FOREIGN KEY ("blocked_by") REFERENCES "profile"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "direct_message" ADD CONSTRAINT "direct_message_sender_profile_id_member_id_fk" FOREIGN KEY ("sender_profile_id") REFERENCES "member"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "direct_message" ADD CONSTRAINT "direct_message_conversation_id_channel_id_fk" FOREIGN KEY ("conversation_id") REFERENCES "channel"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "direct_message" ADD CONSTRAINT "direct_message_in_reply_to_message_id_fk" FOREIGN KEY ("in_reply_to") REFERENCES "message"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "email_activation_token" ADD CONSTRAINT "email_activation_token_profile_id_profile_id_fk" FOREIGN KEY ("profile_id") REFERENCES "profile"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "invite_token" ADD CONSTRAINT "invite_token_server_id_server_id_fk" FOREIGN KEY ("server_id") REFERENCES "server"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "invite_token" ADD CONSTRAINT "invite_token_channel_id_channel_id_fk" FOREIGN KEY ("channel_id") REFERENCES "channel"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "invite_token" ADD CONSTRAINT "invite_token_creator_member_id_member_id_fk" FOREIGN KEY ("creator_member_id") REFERENCES "member"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -180,7 +287,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "message" ADD CONSTRAINT "message_sender_member_id_member_id_fk" FOREIGN KEY ("sender_member_id") REFERENCES "member"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "message" ADD CONSTRAINT "message_sender_member_id_member_id_fk" FOREIGN KEY ("sender_member_id") REFERENCES "member"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
