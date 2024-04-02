@@ -6,7 +6,7 @@ const ChannelLayout = async ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="min-h-screen w-full flex text-white">
+    <div className="h-screen w-full flex text-white">
       <NavigationSidebar />
       {children}
     </div>

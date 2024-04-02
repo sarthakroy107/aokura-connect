@@ -6,7 +6,7 @@ export default function DirectMessageLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
+    <div className="flex w-full h-full">
       <DirectMessasgeSidebar />
       {children}
     </div>

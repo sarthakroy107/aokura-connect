@@ -1,11 +1,27 @@
 "use client";
-import { Dispatch, memo, useEffect } from "react";
+import { Dispatch, memo, useEffect, useState } from "react";
 import Image from "next/image";
 import { Textarea } from "@ui/components/ui/textarea";
-import { UseFormReturn } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 import TooltipWrapper from "../common/tooltip-wrapper";
 import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@ui/components/ui/popover";
+import { TMessageBodyDto } from "@db/dto/messages/message-dto";
+import { Separator } from "@ui/components/ui/separator";
+import {
+  formatDate,
+  formatJoinedOnDate,
+} from "@/lib/transformations/date-formater";
+import { Input } from "@ui/components/ui/input";
+import { useQuery } from "@tanstack/react-query";
+import getProfileFromMemberIdAction from "@/lib/member/get-profile-from -member";
+import Loading from "@/app/(protected)/channel/[serverId]/[channelId]/_components/loading";
+import { MoonLoader } from "react-spinners";
 
 const ActualMessage = memo(
   ({
@@ -14,20 +30,17 @@ const ActualMessage = memo(
     setIsEditing,
     isMessageDeleting,
     isDeleted,
+    senderProfile,
   }: {
     form: UseFormReturn<TTransformedMessage>;
     isEditing: boolean;
     setIsEditing: Dispatch<React.SetStateAction<boolean>>;
     isMessageDeleting: boolean;
     isDeleted: boolean;
+    senderProfile: TMessageBodyDto["sender"];
   }) => {
-    const {
-      text_content,
-      file_url,
-      sender: { nickname: name, avatar },
-      created_at,
-      updated_at,
-    } = form.getValues();
+    const { text_content, file_url, sender, created_at, updated_at } =
+      form.getValues();
 
     const onEditSubmit = async (values: {
       text_content: string | null;
@@ -69,11 +82,11 @@ const ActualMessage = memo(
         <div className="mt-[2px]">
           <Image
             src={
-              avatar
-                ? avatar
+              sender.avatar
+                ? sender.avatar
                 : "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
             }
-            alt={name}
+            alt={sender.nickname}
             width={64}
             height={64}
             draggable={false}
@@ -83,9 +96,7 @@ const ActualMessage = memo(
         <div className="w-[95%] relative">
           <div className="w-full justify-between flex gap-x-3">
             <div className="flex gap-x-2 text-white/80">
-              <p className="text-sm font-medium hover:underline cursor-pointer">
-                {name}
-              </p>
+              <NameHoverCard {...senderProfile} />
               <p className="text-xs text-white text-opacity-40 mt-0.5">
                 {created_at}
               </p>
@@ -162,3 +173,79 @@ const ActualMessage = memo(
 );
 
 export default ActualMessage;
+
+const NameHoverCard = ({
+  nickname,
+  id,
+  avatar,
+  created_at,
+}: TNameHoverCard) => {
+  const { register, handleSubmit } = useForm<{ textMessage: string }>();
+  const { data } = useQuery({
+    queryKey: ["profile", id],
+    queryFn: () => getProfileFromMemberIdAction(id),
+    staleTime: 1000 * 60 * 10,
+  });
+
+  const onSubmit = ({ textMessage }: {textMessage: string}) => {
+    console.log(textMessage);
+  };
+
+  return (
+    <Popover>
+      <PopoverTrigger className="text-sm font-medium hover:underline cursor-pointer">
+        {nickname}
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="bg-discord_darker rounded-sm p-0 w-96 overflow-hidden relative"
+      >
+        {!data || data.status !== 200 || !data.data ? (
+          <div className="py-8 flex justify-center">
+            <MoonLoader size={32} color="#FFF" />
+          </div>
+        ) : (
+          <>
+            <div className="bg-yellow-500 w-full h-16 mb-11" />
+            <div className="p-1.5 bg-discord_darker w-fit h-fit rounded-full absolute left-3 top-7">
+              <Image
+                src={avatar}
+                alt="Profile image"
+                width={69}
+                height={69}
+                draggable={false}
+                className="w-16 h-16 rounded-full"
+              />
+            </div>
+            <div className="flex flex-col gap-y-1 mx-3.5 rounded-md p-2 px-3.5 bg-black text-sm mb-4">
+              <p className="text-base font-medium px-1.5">{nickname}</p>
+              <p>@{data.data.username}</p>
+              <Separator className="my-1" />
+              <div className="py-1 mb-3">
+                <p className="text-white/60 font-medium">
+                  AOKURA CONNECT SINCE
+                </p>
+                <p className="text-white/70">
+                  {formatJoinedOnDate(created_at)}
+                </p>
+              </div>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Input
+                  placeholder={`Message @${data.data.username}`}
+                  {...register("textMessage")}
+                />
+              </form>
+            </div>
+          </>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+type TNameHoverCard = {
+  nickname: string;
+  id: string;
+  avatar: string;
+  created_at: string;
+};

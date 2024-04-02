@@ -408,6 +408,18 @@ export const messageRelations = relations(Message, ({ one }) => ({
 
 }))
 
+export const conversationRelations = relations(Conversation, ({ one }) => ({
+  memberOne: one(Profile, {
+    fields: [Conversation.memberOne],
+    references: [Profile.id]
+  }),
+
+  memberTwo: one(Profile, {
+    fields: [Conversation.memberTwo],
+    references: [Profile.id]
+  })
+}))
+
 export const emailActivationTokenTableRelations = relations(EmailActivationTokenTable, ({ one }) => ({
   profile: one(Profile, {
     fields: [EmailActivationTokenTable.profile_id],

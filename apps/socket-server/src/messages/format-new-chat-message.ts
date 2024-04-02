@@ -14,6 +14,7 @@ export const formateNewChatMessage = (
     channel_id: data.channelId,
     in_reply_to: null,
     sender: {
+      created_at: data.senderMemberDetails.created_at,
       nickname: data.senderMemberDetails.nickname,
       avatar: data.senderMemberDetails.avatar ?? "",
       id: data.senderMemberDetails.id,

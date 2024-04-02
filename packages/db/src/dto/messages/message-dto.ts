@@ -40,6 +40,7 @@ const replingToMessageDto = (
 };
 
 const senderDto = (data: TMember & { profile?: TProfile }) => {
+  console.log(data.profile?.created_at);
   return {
     id: data.id,
     role: data.role,
@@ -49,6 +50,7 @@ const senderDto = (data: TMember & { profile?: TProfile }) => {
     is_muted: data.is_muted,
     is_kicked: data.is_kicked,
     is_left: data.is_left,
+    created_at: data.created_at,
   };
 };
 

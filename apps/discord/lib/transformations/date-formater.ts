@@ -1,3 +1,5 @@
+import { string } from "zod";
+
 export function formatDate(inputDate: string) {
   const currentDate = new Date();
   const inputDateTime = new Date(inputDate);
@@ -31,4 +33,9 @@ export function formatDate(inputDate: string) {
     const formattedTime = inputDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     return `${formattedDate} ${formattedTime}`;
   }
+}
+
+export function formatJoinedOnDate(joinedOn: string) {
+  const date = new Date(joinedOn);
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }

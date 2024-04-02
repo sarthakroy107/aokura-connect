@@ -3,6 +3,7 @@ import { getMessages } from '@/lib/server-actions/message/actions'
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 
 import ChatMessagesClient from './chat-messages-client';
+import { getSavedMessages } from '@/lib/server-actions/message/get-messages';
 
 const ChatMessages = async ({channel_id}: { channel_id: string}) => {
 
@@ -10,7 +11,7 @@ const ChatMessages = async ({channel_id}: { channel_id: string}) => {
 
   await queryClient.prefetchInfiniteQuery({
     queryKey: ['messages', channel_id],
-    queryFn: () => getMessages(channel_id, 0, 20),
+    queryFn: () => getSavedMessages(channel_id, 0, 20),
     initialPageParam: 0,
   })
 
