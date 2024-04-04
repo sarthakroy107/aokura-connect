@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { db } from "../../db";
-import { Profile } from "../../schema";
-import { profileDto } from "../../dto/profile/profile-body-dto";
+import { db } from "../../db.js";
+import { Profile } from "../../schema.js";
+import { profileDto } from "../../dto/profile/profile-body-dto.js";
 
 type ProfileStatus = {
   is_email_verified: boolean;

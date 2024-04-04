@@ -13,15 +13,15 @@ import { useSocket } from "../provider/socket-provider";
 import { getSavedMessages } from "@/lib/server-actions/message/get-messages";
 import { TMessageBodyDto } from "@db/dto/messages/message-dto";
 
-export type TMessage = {
-  messageData: {
-    textMessage?: string | null | undefined;
-    fileUrl?: string | null | undefined;
-    inReplyTo?: string | null | undefined;
-  };
-  channelId: string;
-  token: string;
-};
+// export type TMessage = {
+//   messageData: {
+//     textMessage?: string | null | undefined;
+//     fileUrl?: string | null | undefined;
+//     inReplyTo?: string | null | undefined;
+//   };
+//   channelId: string;
+//   token: string;
+// };
 
 const ChatMessagesClient = () => {
   const { ref, inView } = useInView(); //This is used to detect when the user has reached the end of the messages and trigger a fetch for the next page of messages
@@ -34,16 +34,15 @@ const ChatMessagesClient = () => {
   const scrollRef = useRef<HTMLDivElement>(null); //Create a ref for the last div
 
   const [socketMessages, setSocketMessages] = useState<TMessageBodyDto[]>([]);
-  const [inputDisabled, setInputDisabled] = useState(false);
-
   const { socket: io } = useSocket();
 
   const handleGetMessages = async (props: any) => {
-    const messages = await getSavedMessages(
-      params?.channelId!,
-      props?.pageParam,
-      20
-    );
+    const messages = await getSavedMessages({
+      channel_id: params?.channelId!,
+      skip: props?.pageParam,
+      batchSize: 20,
+      type: "server-message",
+    });
     return messages;
   };
 

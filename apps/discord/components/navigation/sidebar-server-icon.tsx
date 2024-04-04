@@ -19,7 +19,7 @@ const SidebarServerIcon = ({ server }: { server: IServerIcon }) => {
     <TooltipWrapper label={server.name} side="right">
       <div
         onClick={() =>
-          router.push(server.id === "me" ? "/me" : `/channel/${server.id}`)
+          router.push(`/channel/${server.id}`)
         }
         className="group flex items-center my-2 gap-x-2 w-full h-11 cursor-pointer"
       >

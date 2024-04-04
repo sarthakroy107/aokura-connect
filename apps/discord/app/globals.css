@@ -9,6 +9,10 @@
   .auth-box {
     @apply bg-discord h-[38rem] pb-10 rounded-[3px] w-[390px] md:w-[420px] lg:w-[480px] flex flex-col items-center py-10
   }
+  .channel-nav {
+    @apply w-full sticky top-0 h-11 bg-discord shadow-sm shadow-black/30 space-x-4 px-5
+    flex items-center text-white text-opacity-40 gap-x-1 text-xs
+  }
 }
  
 @layer base {

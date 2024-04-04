@@ -8,7 +8,9 @@ export default function DirectMessageLayout({
   return (
     <div className="flex w-full h-full">
       <DirectMessasgeSidebar />
-      {children}
+      <div className="w-full h-full">
+        {children}
+      </div>
     </div>
   );
 }
