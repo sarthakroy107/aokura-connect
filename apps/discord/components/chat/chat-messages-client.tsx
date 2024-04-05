@@ -6,30 +6,16 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
 import MessageComponent from "./message-component";
-import useChatSocket from "@/components/hooks/useChatSocket";
 import MessageLoader from "../loaders/message-loader";
 import ChatWelcome from "./chat-welcome";
 import { useSocket } from "../provider/socket-provider";
 import { getSavedMessages } from "@/lib/server-actions/message/get-messages";
 import { TMessageBodyDto } from "@db/dto/messages/message-dto";
 
-// export type TMessage = {
-//   messageData: {
-//     textMessage?: string | null | undefined;
-//     fileUrl?: string | null | undefined;
-//     inReplyTo?: string | null | undefined;
-//   };
-//   channelId: string;
-//   token: string;
-// };
-
 const ChatMessagesClient = () => {
   const { ref, inView } = useInView(); //This is used to detect when the user has reached the end of the messages and trigger a fetch for the next page of messages
 
   const params = useParams<{ serverId: string; channelId: string }>(); //This is used to get the channelId from the url to fetch the messages for the channel
-
-  const socketEvent = `channel:${params?.channelId}:message`;
-  const reactQueryKeys = ["messages", params?.channelId!];
 
   const scrollRef = useRef<HTMLDivElement>(null); //Create a ref for the last div
 
@@ -48,7 +34,7 @@ const ChatMessagesClient = () => {
 
   //*React Query is used to fetch the messages for the channel
   const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
-    queryKey: reactQueryKeys,
+    queryKey: ["messages", params?.channelId!],
     initialPageParam: 0,
     queryFn: handleGetMessages,
     getNextPageParam: (lastPage) => {
@@ -67,9 +53,6 @@ const ChatMessagesClient = () => {
     refetchOnMount: false,
     refetchOnReconnect: false,
   });
-
-  //?This have to be changed
-  useChatSocket({ socketEvent, reactQueryKeys, updateKey: "messages" });
 
   useEffect(() => {
     //*Triggers fetching nextPage messages

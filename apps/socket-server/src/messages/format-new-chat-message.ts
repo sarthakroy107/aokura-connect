@@ -5,26 +5,26 @@ import { formatDate } from "../../../../packages/db/src/dto/messages/date-format
 export const formateNewChatMessage = (
   data: TInsertMessage
 ): TMessageBodyDto => {
-  formatDate(new Date().toISOString()) ;
+  formatDate(new Date().toISOString());
   return {
     id: crypto.randomUUID(),
-    text_content: data.textMessage ?? "",
-    file_url: data.fileUrl ?? "",
-    is_deleted: false,
-    channel_id: data.channelId,
-    in_reply_to: null,
+    content: data.textMessage ?? "",
+    attachments: [data.fileUrl ?? ""],
+    isDeleted: false,
+    channelId: data.channelId,
+    inReplyTo: null,
     sender: {
-      created_at: data.senderMemberDetails.created_at,
-      nickname: data.senderMemberDetails.nickname,
+      joinedOn: data.senderMemberDetails.joinedOn,
+      name: data.senderMemberDetails.name,
       avatar: data.senderMemberDetails.avatar ?? "",
       id: data.senderMemberDetails.id,
       role: data.senderMemberDetails.role,
-      is_banned: data.senderMemberDetails.is_banned,
-      is_muted: data.senderMemberDetails.is_muted,
-      is_kicked: data.senderMemberDetails.is_kicked,
-      is_left: data.senderMemberDetails.is_left,
+      isBanned: data.senderMemberDetails.isBanned,
+      isMuted: data.senderMemberDetails.isMuted,
+      isKicked: data.senderMemberDetails.isKicked,
+      isLeft: data.senderMemberDetails.isLeft,
     },
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    lastEditedOn: new Date().toISOString(),
   };
 };

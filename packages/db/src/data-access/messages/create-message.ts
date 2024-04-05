@@ -15,15 +15,17 @@ export type TInsertMessage = {
 
 export const insertMessage = async (data: TMessageBodyDto) => {
   try {
+    if(!data.sender) return false;
+
     await db.insert(Message).values({
       id: data.id,
       sender_member_id: data.sender.id, // This is the memeber id of the sender
-      channel_id: data.channel_id,
-      file_url: data.file_url,
-      in_reply_to: data.in_reply_to?.id ?? null,
-      content: data.text_content,
-      created_at: data.created_at,
-      updated_at: data.updated_at,
+      channel_id: data.channelId,
+      file_url: data.attachments[0], //!This needs to be changed
+      in_reply_to: data.inReplyTo?.id ?? null,
+      content: data.content,
+      created_at: data.createdAt,
+      updated_at: data.lastEditedOn,
       is_deleted: false,
     });
 

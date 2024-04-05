@@ -420,6 +420,23 @@ export const conversationRelations = relations(Conversation, ({ one }) => ({
   })
 }))
 
+export const directMessageRelations = relations(DirectMessage, ({ one }) => ({
+  sender: one(Profile, {
+    fields: [DirectMessage.senderProfileId],
+    references: [Profile.id]
+  }),
+
+  conversation: one(Conversation, {
+    fields: [DirectMessage.conversationId],
+    references: [Conversation.id]
+  }),
+
+  in_reply_to: one(DirectMessage, {
+    fields: [DirectMessage.inReplyTo],
+    references: [DirectMessage.id]
+  })
+}))
+
 export const emailActivationTokenTableRelations = relations(EmailActivationTokenTable, ({ one }) => ({
   profile: one(Profile, {
     fields: [EmailActivationTokenTable.profile_id],

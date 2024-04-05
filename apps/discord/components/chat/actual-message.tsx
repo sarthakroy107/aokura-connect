@@ -1,4 +1,5 @@
 "use client";
+
 import { Dispatch, memo, useEffect } from "react";
 import Image from "next/image";
 import { Textarea } from "@ui/components/ui/textarea";
@@ -21,7 +22,6 @@ import { MoonLoader } from "react-spinners";
 import dmFromServerChannelAction from "@/lib/server-actions/conversation/dm-from-group";
 import { toast } from "sonner";
 import { useParams, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import useCurrentServer from "../hooks/use-current-member";
 
 const ActualMessage = memo(
@@ -176,7 +176,7 @@ const ActualMessage = memo(
 export default ActualMessage;
 
 const NameHoverCard = ({
-  nickname,
+  name,
   id,
   avatar,
   created_at,
@@ -210,7 +210,7 @@ const NameHoverCard = ({
   return (
     <Popover onOpenChange={() => reset({})}>
       <PopoverTrigger className="text-sm font-medium hover:underline cursor-pointer">
-        {nickname}
+        {name}
       </PopoverTrigger>
       <PopoverContent
         align="start"
@@ -234,7 +234,7 @@ const NameHoverCard = ({
               />
             </div>
             <div className="flex flex-col gap-y-1 mx-3.5 rounded-md p-2 px-3.5 bg-black text-sm mb-4">
-              <p className="text-base font-medium px-1.5">{nickname}</p>
+              <p className="text-base font-medium px-1.5">{name}</p>
               <p>@{data.data.username}</p>
               <Separator className="my-1" />
               <div className="py-1 mb-3">
@@ -264,7 +264,7 @@ const NameHoverCard = ({
 };
 
 type TNameHoverCard = {
-  nickname: string;
+  name: string;
   id: string;
   avatar: string;
   created_at: string;

@@ -1,4 +1,4 @@
-import { TInsertMessage } from "../../../../packages/db/src/data-access/messages/create-message.js";
+import type { TInsertMessage } from "../../../../packages/db/src/data-access/messages/create-message.js";
 import { string, z, ZodType } from "zod";
 
 export const messageSchema: ZodType<TInsertMessage> = z.object({
@@ -7,25 +7,53 @@ export const messageSchema: ZodType<TInsertMessage> = z.object({
   inReplyTo: z
     .object({
       id: z.string(),
-      text_content: z.string().nullable(),
-      is_deleted: z.boolean(),
+      content: z.string(),
+      isDeleted: z.boolean(),
       sender: z.object({
         id: z.string(),
         role: z.union([
           z.literal("admin"),
           z.literal("moderator"),
           z.literal("guest"),
-        ]),
-        created_at: z.string(),
-        nickname: z.string(),
+        ]).nullable(),
+        joinedOn: z.string(),
+        name: z.string(),
         avatar: z.string(),
-        is_banned: z.boolean(),
-        is_muted: z.boolean(),
-        is_kicked: z.boolean(),
-        is_left: z.boolean(),
+        isBanned: z.boolean(),
+        isMuted: z.boolean(),
+        isKicked: z.boolean(),
+        isLeft: z.boolean(),
       }),
-      created_at: z.string(),
-      updated_at: z.string(),
+      createdAt: z.string(),
+      latEditedAt: z.string(),
+      attachments: z.array(z.string()), // Change this line
+      channelId: z.string(),
+      inReplyTo: z.object({
+        id: z.string(),
+        content: z.string(),
+        isDeleted: z.boolean(),
+        sender: z.object({
+          id: z.string(),
+          role: z.union([
+            z.literal("admin"),
+            z.literal("moderator"),
+            z.literal("guest"),
+          ]).nullable(),
+          joinedOn: z.string(),
+          name: z.string(),
+          avatar: z.string(),
+          isBanned: z.boolean(),
+          isMuted: z.boolean(),
+          isKicked: z.boolean(),
+          isLeft: z.boolean(),
+        }),
+        createdAt: z.string(),
+        lastEditedOn: z.string(),
+        attachments: z.array(z.string()), // Change this line
+        channelId: z.string(),
+        inReplyTo: z.null(),
+      }),
+      lastEditedOn: z.string(),
     })
     .nullable(),
 
@@ -35,15 +63,16 @@ export const messageSchema: ZodType<TInsertMessage> = z.object({
       z.literal("admin"),
       z.literal("moderator"),
       z.literal("guest"),
-    ]),
-    nickname: z.string(),
+    ]).nullable(),
+    name: z.string(),
     avatar: z.string(),
-    is_banned: z.boolean(),
-    is_muted: z.boolean(),
-    is_kicked: z.boolean(),
-    is_left: z.boolean(),
-    created_at: z.string(),
+    isBanned: z.boolean(),
+    isMuted: z.boolean(),
+    isKicked: z.boolean(),
+    isLeft: z.boolean(),
+    joinedOn: z.string(),
   }),
+
   channelId: z.string(),
   token: z.string(),
 });

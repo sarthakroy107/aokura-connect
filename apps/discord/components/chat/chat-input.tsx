@@ -123,7 +123,7 @@ const ChatInput = ({
       >
         {inReply && replingToMessageData && (
           <InReply
-            senderName={replingToMessageData.sender.nickname}
+            senderName={replingToMessageData.sender.name}
             messageId={replingToMessageData.id}
           />
         )}
