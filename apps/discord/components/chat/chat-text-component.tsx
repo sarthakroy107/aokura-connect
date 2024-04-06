@@ -1,6 +1,6 @@
 "use client";
 
-import { messageBodyDto } from "@/lib/transformations/message";
+import { messageBodyDto } from "@db/dto/messages/message-dto";
 import { forwardRef } from "react";
 
 const ChatTextComponent = forwardRef(
@@ -11,16 +11,14 @@ const ChatTextComponent = forwardRef(
       formIsSubmitting,
     }: {
       data: ReturnType<typeof messageBodyDto>;
-      setIsEditing: React.Dispatch<
-        React.SetStateAction<boolean>
-      >;
+      setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
       formIsSubmitting: boolean;
     },
-    ref 
+    ref
   ) => {
     return (
       <p className="text-sm text-white text-opacity-75 mt-[2px]">
-        {data.text_content}
+        {data.content}
       </p>
     );
   }

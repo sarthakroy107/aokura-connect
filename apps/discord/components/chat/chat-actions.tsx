@@ -36,7 +36,7 @@ const ChatActions = memo(
 
     return (
       <div className="flex p-0.5 bg-disord_lighter rounded-sm gap-x-0.5 text-white/30">
-        {member?.id === data.sender.id && (
+        {member?.id === data.sender?.id && (
           <TooltipWrapper label="Edit" align="center" side="top">
             <div
               onClick={() => setIsEditing(true)}
@@ -49,7 +49,7 @@ const ChatActions = memo(
         <TooltipWrapper label="Copy" align="center" side="top">
           <div
             onClick={() => {
-              copy(data.text_content || "");
+              copy(data.content || "");
               toast.success("Copied to clipboard");
             }}
             className="hover:bg-white/20 rounded-sm p-1"
@@ -67,7 +67,7 @@ const ChatActions = memo(
             <LucideReply className="h-5 w-5" />
           </div>
         </TooltipWrapper>
-        {member?.id === data.sender.id && (
+        {member?.id === data.sender?.id && (
           <TooltipWrapper label="Delete" align="center" side="top">
             <div
               onClick={() => setIsDeleting(true)}

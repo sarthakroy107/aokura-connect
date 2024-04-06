@@ -50,7 +50,7 @@ const ServerSidebar = async ({ server_id }: { server_id: string }) => {
             data: [
               {
                 id: res.data.member.id,
-                name: res.data.member.nickname || '',
+                name: res.data.member.name || '',
                 icon:
                   res.data.member.role === "admin" ? (
                     <Shield />

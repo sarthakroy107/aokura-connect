@@ -32,25 +32,27 @@ function VideoChannelClient({
   console.log("In Video Channel Client");
   return (
     <>
-      <MeetingProvider
-        config={{
-          meetingId: roomId,
-          micEnabled: false,
-          webcamEnabled: false,
-          name: username,
-          metaData: {
-            name: member?.nickname,
-            avatar: member?.avatar,
-          },
-        }}
-        token={authToken}
-      >
-        <MeetingView
-          roomId={roomId}
-          channelName={channelName}
-          onMeetingLeave={onMeetingLeave}
-        />
-      </MeetingProvider>
+      {member && (
+        <MeetingProvider
+          config={{
+            meetingId: roomId,
+            micEnabled: false,
+            webcamEnabled: false,
+            name: username,
+            metaData: {
+              name: member.name,
+              avatar: member.avatar,
+            },
+          }}
+          token={authToken}
+        >
+          <MeetingView
+            roomId={roomId}
+            channelName={channelName}
+            onMeetingLeave={onMeetingLeave}
+          />
+        </MeetingProvider>
+      )}
     </>
   );
 }

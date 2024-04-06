@@ -22,7 +22,7 @@ const EditServerProfile = () => {
   const { member } = useCurrentServer(serverId);
 
   const isModalOpen = isOpen && type === ModalEnum.EDIT_SERVER_PROFILE;
-  const name: string = member?.nickname!;
+  const name: string = member?.name!;
   console.log({ name });
   const form = useForm<{ name: string }>({ defaultValues: { name: name } });
 

@@ -8,7 +8,7 @@ export const formateNewChatMessage = (
   formatDate(new Date().toISOString());
   return {
     id: crypto.randomUUID(),
-    content: data.textMessage ?? "",
+    content: data.content ?? "",
     attachments: data.attachments,
     isDeleted: false,
     channelId: data.channelId,

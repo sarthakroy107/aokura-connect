@@ -21,7 +21,7 @@ export default async function createDMOperation({
       .insert(DirectMessage)
       .values({
         conversationId,
-        files,
+        attachments: files,
         senderProfileId,
         content: textContent,
         inReplyTo,

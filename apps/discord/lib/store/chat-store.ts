@@ -22,8 +22,8 @@ export const useChatActions = create<TChatReply>((set) => ({
       ...state,
       inReply: true,
       messageId: data.id,
-      senderName: data.sender.name,
-      mediaContent: data.file_url ? true : false,
+      senderName: data.sender?.name || "",
+      mediaContent: data.attachments ? true : false,
       replingToMessageData: data,
     })),
   setEditing: (data) => ({

@@ -97,7 +97,7 @@ const ServersidebarNavbar = memo(
             onClick={() =>
               openModalWithOptions({
                 type: "leave-server",
-                data: { serverId: member.server_id },
+                data: { serverId: member.serverId },
               })
             }
             className="flex w-full justify-between items-center text-rose-500 focus:bg-red-500 hover:text-opacity-100 hover:text-white p-2 py-1 rounded-[2px] cursor-pointer"

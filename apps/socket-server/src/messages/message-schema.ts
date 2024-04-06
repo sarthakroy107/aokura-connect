@@ -2,7 +2,7 @@ import type { TInsertMessage } from "../../../../packages/db/src/data-access/mes
 import { string, z, ZodType } from "zod";
 
 export const messageSchema: ZodType<TInsertMessage> = z.object({
-  textMessage: z.string().nullable(),
+  content: z.string(),
   attachments: z.string().array(),
   inReplyTo: z
     .object({

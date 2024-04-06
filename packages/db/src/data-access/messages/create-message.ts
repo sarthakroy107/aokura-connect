@@ -3,7 +3,7 @@ import { TMessageBodyDto, TMessageSenderDto, TReplingToMessageDto } from "../../
 import { Message } from "../../schema.js";
 
 export type TInsertMessage = {
-  content: string | undefined;
+  content: string;
   attachments: string[];
   inReplyTo: null | TReplingToMessageDto
   senderMemberDetails: TMessageSenderDto;
