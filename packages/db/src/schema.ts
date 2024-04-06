@@ -220,7 +220,7 @@ export const Message = pgTable('message', {
   sender_member_id:    uuid('sender_member_id').notNull().references(() => Member.id, { onDelete: 'no action' }),
   channel_id:          uuid('channel_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
   content:             text('content'),
-  file_url:            text('file_url'),
+  attachments:         text('attachments').array(),
   is_deleted:          boolean('deleted').default(false).notNull(),
   in_reply_to:         uuid('in_reply_to').references((): AnyPgColumn => Message.id, { onDelete: 'no action' }),
   
@@ -240,7 +240,7 @@ export const Conversation = pgTable('coversation', {
   id:                  uuid('id').defaultRandom().primaryKey().notNull(),
   memberOne:           uuid('member_one').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
   memberTwo:           uuid('member_two').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
-  invitationAccepted:  boolean('invitation_accepted').default(false).notNull(), //Member Two will accept the invitation
+  invitationAccepted:  boolean('invitation_accepted').default(false).notNull(), //*Member Two will accept the invitation
   isDeleted:           boolean('deleted').default(false).notNull(),
   isBlocked:           boolean('is_blocked').default(false).notNull(),
   blockedBy:           uuid('blocked_by').references(() => Profile.id, { onDelete: 'no action' }),
@@ -262,7 +262,7 @@ export const DirectMessage = pgTable('direct_message', {
   senderProfileId:        uuid('sender_profile_id').notNull().references(() => Profile.id, { onDelete: 'no action' }),
   conversationId:         uuid('conversation_id').notNull().references(() => Conversation.id, { onDelete: 'cascade' }),
   content:                text('content'),
-  files:                  text('files').array(),
+  attachments:            text('attachments').array(),
   isDeleted:              boolean('deleted').default(false).notNull(),
   inReplyTo:              uuid('in_reply_to').references((): AnyPgColumn => Message.id, { onDelete: 'no action' }),
 

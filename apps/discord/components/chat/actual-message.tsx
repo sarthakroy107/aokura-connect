@@ -12,7 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@ui/components/ui/popover";
-import { TMessageBodyDto } from "@db/dto/messages/message-dto";
+import { TSenderBody } from "@db/dto/messages/sender";
 import { Separator } from "@ui/components/ui/separator";
 import { formatJoinedOnDate } from "@/lib/transformations/date-formater";
 import { Input } from "@ui/components/ui/input";
@@ -38,33 +38,30 @@ const ActualMessage = memo(
     setIsEditing: Dispatch<React.SetStateAction<boolean>>;
     isMessageDeleting: boolean;
     isDeleted: boolean;
-    senderProfile: TMessageBodyDto["sender"];
+    senderProfile: TSenderBody | null;
   }) => {
-    const { text_content, file_url, sender, created_at, updated_at } =
+    const { content, attachments, sender, createdAt, lastEditedOn } =
       form.getValues();
 
     const onEditSubmit = async (values: {
-      text_content: string | null;
-      file_url: string | null;
-      updated_at: string;
+      content: string | null;
+      attachments: string[] | null;
+      lastEditedOn: string;
     }) => {
       setIsEditing(false);
-      if (
-        text_content !== values.text_content ||
-        file_url !== values.file_url
-      ) {
-        form.setValue("updated_at", new Date().toISOString());
+      if (content !== values.content || attachments !== values.attachments) {
+        form.setValue("lastEditedOn", new Date().toISOString());
       }
       await new Promise<void>((resolve) => {
         setTimeout(resolve, 2000);
       });
-      values.updated_at = new Date().toISOString();
+      values.lastEditedOn = new Date().toISOString();
       console.log("submitting");
       form.reset();
     };
 
-    const currentTextContent = form.watch("text_content");
-    const lastUpdatedAt = form.watch("updated_at");
+    const currentTextContent = form.watch("content");
+    const lastUpdatedAt = form.watch("lastEditedOn");
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Escape") {
@@ -80,26 +77,28 @@ const ActualMessage = memo(
 
     return (
       <div className="w-full flex gap-x-3">
-        <div className="mt-[2px]">
-          <Image
-            src={
-              sender.avatar
-                ? sender.avatar
-                : "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
-            }
-            alt={sender.nickname}
-            width={64}
-            height={64}
-            draggable={false}
-            className="rounded-full object-cover h-10 w-10"
-          />
-        </div>
+        {sender && (
+          <div className="mt-[2px]">
+            <Image
+              src={
+                sender.avatar
+                  ? sender.avatar
+                  : "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
+              }
+              alt={sender.name}
+              width={64}
+              height={64}
+              draggable={false}
+              className="rounded-full object-cover h-10 w-10"
+            />
+          </div>
+        )}
         <div className="w-[95%] relative">
           <div className="w-full justify-between flex gap-x-3">
             <div className="flex gap-x-2 text-white/80">
-              <NameHoverCard {...senderProfile} />
+              {senderProfile && <NameHoverCard {...senderProfile} />}
               <p className="text-xs text-white text-opacity-40 mt-0.5">
-                {created_at}
+                {createdAt}
               </p>
             </div>
           </div>
@@ -114,7 +113,7 @@ const ActualMessage = memo(
                 onKeyDown={handleKeyDown}
                 disabled={form.formState.isSubmitting}
                 className="max-w-[690px] h-10 bg-[#202225] rounded-[3px] outline-none focus-visible:ring-offset-0 focus-visible:ring-0"
-                {...form.register("text_content")}
+                {...form.register("content")}
               />
               <div className="flex pl-1 mt-0.5 text-xs text-white/50">
                 <span>
@@ -145,10 +144,10 @@ const ActualMessage = memo(
           ) : (
             <p className="text-sm text-start text-white text-opacity-75 mt-[2px] my-1">
               {currentTextContent} &nbsp;{" "}
-              {updated_at !== lastUpdatedAt && "(edited)"}
+              {lastEditedOn !== lastUpdatedAt && "(edited)"}
             </p>
           )}
-          {file_url && (
+          {attachments && (
             <div className={cn("group/delete w-fit mt-1 relative")}>
               {!isMessageDeleting && (
                 <div className="hidden group-hover/delete:flex justify-center items-center bg-discord hover:bg-red-500 absolute right-1.5 top-1.5 cursor-pointer rounded-sm">
@@ -157,14 +156,17 @@ const ActualMessage = memo(
                   </TooltipWrapper>
                 </div>
               )}
-              <Image
-                width={900}
-                height={750}
-                src={file_url}
-                alt="upload"
-                draggable={false}
-                className="h-56 w-fit object-cover rounded-sm"
-              />
+              {attachments.map((imageURL, index) => (
+                <Image
+                  key={index}
+                  width={900}
+                  height={750}
+                  src={imageURL}
+                  alt="upload"
+                  draggable={false}
+                  className="h-56 w-fit object-cover rounded-sm"
+                />
+              ))}
             </div>
           )}
         </div>
@@ -175,12 +177,7 @@ const ActualMessage = memo(
 
 export default ActualMessage;
 
-const NameHoverCard = ({
-  name,
-  id,
-  avatar,
-  created_at,
-}: TNameHoverCard) => {
+const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
   const params = useParams<{ serverId: string; channelId: string }>();
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<{ textMessage: string }>();
@@ -193,7 +190,7 @@ const NameHoverCard = ({
 
   const onSubmit = async ({ textMessage }: { textMessage: string }) => {
     if (!textMessage) return;
-    if(!data?.data?.id) return;
+    if (!data?.data?.id) return;
     console.log(textMessage);
     const res = await dmFromServerChannelAction({
       receiverProfileId: data.data.id,
@@ -241,20 +238,16 @@ const NameHoverCard = ({
                 <p className="text-white/60 font-medium">
                   AOKURA CONNECT SINCE
                 </p>
-                <p className="text-white/70">
-                  {formatJoinedOnDate(created_at)}
-                </p>
+                <p className="text-white/70">{formatJoinedOnDate(joinedOn)}</p>
               </div>
-              {member &&
-                member.member &&
-                member.member.id !== id && (
-                  <form onSubmit={handleSubmit(onSubmit)}>
-                    <Input
-                      placeholder={`Message @${data.data.username}`}
-                      {...register("textMessage")}
-                    />
-                  </form>
-                )}
+              {member && member.member && member.member.id !== id && (
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <Input
+                    placeholder={`Message @${data.data.username}`}
+                    {...register("textMessage")}
+                  />
+                </form>
+              )}
             </div>
           </>
         )}
@@ -264,8 +257,8 @@ const NameHoverCard = ({
 };
 
 type TNameHoverCard = {
-  name: string;
+  name?: string | undefined;
   id: string;
   avatar: string;
-  created_at: string;
+  joinedOn: string;
 };

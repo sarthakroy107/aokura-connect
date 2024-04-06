@@ -30,7 +30,7 @@
     "@types/node": "^20.11.17",
     "@types/pg": "^8.10.9",
     "@types/ws": "^8.5.10",
-    "drizzle-kit": "^0.20.13",
+    "drizzle-kit": "^0.20.14",
     "tsimp": "^2.0.11",
     "typescript": "^5.3.3"
   }

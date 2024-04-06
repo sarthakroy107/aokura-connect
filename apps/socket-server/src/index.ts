@@ -63,7 +63,6 @@ socketServer.on("connection", (io: Socket) => {
 
     if (result.success) {
       try {
-        console.log(data.token);
         await decrypt(data.token);
         const message = result.data;
         const formattedMessage = formateNewChatMessage(message);

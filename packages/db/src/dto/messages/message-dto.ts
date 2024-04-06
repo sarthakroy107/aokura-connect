@@ -13,7 +13,7 @@ export const messageBodyDto = (data: TChatMessageData): TGenericMessageBody => {
   return {
     id: data.id,
     content: data.content ?? "",
-    attachments: [data.file_url || ""],
+    attachments: data.attachments ?? [],
     isDeleted: data.is_deleted,
     channelId: data.channel_id,
     sender: senderDto(data.sender),

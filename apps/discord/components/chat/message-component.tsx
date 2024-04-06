@@ -19,24 +19,25 @@ import {
 import { cn } from "@ui/lib/utils";
 import ActualMessage from "./actual-message";
 import { ScrollArea } from "@ui/components/ui/scroll-area";
+import { TGenericMessageBody } from "@db/dto/messages/sender";
 
-const MessageComponent = memo((props: TMessageBodyDto) => {
+const MessageComponent = memo((props: TGenericMessageBody) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isMessageDeleting, setIsMessageDeleting] = useState(false);
 
-  const form = useForm<TTransformedMessage>({
+  const form = useForm<TMessageBodyDto>({
     defaultValues: props,
   });
 
   const handleDeleteFunction = () => {
     try {
-      form.setValue("file_url", "");
-      form.setValue("text_content", "");
-      form.setValue("is_deleted", true);
+      form.setValue("attachments", []);
+      form.setValue("content", "");
+      form.setValue("isDeleted", true);
     } catch (error) {}
   };
 
-  const isDeleted = form.watch("is_deleted");
+  const isDeleted = form.watch("isDeleted");
 
   return (
     <div

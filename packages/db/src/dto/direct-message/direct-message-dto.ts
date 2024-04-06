@@ -11,7 +11,7 @@ export const messageBodyDto = (data: TChatDirectMessageData) => {
   return {
     id: data.id,
     content: data.content,
-    attachmemts: data.files,
+    attachmemts: data.attachments,
     isDeleted: data.isDeleted,
     channelId: data.conversationId,
     sender: senderDto(data.sender),

@@ -3,12 +3,10 @@ import { TMessageBodyDto, TMessageSenderDto, TReplingToMessageDto } from "../../
 import { Message } from "../../schema.js";
 
 export type TInsertMessage = {
-  textMessage?: string |undefined;
-  fileUrl?: string | null | undefined;
+  content: string | undefined;
+  attachments: string[];
   inReplyTo: null | TReplingToMessageDto
-
   senderMemberDetails: TMessageSenderDto;
-
   channelId: string;
   token: string;
 };
@@ -21,7 +19,7 @@ export const insertMessage = async (data: TMessageBodyDto) => {
       id: data.id,
       sender_member_id: data.sender.id, // This is the memeber id of the sender
       channel_id: data.channelId,
-      file_url: data.attachments[0], //!This needs to be changed
+      attachments: data.attachments,
       in_reply_to: data.inReplyTo?.id ?? null,
       content: data.content,
       created_at: data.createdAt,

@@ -2,8 +2,8 @@ import type { TInsertMessage } from "../../../../packages/db/src/data-access/mes
 import { string, z, ZodType } from "zod";
 
 export const messageSchema: ZodType<TInsertMessage> = z.object({
-  textMessage: z.string().optional(),
-  fileUrl: z.string().nullable().optional(),
+  textMessage: z.string().nullable(),
+  attachments: z.string().array(),
   inReplyTo: z
     .object({
       id: z.string(),
@@ -26,7 +26,7 @@ export const messageSchema: ZodType<TInsertMessage> = z.object({
       }),
       createdAt: z.string(),
       latEditedAt: z.string(),
-      attachments: z.array(z.string()), // Change this line
+      attachments: z.array(z.string()),
       channelId: z.string(),
       inReplyTo: z.object({
         id: z.string(),
@@ -49,7 +49,7 @@ export const messageSchema: ZodType<TInsertMessage> = z.object({
         }),
         createdAt: z.string(),
         lastEditedOn: z.string(),
-        attachments: z.array(z.string()), // Change this line
+        attachments: z.array(z.string()),
         channelId: z.string(),
         inReplyTo: z.null(),
       }),

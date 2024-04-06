@@ -22,7 +22,8 @@ export const getMemberDetails = async ({
           columns: {
             channel_id: true,
           }
-        }
+        },
+        profile: true,
       }
     })
 

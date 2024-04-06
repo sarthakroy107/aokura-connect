@@ -1,5 +1,5 @@
 import { TMessageBodyDto } from "../../../../packages/db/src/dto/messages/message-dto.js";
-import { TInsertMessage } from "../../../../packages/db/src/data-access/messages/new-create-messages.js";
+import { TInsertMessage } from "../../../../packages/db/src/data-access/messages/create-message.js";
 import { formatDate } from "../../../../packages/db/src/dto/messages/date-formater.js";
 
 export const formateNewChatMessage = (
@@ -9,7 +9,7 @@ export const formateNewChatMessage = (
   return {
     id: crypto.randomUUID(),
     content: data.textMessage ?? "",
-    attachments: [data.fileUrl ?? ""],
+    attachments: data.attachments,
     isDeleted: false,
     channelId: data.channelId,
     inReplyTo: null,

@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useCurrentProfile } from "@/components/hooks/use-current-profile";
 import { getServerAndMemberDetails } from "@/lib/server-actions/server/get-server-and-member-details";
 
 const useCurrentServer = (serverId: string) => {

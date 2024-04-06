@@ -51,14 +51,14 @@ const ChatInput = ({
     });
     io.on("event:channel-status-changed", (data: boolean) => {
       console.log("channel-status-changed, in CHAT INPUT");
-      console.log("OLD state: "  + " NEW state: " + data);
+      console.log("OLD state: " + " NEW state: " + data);
       setInputDisabled(data);
       refetchServerData();
       router.refresh();
     });
   }, [io]);
 
-  useEffect(() => {}, [inputDisabled])
+  useEffect(() => {}, [inputDisabled]);
 
   const onSubmit = async (values: TInsertMessage) => {
     if (isSubmitting) return;
@@ -73,13 +73,13 @@ const ChatInput = ({
         values.inReplyTo = null;
       }
 
-      file_url && (values.fileUrl = file_url);
+      file_url && (values.attachments = [file_url]);
 
       if (!member || !member.id) {
         throw new Error("Member not found");
       }
 
-      if (!values.textMessage && !values.fileUrl) return;
+      if (!values.content && !values.attachments) return;
       if (!member) return;
 
       if (!io) {
@@ -91,16 +91,26 @@ const ChatInput = ({
       console.log({ token });
       io.emit("event:message", {
         token: token || "",
-        textMessage: values.textMessage,
-        fileUrl: values.fileUrl,
+        content: values.content,
+        attachments: values.attachments,
         inReplyTo: values.inReplyTo,
-        senderMemberDetails: member,
+        senderMemberDetails: {
+          id: member.id,
+          name: member.name,
+          avatar: member.avatar,
+          isBanned: member.isBanned,
+          isMuted: member.isMuted,
+          isKicked: member.isKicked,
+          isLeft: member.isLeft,
+          role: member.role,
+          joinedOn: member.joinedOn,
+        },
         channelId,
       } satisfies TInsertMessage);
 
       form.reset({
-        textMessage: "",
-        fileUrl: "",
+        content: "",
+        attachments: [],
       });
 
       setFileUrl(null);
@@ -123,7 +133,11 @@ const ChatInput = ({
       >
         {inReply && replingToMessageData && (
           <InReply
-            senderName={replingToMessageData.sender.name}
+            senderName={
+              replingToMessageData.sender
+                ? replingToMessageData.sender.name
+                : "Deleted account"
+            }
             messageId={replingToMessageData.id}
           />
         )}
@@ -140,7 +154,7 @@ const ChatInput = ({
         )}
         <FormField
           control={form.control}
-          name="textMessage"
+          name="content"
           render={({ field }) => (
             <FormItem
               className={cn(
