@@ -1,6 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { db } from "../../db";
-import { Profile } from "../../schema";
+import { db } from "../../db.js";
+import { Profile } from "../../schema.js";
+import { getAnimeGirlImage } from "../../fun/get-anime-girl-image.js";
 
 type TCreateAccount = {
   name: string;
@@ -24,16 +25,17 @@ export const createProfile = async (data: TCreateAccount) => {
           )
         );
 
-      if (checkEmailAvailibility && checkEmailAvailibility.length > 0) {  // Check if email is already in use
+      if (checkEmailAvailibility && checkEmailAvailibility.length > 0) {
+        // Check if email is already in use
         return {
           success: false,
           status: 400,
           message: "User already exists",
-          data: null
+          data: null,
         };
       }
 
-      const checkUsernameAvailibility = await trx   // Check if username is already in use
+      const checkUsernameAvailibility = await trx // Check if username is already in use
         .select()
         .from(Profile)
         .where(
@@ -44,22 +46,28 @@ export const createProfile = async (data: TCreateAccount) => {
           )
         );
 
-      if (checkUsernameAvailibility && checkUsernameAvailibility.length > 0) { // Check if username is already in use
+      if (checkUsernameAvailibility && checkUsernameAvailibility.length > 0) {
+        // Check if username is already in use
         return {
           success: false,
           status: 400,
           message: "User already exists",
-          data: null
+          data: null,
         };
       }
 
-      const newUser = await trx.insert(Profile).values({ // Create a new user
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        date_of_birth: data.dateOfBirth,
-      }).returning();
+      const newUser = await trx
+        .insert(Profile)
+        .values({
+          // Create a new user
+          name: data.name,
+          avatar: getAnimeGirlImage(), // Get a random anime girl image
+          email: data.email,
+          password: data.password,
+          username: data.username,
+          date_of_birth: data.dateOfBirth,
+        })
+        .returning();
 
       return {
         success: true,
@@ -68,14 +76,13 @@ export const createProfile = async (data: TCreateAccount) => {
         data: newUser[0],
       };
     });
-
   } catch (error) {
     console.error(error);
     return {
       success: false,
       status: 500,
       message: "An error occurred while creating user",
-      data: null
+      data: null,
     };
   }
 };

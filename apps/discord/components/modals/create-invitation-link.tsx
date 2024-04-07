@@ -111,9 +111,9 @@ const CreateInvitaionLinkModal = () => {
       link: `${process.env.NEXT_PUBLIC_SITE_URL}/invite/${res.data.token}`,
       message: res.data.message,
     });
-  };
 
-  console.log({ member });
+    console.log("Link created")
+  };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>

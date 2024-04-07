@@ -7,7 +7,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@db/db";
 import { apiPublicRoutes, authRoutes, publicRoutes } from "./routes";
 import { NextResponse } from "next/server";
-import { encode, generateJWT } from "./lib/server-actions/auth/jwt-token";
+import { encode } from "./lib/server-actions/auth/jwt-token";
 import { getProfile } from "@db/data-access/user/get-profile";
 
 export const {
@@ -16,6 +16,7 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  //@ts-ignore
   adapter: DrizzleAdapter(db),
 
   providers: [

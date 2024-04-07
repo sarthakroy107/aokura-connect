@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, memo, useEffect } from "react";
+import { useState, memo } from "react";
 import { useParams } from "next/navigation";
 
 import { TMemberWithChannelIds } from "@db/dto/member/member-with-channel-ids";
@@ -37,10 +37,6 @@ const ServersidebarNavbar = memo(
     const params = useParams<{ serverId: string }>();
     const { onOpen, setData, openModalWithOptions } = useModal();
 
-    useEffect(() => {
-      setData({ member });
-    }, [member]);
-
     return (
       <DropdownMenu onOpenChange={() => setOpen(!open)}>
         <DropdownMenuTrigger
@@ -61,7 +57,15 @@ const ServersidebarNavbar = memo(
             className
           )}
         >
-          <DropdownMenuItem className="flex justify-between items-center hover:bg-[#7289da] text-primary hover:text-primary-foreground font-medium p-2 py-1 rounded-[2px] cursor-pointer">
+          <DropdownMenuItem
+            onClick={() =>
+              openModalWithOptions({
+                type: "create-inviation-link",
+                data: { serverId: member.serverId, channelId: null },
+              })
+            }
+            className="flex justify-between items-center hover:bg-[#7289da] text-primary hover:text-primary-foreground font-medium p-2 py-1 rounded-[2px] cursor-pointer"
+          >
             <p>Invite People</p>
             <LucideUser className="w-4 h-5 text-opacity-60 hover:text-opacity-100" />
           </DropdownMenuItem>
