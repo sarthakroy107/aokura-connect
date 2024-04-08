@@ -57,7 +57,7 @@ socketServer.on("connection", (io: Socket) => {
     io.leave(`channel:${data.channel_id}`);
   });
 
-  io.on("event:message", async (data: TInsertMessage) => {
+  io.on("event:send-message", async (data: TInsertMessage) => {
     console.log(data.token);
     const result = messageSchema.safeParse(data);
 
@@ -81,22 +81,25 @@ socketServer.on("connection", (io: Socket) => {
     }
   });
 
-  io.on(
-    "event:change-channel-status",
-    async (data: TChangeChannelStatus) => {
-      console.log("Channel status changing: ", data);
-      const res = await chnageChannelStatus({
-        newState: data.newState,
-        channelId: data.channelId,
-      });
-      console.log("Channel status changed, emitting new event ", res, data.newState);
-      io.nsp.to(`channel-input:${data.channelId}`).emit("event:channel-status-changed", data.newState);
-    }
-  );
+  io.on("event:change-channel-status", async (data: TChangeChannelStatus) => {
+    console.log("Channel status changing: ", data);
+    const res = await chnageChannelStatus({
+      newState: data.newState,
+      channelId: data.channelId,
+    });
+    console.log(
+      "Channel status changed, emitting new event ",
+      res,
+      data.newState
+    );
+    io.nsp
+      .to(`channel-input:${data.channelId}`)
+      .emit("event:channel-status-changed", data.newState);
+  });
 });
 
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// startMessageConsumer();
+startMessageConsumer();

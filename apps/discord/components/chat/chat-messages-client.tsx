@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
+import { getSavedMessages } from "@/lib/server-actions/message/get-messages";
 import MessageComponent from "./message-component";
 import MessageLoader from "../loaders/message-loader";
 import ChatWelcome from "./chat-welcome";
-import { useSocket } from "../provider/socket-provider";
-import { getSavedMessages } from "@/lib/server-actions/message/get-messages";
-import { TMessageBodyDto } from "@db/dto/messages/message-dto";
+import useSocketMessages from "./use-socket-messages";
 
 const ChatMessagesClient = () => {
   const { ref, inView } = useInView(); //This is used to detect when the user has reached the end of the messages and trigger a fetch for the next page of messages
@@ -18,9 +17,6 @@ const ChatMessagesClient = () => {
   const params = useParams<{ serverId: string; channelId: string }>(); //This is used to get the channelId from the url to fetch the messages for the channel
 
   const scrollRef = useRef<HTMLDivElement>(null); //Create a ref for the last div
-
-  const [socketMessages, setSocketMessages] = useState<TMessageBodyDto[]>([]);
-  const { socket: io } = useSocket();
 
   const handleGetMessages = async (props: any) => {
     const messages = await getSavedMessages({
@@ -69,26 +65,8 @@ const ChatMessagesClient = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!io || !params || !params.channelId) return;
-    if (io) {
-      io.emit("event:join", {
-        channel_id: params.channelId,
-      });
-      io.on("event:broadcast-message", (data: TMessageBodyDto) => {
-        console.log("Broadcast message from server: ", data);
-        setSocketMessages((prev) => [...prev, data]);
-      });
-    }
 
-    return () => {
-      if (io) {
-        io.emit("event:leave", {
-          channel_id: params?.channelId,
-        });
-      }
-    };
-  }, [io, params?.channelId]);
+  const { socketMessages } = useSocketMessages(params?.channelId!);
 
   if (!data) return <div>Loading...</div>;
 
@@ -105,7 +83,6 @@ const ChatMessagesClient = () => {
         <MessageComponent key={item.id} {...item} />
       ))}
       {
-        //This is used to display the messages from the socket
         socketMessages.map((item) => (
           <MessageComponent key={item.id} {...item} />
         ))

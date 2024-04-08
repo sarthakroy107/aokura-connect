@@ -15,7 +15,8 @@ export const validMemberDetails = async ({
   serverId,
   channelId,
 }: TValidMemberDetailsProps) => {
-
+  console.log("Checking member details");
+  console.table({ profileId, memberId, serverId, channelId });
   try {
     const member = await db.query.Member.findFirst({
       where: and(

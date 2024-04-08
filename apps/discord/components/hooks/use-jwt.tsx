@@ -20,7 +20,7 @@ export default function useJWT() {
   if (
     !serverId ||
     !channelId ||
-    !session.data?.user.email ||
+    !session.data.user.email ||
     !session.data.user.username
     
   ) {

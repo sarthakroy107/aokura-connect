@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { PlusCircle } from "lucide-react";
@@ -10,12 +9,16 @@ import { ModalEnum, useModal } from "@/lib/store/modal-store";
 import { cn } from "@/lib/utils";
 import { useChatActions } from "@/lib/store/chat-store";
 import { useSocket } from "@/components/provider/socket-provider";
-import useCurrentServer from "../hooks/use-current-member";
-import InReply from "./in-reply";
-import useJWT from "../hooks/use-jwt";
 import { TInsertMessage } from "@db/data-access/messages/create-message";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+import InReply from "./in-reply";
+import useJWT from "../hooks/use-jwt";
+import Image from "next/image";
+import useCurrentServer from "../hooks/use-current-member";
+import useSocketSendMessage from "../hooks/use-socket-send-message";
+import useSocketChatInputStatus from "./use-socket-chat-input-status";
 
 type TChatInputProps = {
   name: string;
@@ -34,39 +37,34 @@ const ChatInput = ({
 }: TChatInputProps) => {
   const { onOpen, file_url, data, setFileUrl } = useModal();
   const { inReply, replingToMessageData, eraceReplyData } = useChatActions();
-  const { socket: io } = useSocket();
-  const { token } = useJWT();
+  const { token, refetchJWT } = useJWT();
   const { member, refetchServerData } = useCurrentServer(serverId);
-  const [inputDisabled, setInputDisabled] = useState(isBlocked);
+
   const router = useRouter();
 
-  const form = useForm<TInsertMessage>();
-
+  const form = useForm<TInsertMessage>({
+    defaultValues: {
+      content: "",
+      attachments: [],
+    },
+  });
   const isSubmitting = form.formState.isSubmitting;
 
-  useEffect(() => {
-    if (!io) return;
-    io.emit("event:chat-input-join", {
-      channel_id: channelId,
-    });
-    io.on("event:channel-status-changed", (data: boolean) => {
-      console.log("channel-status-changed, in CHAT INPUT");
-      console.log("OLD state: " + " NEW state: " + data);
-      setInputDisabled(data);
-      refetchServerData();
-      router.refresh();
-    });
-  }, [io]);
+  const { sendMessage } = useSocketSendMessage();
+  const { inputDisabled } = useSocketChatInputStatus(isBlocked);
 
-  useEffect(() => {}, [inputDisabled]);
+  useEffect(() => {
+    refetchServerData();
+    router.refresh();
+  }, [inputDisabled]);
 
   const onSubmit = async (values: TInsertMessage) => {
     if (isSubmitting) return;
 
     try {
       if (inReply && !replingToMessageData) {
-        toast.error("essage id not found in reply message");
-        throw new Error("Something went wrong in reply message");
+        toast.error("message id not found in reply message");
+        return;
       } else if (inReply && replingToMessageData) {
         values.inReplyTo = replingToMessageData;
       } else {
@@ -75,21 +73,21 @@ const ChatInput = ({
 
       file_url && (values.attachments = [file_url]);
 
-      if (!member || !member.id) {
-        throw new Error("Member not found");
+      if (!member) {
+        toast.error("Member not found");
+        return;
       }
 
       if (!values.content && !values.attachments) return;
-      if (!member) return;
 
-      if (!io) {
-        throw new Error("Socket not found");
-      }
       if (!token) {
-        throw new Error("Token not found");
+        console.log({ token })
+        refetchJWT();
+        toast.error("Token not found");
+        return;
       }
-      console.log({ token });
-      io.emit("event:message", {
+
+      sendMessage({
         token: token || "",
         content: values.content,
         attachments: values.attachments,
@@ -106,7 +104,7 @@ const ChatInput = ({
           joinedOn: member.joinedOn,
         },
         channelId,
-      } satisfies TInsertMessage);
+      });
 
       form.reset({
         content: "",
@@ -114,8 +112,6 @@ const ChatInput = ({
       });
 
       setFileUrl(null);
-
-      //toast.success("Message sent");
     } catch (error) {
       console.log(error);
       toast.error("something went wrong");

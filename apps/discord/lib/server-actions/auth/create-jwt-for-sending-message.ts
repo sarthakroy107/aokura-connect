@@ -34,6 +34,7 @@ export const createJWTForSendingMessage = async (props: TProp) => {
     
 
     if (!checkIsValid) {
+      console.log("Invalid member details");
       return {
         status: 403,
         success: false,
@@ -49,6 +50,9 @@ export const createJWTForSendingMessage = async (props: TProp) => {
       username: props.username,
       email: props.email,
     });
+
+    console.log("Token created for member channel");
+    console.log({ token });
 
     return {
       status: 200 as const,

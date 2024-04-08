@@ -24,6 +24,10 @@ const useChatSocket = ({ socketEvent, updateKey, reactQueryKeys }: TProps) => {
       socket.off(socketEvent);
     };
   }, [socket, socketEvent, updateKey, reactQueryKeys]);
+
+  return {
+    io: socket,
+  }
 };
 
 export default useChatSocket;
