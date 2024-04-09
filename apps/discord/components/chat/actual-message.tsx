@@ -1,28 +1,27 @@
 "use client";
 
 import { Dispatch, memo, useEffect } from "react";
-import Image from "next/image";
-import { Textarea } from "@ui/components/ui/textarea";
 import { useForm, UseFormReturn } from "react-hook-form";
-import TooltipWrapper from "../common/tooltip-wrapper";
-import { Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { useCurrentProfile } from "../hooks/use-current-profile";
+import Image from "next/image";
+import dmFromServerChannelAction from "@/lib/server-actions/conversation/dm-from-group";
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@ui/components/ui/popover";
-import { TSenderBody } from "@db/dto/messages/sender";
+import { Textarea } from "@ui/components/ui/textarea";
+import { Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Separator } from "@ui/components/ui/separator";
 import { formatJoinedOnDate } from "@/lib/transformations/date-formater";
 import { Input } from "@ui/components/ui/input";
-import { useQuery } from "@tanstack/react-query";
-import getProfileFromMemberIdAction from "@/lib/member/get-profile-from -member";
 import { MoonLoader } from "react-spinners";
-import dmFromServerChannelAction from "@/lib/server-actions/conversation/dm-from-group";
 import { toast } from "sonner";
-import { useParams, useRouter } from "next/navigation";
-import useCurrentServer from "../hooks/use-current-member";
+import TooltipWrapper from "../common/tooltip-wrapper";
+import type { TSenderBody } from "@db/dto/messages/sender";
 
 const ActualMessage = memo(
   ({
@@ -52,9 +51,6 @@ const ActualMessage = memo(
       if (content !== values.content || attachments !== values.attachments) {
         form.setValue("lastEditedOn", new Date().toISOString());
       }
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 2000);
-      });
       values.lastEditedOn = new Date().toISOString();
       console.log("submitting");
       form.reset();
@@ -175,25 +171,24 @@ const ActualMessage = memo(
   }
 );
 
-export default ActualMessage;
+type TNameHoverCard = {
+  name?: string | undefined;
+  id: string;
+  avatar: string;
+  joinedOn: string;
+};
 
 const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
-  const params = useParams<{ serverId: string; channelId: string }>();
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<{ textMessage: string }>();
-  const member = useCurrentServer(params.serverId);
-  const { data } = useQuery({
-    queryKey: ["profile", id],
-    queryFn: () => getProfileFromMemberIdAction(id),
-    staleTime: 1000 * 60 * 10,
-  });
+  const { profile } = useCurrentProfile();
 
   const onSubmit = async ({ textMessage }: { textMessage: string }) => {
     if (!textMessage) return;
-    if (!data?.data?.id) return;
+    if (!profile?.id) return;
     console.log(textMessage);
     const res = await dmFromServerChannelAction({
-      receiverProfileId: data.data.id,
+      receiverProfileId: profile.id,
       textContent: textMessage,
     });
     if (!res.data || res.status !== 200) {
@@ -213,7 +208,7 @@ const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
         align="start"
         className="bg-discord_darker rounded-sm p-0 w-96 overflow-hidden relative"
       >
-        {!data || data.status !== 200 || !data.data ? (
+        {!profile ? (
           <div className="py-8 flex justify-center">
             <MoonLoader size={32} color="#FFF" />
           </div>
@@ -232,18 +227,18 @@ const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
             </div>
             <div className="flex flex-col gap-y-1 mx-3.5 rounded-md p-2 px-3.5 bg-black text-sm mb-4">
               <p className="text-base font-medium px-1.5">{name}</p>
-              <p>@{data.data.username}</p>
+              <p>@{profile.usernaeme}</p>
               <Separator className="my-1" />
               <div className="py-1 mb-3">
-                <p className="text-white/60 font-medium">
-                  AOKURA CONNECT SINCE
+                <p className="text-white/60 font-medium text-sm">
+                  AOKURA CONNECT MEMBER SINCE
                 </p>
-                <p className="text-white/70">{formatJoinedOnDate(joinedOn)}</p>
+                <p className="text-white/80 text-base mt-0.5">{formatJoinedOnDate(joinedOn)}</p>
               </div>
-              {member && member.member && member.member.id !== id && (
+              {profile && profile.id !== id && (
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <Input
-                    placeholder={`Message @${data.data.username}`}
+                    placeholder={`Message @${profile.usernaeme}`}
                     {...register("textMessage")}
                   />
                 </form>
@@ -256,9 +251,4 @@ const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
   );
 };
 
-type TNameHoverCard = {
-  name?: string | undefined;
-  id: string;
-  avatar: string;
-  joinedOn: string;
-};
+export default ActualMessage;

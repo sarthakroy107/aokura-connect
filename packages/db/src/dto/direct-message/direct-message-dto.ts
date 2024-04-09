@@ -1,42 +1,43 @@
 import { TDirectMessage, TProfile } from "../../schema.js";
 import { formatDate } from "../messages/date-formater.js";
-import type { TSenderBody } from "../messages/sender.js";
+import type { TGenericMessageBody, TSenderBody } from "../messages/sender.js";
 
 type TChatDirectMessageData = TDirectMessage & {
   sender: TProfile;
   in_reply_to: (TDirectMessage & { sender: TProfile }) | null;
 };
 
-export const messageBodyDto = (data: TChatDirectMessageData) => {
+export const directMessaageDTO = (data: TChatDirectMessageData): TGenericMessageBody => {
   return {
     id: data.id,
-    content: data.content,
-    attachmemts: data.attachments,
+    content: data.content || "",
+    attachments: data.attachments || [],
     isDeleted: data.isDeleted,
     channelId: data.conversationId,
-    sender: senderDto(data.sender),
+    sender: senderDTO(data.sender),
 
     inReplyTo: !data.in_reply_to
       ? null
-      : replingToMessageDto(data.in_reply_to),
+      : replingToDirectMessageDTO(data.in_reply_to),
 
     createdAt: formatDate(data.createdAt),
-    updatedAt: formatDate(data.createdAt),
+    lastEditedOn: formatDate(data.createdAt),
   };
 };
 
-const replingToMessageDto = (data: TDirectMessage & { sender: TProfile }) => {
+const replingToDirectMessageDTO = (data: TDirectMessage & { sender: TProfile }) => {
   return {
     id: data.id,
-    text_content: data.content,
+    content: data.content || "",
+    attachments: [],
     isDeleted: null,
-    sender: senderDto(data.sender),
+    sender: senderDTO(data.sender),
     createdAt: formatDate(data.createdAt),
-    updatedAt: formatDate(data.updatedAt),
+    lastEditedOn: formatDate(data.updatedAt),
   };
 };
 
-const senderDto = (data: TProfile): TSenderBody => {
+const senderDTO = (data: TProfile): TSenderBody => {
   return {
     id: data.id,
     role: null,
@@ -50,8 +51,8 @@ const senderDto = (data: TProfile): TSenderBody => {
   };
 };
 
-export type TReplingToDirectMessageDto = ReturnType<typeof replingToMessageDto>;
+export type TReplingToDirectMessageDto = ReturnType<typeof replingToDirectMessageDTO>;
 
-export type TDirectMessageSenderDto = ReturnType<typeof senderDto>;
+export type TDirectMessageSenderDto = ReturnType<typeof senderDTO>;
 
-export type TDirectMessageBodyDto = ReturnType<typeof messageBodyDto>;
+export type TDirectMessageBodyDto = ReturnType<typeof directMessaageDTO>;

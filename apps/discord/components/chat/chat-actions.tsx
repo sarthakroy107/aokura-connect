@@ -14,9 +14,8 @@ import {
 
 import { TMessageBodyDto } from "@db/dto/messages/message-dto";
 import { useChatActions } from "@/lib/store/chat-store";
+import { useCurrentProfile } from "../hooks/use-current-profile";
 import TooltipWrapper from "../common/tooltip-wrapper";
-import useCurrentServer from "../hooks/use-current-member";
-import { useParams } from "next/navigation";
 
 const ChatActions = memo(
   ({
@@ -28,15 +27,13 @@ const ChatActions = memo(
     setIsEditing: Dispatch<SetStateAction<boolean>>;
     setIsDeleting: Dispatch<SetStateAction<boolean>>;
   }) => {
-    const { serverId } = useParams<{ serverId: string }>();
-    if (!serverId) return <div>Loading...</div>;
-
-    const { member } = useCurrentServer(serverId);
+    const { profile } = useCurrentProfile();
     const setReply = useChatActions(useShallow((state) => state.setReply));
-
+    //if (!serverId) return <div>Loading...</div>;
+    
     return (
       <div className="flex p-0.5 bg-disord_lighter rounded-sm gap-x-0.5 text-white/30">
-        {member?.id === data.sender?.id && (
+        {profile?.id === data.sender?.id && (
           <TooltipWrapper label="Edit" align="center" side="top">
             <div
               onClick={() => setIsEditing(true)}
@@ -67,7 +64,7 @@ const ChatActions = memo(
             <LucideReply className="h-5 w-5" />
           </div>
         </TooltipWrapper>
-        {member?.id === data.sender?.id && (
+        {profile?.id === data.sender?.id && (
           <TooltipWrapper label="Delete" align="center" side="top">
             <div
               onClick={() => setIsDeleting(true)}

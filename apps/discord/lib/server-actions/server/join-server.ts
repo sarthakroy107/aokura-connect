@@ -30,8 +30,6 @@ export default async function joinServerAction({
     };
   }
 
-  //console.log("Before Join Server Res");
-
   const joinServerRes = await joinServerOperation({
     profile: {
       id: profile.data.id,
@@ -58,8 +56,6 @@ export default async function joinServerAction({
       message: joinServerRes.message,
     };
   }
-  
-  //console.log("Before Join Channel Res");
 
   const joinChannelRes = await joinChannelOperation({
     channelId,

@@ -43,7 +43,7 @@ const CreateServerModal = () => {
 
   const router = useRouter();
 
-  const { currentProfileData } = useCurrentProfile();
+  const { profile: currentProfileData } = useCurrentProfile();
 
   const form = useForm<z.infer<typeof formSchema>>();
 

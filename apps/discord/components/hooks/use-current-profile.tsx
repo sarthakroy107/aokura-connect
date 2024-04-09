@@ -16,15 +16,15 @@ export const useCurrentProfile = () => {
 
   if (data?.status !== 200 || !data.data) {
     return {
-      currentProfileData: null,
-      refetchCurrentProfileData: refetch,
-      isCurrentProfileDataFetching: isFetching,
+      profile: null,
+      refetchProfileData: refetch,
+      isProfileDataFetching: isFetching,
     };
   }
 
   return {
-    currentProfileData: data.data,
-    refetchCurrentProfileData: refetch,
-    isCurrentProfileDataFetching: isFetching,
+    profile: data.data,
+    refetchProfile: refetch,
+    isProfileDataFetching: isFetching,
   };
 };

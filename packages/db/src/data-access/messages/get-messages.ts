@@ -10,9 +10,7 @@ export const getMessages = async (
   skip?: number,
   batchSize?: number
 ) => {
-
   try {
-
     const messages = await db.query.Message.findMany({
       where: eq(Message.channel_id, channel_id),
       offset: !skip ? 0 : skip,
@@ -26,8 +24,12 @@ export const getMessages = async (
         },
         in_reply_to: {
           with: {
-            sender: true
-          }
+            sender: {
+              with: {
+                profile: true,
+              }
+            },
+          },
         },
       },
     });
@@ -46,9 +48,12 @@ export const getMessages = async (
       skip: (!skip ? 0 : skip) + (batchSize ?? MESSAGE_BATCH),
       total: totalMessagesCount[0]?.value ?? 0,
     };
-
   } catch (error) {
     console.log(error);
-    throw new Error("Error fetching messages");
+    return {
+      messages: [],
+      skip: 0,
+      total: 0,
+    }
   }
 };

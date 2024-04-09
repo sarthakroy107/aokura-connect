@@ -8,9 +8,8 @@ import { toast } from "sonner";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 import { cn } from "@/lib/utils";
 import { useChatActions } from "@/lib/store/chat-store";
-import { useSocket } from "@/components/provider/socket-provider";
 import { TInsertMessage } from "@db/data-access/messages/create-message";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import InReply from "./in-reply";
@@ -22,7 +21,7 @@ import useSocketChatInputStatus from "./use-socket-chat-input-status";
 
 type TChatInputProps = {
   name: string;
-  type: "channel" | "me";
+  type: "server-message" | "direct-message";
   serverId: string;
   channelId: string;
   isBlocked: boolean;

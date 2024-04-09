@@ -30,7 +30,7 @@ const DisplayImageChange = ({
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const { serverId } = useParams<{ serverId: string }>();
 
-  const { refetchCurrentProfileData} = useCurrentProfile();
+  const { refetchProfile: refetchCurrentProfileData} = useCurrentProfile();
   const { refetchServerData } = useCurrentServer(serverId);
 
   return (

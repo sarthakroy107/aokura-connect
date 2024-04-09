@@ -51,7 +51,7 @@ export async function joinServerOperation({
           server_id: serverId,
           role: "guest",
           nickname: profile.name,
-          server_avatar: profile.id,
+          server_avatar: profile.avatar,
         })
         .returning();
 

@@ -20,10 +20,10 @@ const ChatMessages = async ({
     queryKey: [type, id],
     queryFn: () =>
       getSavedMessages({
-        channel_id: id,
+        id,
         skip: 0,
         batchSize: 20,
-        type: "server-message",
+        type,
       }),
     initialPageParam: 0,
   });
@@ -31,7 +31,7 @@ const ChatMessages = async ({
   return (
     <ScrollArea className="w-full h-[89vh]">
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <ChatMessagesClient />
+        <ChatMessagesClient type={type} />
       </HydrationBoundary>
     </ScrollArea>
   );

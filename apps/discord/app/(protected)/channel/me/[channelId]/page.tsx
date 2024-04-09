@@ -1,15 +1,16 @@
 import PageNavbar from "@/components/navigation/page-nav";
-import { getProfile } from "@db/data-access/user/get-profile";
 import getConversationDetails from "./_actions/get-conversation-details";
 import Image from "next/image";
+import ChatMessages from "@/components/chat/chat-messages-server";
+import ChatInput from "@/components/chat/chat-input";
 
 export default async function Page({
-  params: { conversationId },
+  params: { channelId },
 }: {
-  params: { conversationId: string };
+  params: { channelId: string };
 }) {
-  const conversationDetails = await getConversationDetails(conversationId);
-  
+  const conversationDetails = await getConversationDetails(channelId);
+
   return (
     <div className="w-full h-full bg-discord">
       {conversationDetails.data && (
@@ -28,9 +29,17 @@ export default async function Page({
         </PageNavbar>
       )}
       {conversationDetails.data && (
-        <div>
-          <h1>{conversationDetails.data.to.name}</h1>
-        </div>
+        <>
+          <ChatMessages id={channelId} type="direct-message" />
+          <ChatInput 
+            channelId={channelId}
+            serverId="sjcm"
+            type="direct-message" 
+            name={conversationDetails.data.to.name} 
+            isBlocked={conversationDetails.data.block.isBlocked}
+          />
+        </>
+
       )}
     </div>
   );

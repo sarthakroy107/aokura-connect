@@ -1,6 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "../../db.js";
-import { Member, memberToChannel } from "../../schema.js";
+import { Channel, Member, memberToChannel } from "../../schema.js";
+import joinChannelOperation from "../channel/join-channel.js";
 
 export type TValidMemberDetailsProps = {
   profileId: string;
@@ -33,10 +34,24 @@ export const validMemberDetails = async ({
         eq(memberToChannel.member_id, member.id)
       ),
     });
-    if (!channel) return false;
+    if (!channel) {
+      console.log("Channel not found");
+      const channel = await db
+        .select()
+        .from(Channel)
+        .where(eq(Channel.id, channelId));
+      if (!channel[0] || channel[0].is_private) return false;
+      else {
+        const res = await joinChannelOperation({
+          memberId: member.id,
+          channelId,
+        });
+        if (res.joined) return true;
+        else return false;
+      }
+    }
 
     return true;
-
   } catch (error) {
     console.error(error);
     return false;

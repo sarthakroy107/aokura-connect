@@ -49,7 +49,7 @@ const CreateChannelModal = () => {
   const { serverId } = useParams<{ serverId: string }>();
   const { isOpen, type, onClose, data } = useModal();
 
-  const { currentProfileData } = useCurrentProfile();
+  const { profile: currentProfileData } = useCurrentProfile();
   const { member } = useCurrentServer(serverId);
 
   const form = useForm<z.infer<typeof formSchema>>({

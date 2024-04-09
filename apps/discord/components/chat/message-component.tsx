@@ -2,10 +2,9 @@
 
 import { memo, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { TMessageBodyDto } from "@db/dto/messages/message-dto";
-
 import ChatActions from "./chat-actions";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,9 +16,9 @@ import {
   AlertDialogTitle,
 } from "@ui/components/ui/alert-dialog";
 import { cn } from "@ui/lib/utils";
-import ActualMessage from "./actual-message";
 import { ScrollArea } from "@ui/components/ui/scroll-area";
 import { TGenericMessageBody } from "@db/dto/messages/sender";
+import ActualMessage from "./actual-message";
 
 const MessageComponent = memo((props: TGenericMessageBody) => {
   const [isEditing, setIsEditing] = useState(false);

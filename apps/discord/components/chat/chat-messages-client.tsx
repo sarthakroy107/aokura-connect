@@ -11,7 +11,7 @@ import MessageLoader from "../loaders/message-loader";
 import ChatWelcome from "./chat-welcome";
 import useSocketMessages from "./use-socket-messages";
 
-const ChatMessagesClient = () => {
+const ChatMessagesClient = ({ type }: {type: "direct-message" | "server-message";}) => {
   const { ref, inView } = useInView(); //This is used to detect when the user has reached the end of the messages and trigger a fetch for the next page of messages
 
   const params = useParams<{ serverId: string; channelId: string }>(); //This is used to get the channelId from the url to fetch the messages for the channel
@@ -20,10 +20,10 @@ const ChatMessagesClient = () => {
 
   const handleGetMessages = async (props: any) => {
     const messages = await getSavedMessages({
-      channel_id: params?.channelId!,
+      id: params?.channelId!,
       skip: props?.pageParam,
       batchSize: 20,
-      type: "server-message",
+      type,
     });
     return messages;
   };
@@ -48,6 +48,7 @@ const ChatMessagesClient = () => {
     refetchInterval: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -68,11 +69,13 @@ const ChatMessagesClient = () => {
 
   const { socketMessages } = useSocketMessages(params?.channelId!);
 
-  if (!data) return <div>Loading...</div>;
+  console.log(data);
+
+  if (data === undefined) return <div>Loading...</div>;
 
   return (
     <div>
-      {!hasNextPage && <ChatWelcome />}
+      {!hasNextPage && type === "server-message" && <ChatWelcome />}
       <div ref={ref} />
       {isFetching && hasNextPage && (
         <div className="w-full flex flex-col justify-center items-center">

@@ -1,5 +1,5 @@
 import getInviteDetailsAction from "@/lib/server-actions/invitation-link/get-invite-details-action";
-import Image from 'next/image';
+import Image from "next/image";
 import JoinServerButton from "../../join/join-server";
 
 const Page = async ({ params: { token } }: { params: { token: string } }) => {
@@ -38,7 +38,10 @@ const Page = async ({ params: { token } }: { params: { token: string } }) => {
         />
         {/* <Separator className="bg-zinc-300/10 my-3" /> */}
         <h2 className="text-3xl font-medium">{res.data.server.name}</h2>
-        <JoinServerButton serverId={res.data.server.id} channelId={res.data.channel?.id} />
+        <JoinServerButton
+          serverId={res.data.server.id}
+          channelId={res.data.channel?.id}
+        />
       </section>
     </main>
   );
