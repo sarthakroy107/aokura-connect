@@ -42,7 +42,7 @@ export default async function ChannelMessageChatInput({
       channelId={channelId}
       name="Direct Message"
       isBlocked={channelDetails.isBlocked}
-      serverId={serverId}
+      operarion={() => {}}
     />
   );
 }

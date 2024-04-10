@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import getPendingDMs from "../_actions/get-pending-messages";
+import getDirectMessages from "../_actions/get-dms";
 
 export default async function DirectMessasgeSidebar() {
-  const pendingConversations = await getPendingDMs();
+  const conversationRes = await getDirectMessages();
   return (
     <div className="min-w-[220px] max-w-[220px] h-screen overflow-auto bg-[rgb(40,43,48)] text-white space-y-1 p-1.5">
       <p className="text-xs p-1 font-medium text-white/60">DIRECT MESSAGES</p>
-      <DirectMessageProfileComp
+      {/* <DirectMessageProfileComp
         id="1"
         name="Sarthak Roy"
         avatar="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/6c463ed7-b290-4c55-593d-baf4ed4fa900/width=1200/6c463ed7-b290-4c55-593d-baf4ed4fa900.jpeg"
@@ -36,19 +36,40 @@ export default async function DirectMessasgeSidebar() {
         name="Rem"
         avatar="https://www.hdwallpapers.in/download/blue_short_hair_eyes_rem_re_zero_uniform_dress_4k_5k_hd_anime_girl-3840x2160.jpg"
         status={true}
-      />
+      /> */}
+      {conversationRes.data && conversationRes.data.active.length > 0 ? (
+        conversationRes.data.active.map((conversation, index) => (
+          <DirectMessageProfileComp
+            id={conversation.id}
+            name={conversation.other.name}
+            avatar={conversation.other.avatar || ""}
+            status={true}
+            key={index}
+          />
+        ))
+      ) : (
+        <p className="text-slate-200/50 text-[0.65rem] px-1">
+          NO ACTIVE MESSAGES
+        </p>
+      )}
       <p className="text-xs p-1 font-medium text-white/60 mt-2">
         PENDING MESSAGES
       </p>
-      {pendingConversations.data &&
-        pendingConversations.data.map((conversation) => (
+      {conversationRes.data && conversationRes.data.pending.length > 0 ? (
+        conversationRes.data.pending.map((conversation, index) => (
           <DirectMessageProfileComp
-            id={conversation.conversationId}
-            name={conversation.senderName}
-            avatar={conversation.senderAvatar || ""}
+            id={conversation.id}
+            name={conversation.other.name}
+            avatar={conversation.other.avatar || ""}
             status={true}
+            key={index}
           />
-        ))}
+        ))
+      ) : (
+        <p className="text-slate-200/50 text-[0.65rem] px-1">
+          NO PENDING MESSAGES
+        </p>
+      )}
     </div>
   );
 }

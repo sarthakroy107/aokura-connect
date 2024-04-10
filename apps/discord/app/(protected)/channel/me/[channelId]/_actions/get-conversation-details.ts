@@ -49,6 +49,10 @@ export default async function getConversationDetails(conversationId: string) {
         isBlocked: conversationDetails.data.isBlocked,
         blockedBy: conversationDetails.data.blockedBy,
       },
+      status: {
+        accepted: conversationDetails.data.invitationAccepted,
+        shouldBeAcceptedBy: conversationDetails.data.memberTwo.id,
+      },
       to:
         profile.data.id === conversationDetails.data.memberOne
           ? {

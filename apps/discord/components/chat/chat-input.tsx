@@ -10,41 +10,38 @@ import { cn } from "@/lib/utils";
 import { useChatActions } from "@/lib/store/chat-store";
 import { TInsertMessage } from "@db/data-access/messages/create-message";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 import InReply from "./in-reply";
 import useJWT from "../hooks/use-jwt";
 import Image from "next/image";
 import useSocketSendMessage from "../hooks/use-socket-send-message";
 import useSocketChatInputStatus from "./use-socket-chat-input-status";
+import acceptedInvitation from "@/lib/server-actions/conversation/accept-invitation";
 import type { TMessageSenderDto } from "@db/dto/messages/message-dto";
 
-type TChatInputProps = {
-  name: string;
-  type: "direct-message";
-  channelId: string;
-  isBlocked: boolean;
-  senderDetails: TMessageSenderDto;
-} | {
-  name: string;
-  type: "server-message";
-  channelId: string;
-  isBlocked: boolean;
-  senderDetails: TMessageSenderDto;
-  serverId: string
-} 
-const ChatInput = ({
-  name,
-  type,
-  channelId,
-  isBlocked,
-  senderDetails,
-}: TChatInputProps) => {
+type TChatInputProps =
+  | {
+      name: string;
+      type: "direct-message";
+      channelId: string;
+      isBlocked: boolean;
+      senderDetails: TMessageSenderDto;
+      hasAccepted: boolean;
+      canAccept: boolean;
+    }
+  | {
+      name: string;
+      type: "server-message";
+      channelId: string;
+      isBlocked: boolean;
+      senderDetails: TMessageSenderDto;
+    };
+const ChatInput = (props: TChatInputProps) => {
+  
+  const { name, type, channelId, isBlocked, senderDetails } = props;
   const { onOpen, file_url, data, setFileUrl } = useModal();
   const { inReply, replingToMessageData, eraceReplyData } = useChatActions();
   const { token, refetchJWT } = useJWT({ type });
-
-  const router = useRouter();
 
   const form = useForm<TInsertMessage>({
     defaultValues: {
@@ -88,7 +85,6 @@ const ChatInput = ({
         return;
       }
 
-
       sendMessage({
         token,
         content: values.content,
@@ -103,6 +99,10 @@ const ChatInput = ({
         content: "",
         attachments: [],
       });
+
+      if(props.type === "direct-message" && !props.hasAccepted && props.canAccept) {
+        acceptedInvitation(channelId);
+      }
 
       setFileUrl(null);
     } catch (error) {

@@ -37,6 +37,10 @@ export default async function Page({
           <DirectMessageChatInput
             conversationId={conversationDetails.data.id}
             isBlocked={conversationDetails.data.block.isBlocked}
+            accepted={conversationDetails.data.status.accepted}
+            shouldBeAcceptedBy={
+              conversationDetails.data.status.shouldBeAcceptedBy
+            }
           />
         </>
       )}

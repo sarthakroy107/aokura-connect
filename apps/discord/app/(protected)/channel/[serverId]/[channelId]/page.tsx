@@ -22,10 +22,10 @@ const Page = async ({
       {channel.type === "text" && (
         <>
           <ChatMessages id={params.channelId} type="server-message" />
-          <ChannelMessageChatInput
+          {/* <ChannelMessageChatInput
             channelId={params.channelId}
             serverId={params.serverId}
-          />
+          /> */}
         </>
       )}
       {channel.type === "voice" && (
