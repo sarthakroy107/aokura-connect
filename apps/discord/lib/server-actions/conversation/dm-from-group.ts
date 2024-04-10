@@ -51,7 +51,6 @@ export default async function dmFromServerChannelAction({
       conversationId,
       textContent,
       senderProfileId: profile.data.id,
-      receiverProfileId,
     });
     if (!newDm.success || !newDm.data) {
       return {

@@ -29,7 +29,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     if (session.data && session.data.jwt && !socket) {
       (async () => {
         console.log("Connecting to socket server");
-        const socketInstance = io("http://localhost:6700", {
+        const socketInstance = io(process.env.NEXT_PUBLIC_WS_URL!, {
           auth: {
             token: await updateSession(session.data.jwt), // Updating the JWT token
           },
