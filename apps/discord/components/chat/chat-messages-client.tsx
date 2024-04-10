@@ -46,7 +46,7 @@ const ChatMessagesClient = ({ type }: {type: "direct-message" | "server-message"
         .reverse(),
     staleTime: 1000 * 60 * 3,
     refetchInterval: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });
