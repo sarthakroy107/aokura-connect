@@ -3,6 +3,8 @@ import getConversationDetails from "./_actions/get-conversation-details";
 import Image from "next/image";
 import ChatMessages from "@/components/chat/chat-messages-server";
 import ChatInput from "@/components/chat/chat-input";
+import SocketStatus from "@/components/chat/socket-status";
+import DirectMessageChatInput from "./direct-message-input";
 
 export default async function Page({
   params: { channelId },
@@ -14,8 +16,8 @@ export default async function Page({
   return (
     <div className="w-full h-full bg-discord">
       {conversationDetails.data && (
-        <PageNavbar>
-          <div className="h-4 flex items-center gap-x-2">
+        <PageNavbar className="justify-between px-5">
+          <div className="h-4 flex justify-between items-center gap-x-2">
             <Image
               src={conversationDetails.data.to.avatar || ""}
               alt={conversationDetails.data.to.name}
@@ -26,20 +28,17 @@ export default async function Page({
             />
             <p>{conversationDetails.data.to.name}</p>
           </div>
+          <SocketStatus />
         </PageNavbar>
       )}
       {conversationDetails.data && (
         <>
           <ChatMessages id={channelId} type="direct-message" />
-          <ChatInput 
-            channelId={channelId}
-            serverId="sjcm"
-            type="direct-message" 
-            name={conversationDetails.data.to.name} 
+          <DirectMessageChatInput
+            conversationId={conversationDetails.data.id}
             isBlocked={conversationDetails.data.block.isBlocked}
           />
         </>
-
       )}
     </div>
   );

@@ -12,7 +12,7 @@ export default async function getDirectMessagesOperation(
 ) {
   if(!conversationId) throw new Error("No conversationId provided");
   try {
-    console.table({ conversationId, skip, batchSize });
+    // console.table({ conversationId, skip, batchSize });
     const dms = await db.query.DirectMessage.findMany({
       where: eq(DirectMessage.conversationId, conversationId),
       offset: !skip ? 0 : skip,
@@ -33,7 +33,7 @@ export default async function getDirectMessagesOperation(
       .from(DirectMessage)
       .where(eq(DirectMessage.conversationId, conversationId));
 
-    console.log(dms);
+    //console.log(dms);
 
     return {
       messages: dms.map((dm) => directMessaageDTO(dm)),

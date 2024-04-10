@@ -1,14 +1,16 @@
+import { and, eq } from "drizzle-orm";
 import { db } from "../../db.js";
 import { TMessageBodyDto, TMessageSenderDto, TReplingToMessageDto } from "../../dto/messages/message-dto.js";
-import { Message } from "../../schema.js";
+import { Member, Message } from "../../schema.js";
 
 export type TInsertMessage = {
   content: string;
   attachments: string[];
   inReplyTo: null | TReplingToMessageDto
-  senderMemberDetails: TMessageSenderDto;
+  senderDetails: TMessageSenderDto;
   channelId: string;
   token: string;
+  type: "server-message" | "direct-message";
 };
 
 export const insertMessage = async (data: TMessageBodyDto) => {

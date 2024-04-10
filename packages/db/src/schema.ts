@@ -202,6 +202,7 @@ export const memberToChannel = pgTable('member_to_channel', {
   id:               uuid('id').defaultRandom().notNull(),
   channel_id:       uuid('channel_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
   member_id:        uuid('member_id').notNull().references(() => Member.id, { onDelete: 'cascade' }),
+  
 
   created_at: timestamp('created_at', {
     withTimezone: true,

@@ -2,7 +2,7 @@ import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import { decrypt, verifyToken } from "./verify-token.js";
 import { TInsertMessage } from "../../../packages/db/src/data-access/messages/create-message.js";
-import { produceMessage } from "./kafka/producer.js";
+import { produceDirectMessage, produceMessage } from "./kafka/producer.js";
 import { startMessageConsumer } from "./kafka/consumer.js";
 import { formateNewChatMessage } from "./messages/format-new-chat-message.js";
 import { messageSchema } from "./messages/message-schema.js";
@@ -66,7 +66,13 @@ socketServer.on("connection", (io: Socket) => {
         await decrypt(data.token);
         const message = result.data;
         const formattedMessage = formateNewChatMessage(message);
-        const res = await produceMessage(formattedMessage);
+        const res =
+          message.type === "server-message"
+            ? await produceMessage(formattedMessage)
+            : await produceDirectMessage({
+              message: formattedMessage,
+              conversationId: result.data.channelId
+            });
         if (res) {
           io.nsp
             .to(`channel:${message.channelId}`)
@@ -103,3 +109,4 @@ httpServer.listen(PORT, () => {
 });
 
 startMessageConsumer();
+// startDirectMessageConsumer()

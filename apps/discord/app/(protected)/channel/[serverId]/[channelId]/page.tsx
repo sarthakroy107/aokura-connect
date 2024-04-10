@@ -1,9 +1,8 @@
-
 import ChannelNavbar from "@/components/channel/channel-nav";
-import ChatInput from "@/components/chat/chat-input";
 import ChatMessages from "@/components/chat/chat-messages-server";
 import { getChannelById } from "@/lib/server-actions/channel/actions";
 import VoiceChannel from "./_components/voice-channel";
+import ChannelMessageChatInput from "./channel-chat-input";
 
 const Page = async ({
   params,
@@ -23,32 +22,17 @@ const Page = async ({
       {channel.type === "text" && (
         <>
           <ChatMessages id={params.channelId} type="server-message" />
-          <ChatInput
-            serverId={params.serverId}
+          <ChannelMessageChatInput
             channelId={params.channelId}
-            type="channel"
-            name={channel.name}
-            isBlocked={channel.isBlocked}
+            serverId={params.serverId}
           />
         </>
       )}
       {channel.type === "voice" && (
-        <VoiceChannel channelId={channel.id} channelName={channel.name}/>
+        <VoiceChannel channelId={channel.id} channelName={channel.name} />
       )}
     </div>
   );
 };
 
 export default Page;
-
-
-// import Video from '@/app/videosdk/vide-component'
-// import React from 'react'
-
-// const Page = () => {
-//   return (
-//     <Video />
-//   )
-// }
-
-// export default Page

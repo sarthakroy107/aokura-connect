@@ -57,7 +57,7 @@ export const messageSchema: ZodType<TInsertMessage> = z.object({
     })
     .nullable(),
 
-  senderMemberDetails: z.object({
+  senderDetails: z.object({
     id: z.string(),
     role: z.union([
       z.literal("admin"),
@@ -66,13 +66,17 @@ export const messageSchema: ZodType<TInsertMessage> = z.object({
     ]).nullable(),
     name: z.string(),
     avatar: z.string(),
-    isBanned: z.boolean(),
-    isMuted: z.boolean(),
-    isKicked: z.boolean(),
-    isLeft: z.boolean(),
+    isBanned: z.boolean().nullable(),
+    isMuted: z.boolean().nullable(),
+    isKicked: z.boolean().nullable(),
+    isLeft: z.boolean().nullable(),
     joinedOn: z.string(),
   }),
 
   channelId: z.string(),
   token: z.string(),
+  type: z.union([
+    z.literal("server-message"),
+    z.literal("direct-message"),
+  ])
 });

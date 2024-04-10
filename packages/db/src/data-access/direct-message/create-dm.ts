@@ -4,14 +4,12 @@ import { Conversation, DirectMessage } from "../../schema.js";
 export default async function createDMOperation({
   conversationId,
   senderProfileId,
-  receiverProfileId,
   files,
   inReplyTo,
   textContent,
 }: {
   conversationId: string;
   senderProfileId: string;
-  receiverProfileId: string;
   files?: string[] | undefined;
   textContent: string;
   inReplyTo?: string ;

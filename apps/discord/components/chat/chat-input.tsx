@@ -15,29 +15,34 @@ import { useRouter } from "next/navigation";
 import InReply from "./in-reply";
 import useJWT from "../hooks/use-jwt";
 import Image from "next/image";
-import useCurrentServer from "../hooks/use-current-member";
 import useSocketSendMessage from "../hooks/use-socket-send-message";
 import useSocketChatInputStatus from "./use-socket-chat-input-status";
+import type { TMessageSenderDto } from "@db/dto/messages/message-dto";
 
 type TChatInputProps = {
   name: string;
-  type: "server-message" | "direct-message";
-  serverId: string;
+  type: "direct-message";
   channelId: string;
   isBlocked: boolean;
-};
-
+  senderDetails: TMessageSenderDto;
+} | {
+  name: string;
+  type: "server-message";
+  channelId: string;
+  isBlocked: boolean;
+  senderDetails: TMessageSenderDto;
+  serverId: string
+} 
 const ChatInput = ({
   name,
   type,
-  serverId,
   channelId,
   isBlocked,
+  senderDetails,
 }: TChatInputProps) => {
   const { onOpen, file_url, data, setFileUrl } = useModal();
   const { inReply, replingToMessageData, eraceReplyData } = useChatActions();
-  const { token, refetchJWT } = useJWT();
-  const { member, refetchServerData } = useCurrentServer(serverId);
+  const { token, refetchJWT } = useJWT({ type });
 
   const router = useRouter();
 
@@ -52,10 +57,7 @@ const ChatInput = ({
   const { sendMessage } = useSocketSendMessage();
   const { inputDisabled } = useSocketChatInputStatus(isBlocked);
 
-  useEffect(() => {
-    refetchServerData();
-    router.refresh();
-  }, [inputDisabled]);
+  useEffect(() => {}, [inputDisabled]);
 
   const onSubmit = async (values: TInsertMessage) => {
     if (isSubmitting) return;
@@ -72,37 +74,29 @@ const ChatInput = ({
 
       file_url && (values.attachments = [file_url]);
 
-      if (!member) {
-        toast.error("Member not found");
+      if (!senderDetails) {
+        toast.error("Sender details not found");
         return;
       }
 
       if (!values.content && !values.attachments) return;
 
       if (!token) {
-        console.log({ token })
+        console.log({ token });
         refetchJWT();
         toast.error("Token not found");
         return;
       }
 
+
       sendMessage({
-        token: token || "",
+        token,
         content: values.content,
         attachments: values.attachments,
         inReplyTo: values.inReplyTo,
-        senderMemberDetails: {
-          id: member.id,
-          name: member.name,
-          avatar: member.avatar,
-          isBanned: member.isBanned,
-          isMuted: member.isMuted,
-          isKicked: member.isKicked,
-          isLeft: member.isLeft,
-          role: member.role,
-          joinedOn: member.joinedOn,
-        },
+        senderDetails,
         channelId,
+        type,
       });
 
       form.reset({
@@ -167,9 +161,7 @@ const ChatInput = ({
                     <PlusCircle />
                   </button>
                   <Input
-                    disabled={
-                      isSubmitting || !member || isBlocked || inputDisabled
-                    }
+                    disabled={isSubmitting || isBlocked || inputDisabled}
                     {...field}
                     className="w-[80%] bg-disord_lighter border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                     placeholder={`Message #${name} as ${data.member?.id}`}
