@@ -10,6 +10,7 @@ import MessageComponent from "./message-component";
 import MessageLoader from "../loaders/message-loader";
 import ChatWelcome from "./chat-welcome";
 import useSocketMessages from "./use-socket-messages";
+import Loading from "@/loading";
 
 const ChatMessagesClient = ({ type }: {type: "direct-message" | "server-message";}) => {
   const { ref, inView } = useInView(); //This is used to detect when the user has reached the end of the messages and trigger a fetch for the next page of messages
@@ -71,7 +72,7 @@ const ChatMessagesClient = ({ type }: {type: "direct-message" | "server-message"
 
   console.log(data);
 
-  if (data === undefined) return <div>Loading...</div>;
+  if (data === undefined) return <Loading />;
 
   return (
     <div>
