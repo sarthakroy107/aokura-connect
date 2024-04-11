@@ -67,7 +67,6 @@ const ChatMessagesClient = ({ type }: {type: "direct-message" | "server-message"
     }
   }, []);
 
-
   const { socketMessages } = useSocketMessages(params?.channelId!);
 
   console.log(data);
