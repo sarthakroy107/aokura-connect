@@ -34,6 +34,8 @@ export const {
     }),
   ],
 
+  trustHost: true,
+
   callbacks: {
     authorized({ request, auth }) {
       const isLoggedIn = !!auth;
