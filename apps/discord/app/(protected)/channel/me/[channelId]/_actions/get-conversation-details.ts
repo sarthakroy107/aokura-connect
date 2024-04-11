@@ -70,3 +70,5 @@ export default async function getConversationDetails(conversationId: string) {
     },
   };
 }
+
+type TGetConversationReturnType = Promise<ReturnType<typeof getConversationDetails>>;

@@ -5,6 +5,7 @@ import ChatMessages from "@/components/chat/chat-messages-server";
 import ChatInput from "@/components/chat/chat-input";
 import SocketStatus from "@/components/chat/socket-status";
 import DirectMessageChatInput from "./direct-message-input";
+import DemiClient from "./demi-client-component";
 
 export default async function Page({
   params: { channelId },
@@ -34,6 +35,7 @@ export default async function Page({
       {conversationDetails.data && (
         <>
           <ChatMessages id={channelId} type="direct-message" />
+          <DemiClient channelId={channelId} />
           <DirectMessageChatInput
             conversationId={conversationDetails.data.id}
             isBlocked={conversationDetails.data.block.isBlocked}
