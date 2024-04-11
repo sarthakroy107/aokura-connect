@@ -19,8 +19,12 @@ export const getSavedMessages = async ({
   skip: number;
   total: number;
 }> => {
-  if(!id) throw new Error("No conversationId provided");
-  return type === "server-message"
-    ? getMessages(id, skip, batchSize)
-    : getDirectMessagesOperation(id, skip, batchSize);
+  console.time("getSavedMessages");
+  if (!id) throw new Error("No conversationId provided");
+  const res =
+    type === "server-message"
+      ? getMessages(id, skip, batchSize)
+      : getDirectMessagesOperation(id, skip, batchSize);
+  console.timeEnd("getSavedMessages");
+  return res;
 };
