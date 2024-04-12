@@ -3,7 +3,7 @@
 import { useState, memo } from "react";
 import { useParams } from "next/navigation";
 
-import { TMemberWithChannelIds } from "@db/dto/member/member-with-channel-ids";
+import { TMemberWithChannelIdsDTO } from "@db/dto/member/member-with-channel-ids";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 
 import {
@@ -31,7 +31,7 @@ const ServersidebarNavbar = memo(
   }: {
     label: string;
     className: "";
-    member: TMemberWithChannelIds;
+    member: TMemberWithChannelIdsDTO;
   }) => {
     const [open, setOpen] = useState<boolean>(false);
     const params = useParams<{ serverId: string }>();

@@ -2,7 +2,7 @@
 
 import { updateSession } from "@/lib/server-actions/auth/jwt-token";
 import { useSession } from "next-auth/react";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 const useUpdateSession = () => {
   useEffect(() => {

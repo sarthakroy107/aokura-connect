@@ -1,4 +1,4 @@
-import { TProfile } from "../../schema";
+import { TProfile } from "../../schema.js";
 
 export const profileDto = (data: TProfile) => {
   return {
@@ -15,4 +15,3 @@ export const profileDto = (data: TProfile) => {
 };
 
 export type TProfileDTO = ReturnType<typeof profileDto>;
-

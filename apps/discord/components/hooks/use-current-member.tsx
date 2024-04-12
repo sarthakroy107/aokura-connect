@@ -1,22 +1,29 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getServerAndMemberDetails } from "@/lib/server-actions/server/get-server-and-member-details";
+import { TAPIServerAndMemberDetails } from "@/app/api/server-and-member/route";
 
 const useCurrentServer = (serverId: string) => {
-
-  //if(!serverId) throw new Error("Server ID is required");
-
   const { data, refetch, error, isFetching } = useQuery({
     queryKey: ["server", serverId],
-    queryFn: () => getServerAndMemberDetails(serverId),
+    queryFn: () =>
+      fetch(`/api/server-and-member-details?server_id=${serverId}`).then(
+        (res) => {
+          if (!res.ok)
+            throw new Error("An error occurred while fetching server data");
+          else if (res.status !== 200)
+            throw new Error("An error occurred while fetching server data");
+          else return res.json() as Promise<TAPIServerAndMemberDetails>;
+        }
+      ),
     refetchInterval: false,
     staleTime: 1000 * 60 * 10,
+    refetchOnMount: false,
   });
 
   if (error) console.error(error);
 
-  if (!data || data?.status !== 200 || !data.data) {
+  if (!data) {
     return {
       member: null,
       server: null,
@@ -27,9 +34,9 @@ const useCurrentServer = (serverId: string) => {
   }
 
   return {
-    member: data.data.member || null,
-    server: data.data.server || null,
-    channel_categories: data.data.server.categories,
+    member: data.member || null,
+    server: data.server || null,
+    channel_categories: data.server.categories,
     refetchServerData: refetch,
     isServerDataFetching: isFetching,
   };

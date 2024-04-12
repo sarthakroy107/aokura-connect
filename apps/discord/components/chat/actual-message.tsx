@@ -5,7 +5,7 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useCurrentProfile } from "../hooks/use-current-profile";
 import Image from "next/image";
-import dmFromServerChannelAction from "@/lib/server-actions/conversation/dm-from-group";
+import type { TAPIDMFromServerReturnType } from "@/app/api/dm-from-server/route";
 
 import {
   Popover,
@@ -187,16 +187,17 @@ const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
     if (!textMessage) return;
     if (!profile?.id) return;
     console.log(textMessage);
-    const res = await dmFromServerChannelAction({
-      receiverProfileId: profile.id,
-      textContent: textMessage,
+    const res = await fetch("api/dm-from-server", {
+      method: "POST",
+      body: JSON.stringify({ textMessage, profile }),
     });
-    if (!res.data || res.status !== 200) {
-      toast.error(res.error as string);
+    const data: TAPIDMFromServerReturnType = await res.json();
+    if (res.status !== 200 || !data.success || !data.conversationId) {
+      toast.error(data.message);
       return;
     }
     reset({});
-    router.push(`/channel/me/${res.data.conversationId}`);
+    router.push(`/channel/me/${data.conversationId}`);
   };
 
   return (
@@ -233,7 +234,9 @@ const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
                 <p className="text-white/60 font-medium text-sm">
                   AOKURA CONNECT MEMBER SINCE
                 </p>
-                <p className="text-white/80 text-base mt-0.5">{formatJoinedOnDate(joinedOn)}</p>
+                <p className="text-white/80 text-base mt-0.5">
+                  {formatJoinedOnDate(joinedOn)}
+                </p>
               </div>
               {profile && profile.id !== id && (
                 <form onSubmit={handleSubmit(onSubmit)}>

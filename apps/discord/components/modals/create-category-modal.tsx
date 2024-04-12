@@ -1,5 +1,10 @@
 "use client";
 
+import { createCategorySchema } from "@/lib/validations/category/create-category-validation";
+import { useParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import useCurrentServer from "../hooks/use-current-member";
+
 import {
   Dialog,
   DialogContent,
@@ -7,28 +12,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@ui/components/ui/dialog";
-import { useForm } from "react-hook-form";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
-
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@ui/components/ui/form";
-
 import { Button } from "@ui/components/ui/button";
 import { toast } from "sonner";
-import { useParams, useRouter } from "next/navigation";
 import { BarLoader } from "react-spinners";
-import useCurrentServer from "../hooks/use-current-member";
-import NormalInput from "@/components/form/normal-input";
-import { createCategorySchema } from "@/lib/validations/category/create-category-validation";
 import { z } from "zod";
-import { createCategoryAction } from "@/lib/server-actions/category/create-category";
-import Loading from "@/components/loaders/loading";
+import NormalInput from "@/components/form/normal-input";
 
 const CreateCategoryModal = () => {
   const { serverId } = useParams<{ serverId: string }>();
@@ -55,13 +51,15 @@ const CreateCategoryModal = () => {
         return;
       }
 
-      const res = await createCategoryAction(result.data);
+      const res = await fetch("/api/server-category", {
+        method: "POST",
+        body: JSON.stringify(result.data),
+      });
 
       if (res.status !== 200) {
-        toast.error(res.error);
+        toast.error("Failed to create category");
         return;
       }
-
       toast.success("Category created successfully");
       form.reset();
       onClose();

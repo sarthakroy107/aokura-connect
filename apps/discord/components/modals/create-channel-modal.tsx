@@ -4,12 +4,11 @@ import * as z from "zod";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
-import { createChannel } from "@/lib/server-actions/channel/actions";
 import { useCurrentProfile } from "@/components/hooks/use-current-profile";
 import useCurrentServer from "@/components/hooks/use-current-member";
-import { LucideIcon, LucideVolume2 } from "lucide-react";
-
-import { channelTypesEnum } from "@db/schema";
+import { LucideVolume2 } from "lucide-react";
+import type { TCreateChannelDBProps } from "@db/data-access/channel/create-channel";
+import { createChannelSchema } from "@/app/api/channel/route";
 
 import {
   Dialog,
@@ -30,7 +29,6 @@ import { Input } from "@ui/components/ui/input";
 import { Button } from "@ui/components/ui/button";
 import { toast } from "sonner";
 import { LucideHash } from "lucide-react";
-import { cn } from "@ui/lib/utils";
 import { Label } from "@ui/components/ui/label";
 import { BarLoader } from "react-spinners";
 import ChannelTypeButton from "../channel/select-channel-type";
@@ -40,7 +38,7 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "Name is rquired" })
     .max(16, { message: "Name must be less than 16 characters" }),
-  type: z.nativeEnum(channelTypesEnum),
+  type: z.enum(["text", "voice"]),
   member_id: z.string(),
 });
 
@@ -54,7 +52,7 @@ const CreateChannelModal = () => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
-      type: channelTypesEnum.TEXT,
+      type: "text",
     },
   });
 
@@ -67,14 +65,27 @@ const CreateChannelModal = () => {
 
       console.log({ currentProfileData, member });
       console.log(values);
-      formSchema.parse(values);
-      await createChannel({
+      const result = createChannelSchema.safeParse({
+        categoryId: data.category?.id!,
+        serverId: serverId,
+        memberId: values.member_id,
         name: values.name,
         type: values.type,
-        serverId,
-        categoryId: data.category?.id as string,
-        memberId: values.member_id,
+      } satisfies TCreateChannelDBProps);
+      if (result.success === false) {
+        toast.error(result.error.message);
+        return;
+      }
+      const res = await fetch("channel", {
+        method: "POST",
+        body: JSON.stringify(result.data),
       });
+
+      if (!res.ok || res.status !== 200) {
+        const data = await res.json();
+        toast.error(data.error || "Channel creation failed");
+        return;
+      }
 
       toast.success("Channel created");
       form.reset();
@@ -117,21 +128,17 @@ const CreateChannelModal = () => {
             <Label className="uppercase mx-6">Type</Label>
             <div className="mx-6 mt-2 space-y-4">
               <ChannelTypeButton
-                hanedleClick={() =>
-                  form.setValue("type", channelTypesEnum.TEXT)
-                }
+                hanedleClick={() => form.setValue("type", "text")}
                 label="Text"
-                selected={form.watch("type") === channelTypesEnum.TEXT}
+                selected={form.watch("type") === "text"}
                 LucideIconComponent={LucideHash}
                 isLoading={isLoading}
                 disabled={false}
               />
               <ChannelTypeButton
-                hanedleClick={() =>
-                  form.setValue("type", channelTypesEnum.VOICE)
-                }
+                hanedleClick={() => form.setValue("type", "voice")}
                 label="Voice"
-                selected={form.watch("type") === channelTypesEnum.VOICE}
+                selected={form.watch("type") === "voice"}
                 LucideIconComponent={LucideVolume2}
                 isLoading={isLoading}
                 disabled={false}
@@ -139,9 +146,7 @@ const CreateChannelModal = () => {
             </div>
             <DialogFooter className="bg-discord_darker mt-4 p-4">
               <Button type="submit" className="w-20">
-                {
-                  isLoading ? <BarLoader color="#fff" /> : "CREATE"
-                }
+                {isLoading ? <BarLoader color="#fff" /> : "CREATE"}
               </Button>
             </DialogFooter>
           </form>

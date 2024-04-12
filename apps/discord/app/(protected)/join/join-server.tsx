@@ -1,9 +1,9 @@
 "use client";
 
-import joinServerAction from "@/lib/server-actions/server/join-server";
 import { Button } from "@ui/components/ui/button";
 import { useState } from "react";
 import { BarLoader } from "react-spinners";
+import type { TAPIJoinServerResponse } from "@/app/api/join-server/route";
 
 const JoinServerButton = ({
   serverId,
@@ -17,11 +17,16 @@ const JoinServerButton = ({
 
   const handleServerJoining = async () => {
     setLoading(true);
-    const res = await joinServerAction({ serverId, channelId });
-
-    if(res?.message) {
-      console.error(res.message);
-      setError(res.message || "Something went wrong");
+    const res = await fetch("/api/join-server", {
+      method: "PUT",
+      body: JSON.stringify({ serverId, channelId }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data: TAPIJoinServerResponse = await res.json();
+    if (res.status !== 200) {
+      setError(data.message);
     }
     setLoading(false);
   };

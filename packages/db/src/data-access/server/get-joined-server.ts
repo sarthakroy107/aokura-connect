@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../db.js";
 import { Member } from "../../schema.js";
-import { TServerDetailsDto } from "../../dto/server/server-details-dto.js";
+import { TServerDetailsDTO } from "../../dto/server/server-details-dto.js";
 
 export const getJoinedServers = async (profileId: string) => {
   try {
@@ -11,7 +11,7 @@ export const getJoinedServers = async (profileId: string) => {
       with: { server: true },
     });
 
-    const transformedServerDetails: Omit<TServerDetailsDto, 'categories' | 'channels'>[] = servers.map(
+    const transformedServerDetails: Omit<TServerDetailsDTO, 'categories' | 'channels'>[] = servers.map(
       (data) => {
         return {
           id: data.server.id,

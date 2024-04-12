@@ -1,42 +1,54 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
-import { encode } from "@/lib/server-actions/auth/jwt-token";
 import { useParams } from "next/navigation";
-import { createJWTForSendingMessage } from "@/lib/server-actions/auth/create-jwt-for-sending-message";
+import { TAPIJWTToken } from "@/app/api/jwt/route";
 
-export default function useJWT({ type } : { type: "direct-message" | "server-message" }) {
+export default function useJWT({
+  type,
+}: {
+  type: "direct-message" | "server-message";
+}) {
+  const { serverId, channelId } = useParams<{
+    serverId?: string;
+    channelId: string;
+  }>();
 
-  const { serverId, channelId} = useParams< { serverId?: string, channelId: string }>();
-
-
-  const { data, refetch } = useQuery({
+  const { data, refetch, error } = useQuery({
     refetchInterval: 1000 * 60 * 3,
-    queryKey: [
-      "jwt",
-      type,
-      channelId,
-    ],
+    queryKey: ["jwt", type, channelId],
     refetchIntervalInBackground: true,
     refetchOnMount: true,
-    queryFn: async () =>
-      await createJWTForSendingMessage({
-        channelId,
-        serverId,
-        type,
+    queryFn: () =>
+      fetch(
+        `/api/jwt?channel_id=${channelId}&server_id=${serverId}&type=${type}`
+      ).then((res) => {
+        if (!res.ok || res.status !== 200) {
+          throw new Error("Failed to fetch JWT");
+        }
+        return res.json() as Promise<TAPIJWTToken>;
       }),
   });
 
-  if (!data || data.status !== 200 || !data.token) {
+  if (error) {
     return {
       token: null,
       refetchJWT: refetch,
+      error,
+    };
+  }
+
+  if (!data || !data.token) {
+    return {
+      token: null,
+      refetchJWT: refetch,
+      error: "No token found",
     };
   }
 
   return {
     token: data.token,
     refetchJWT: refetch,
+    error: null,
   };
 }

@@ -27,4 +27,4 @@ export const memberWithChannelIdsDto = (data: TMemberWithChannelIdsProp) => {
   };
 };
 
-export type TMemberWithChannelIds = ReturnType<typeof memberWithChannelIdsDto>;
+export type TMemberWithChannelIdsDTO = ReturnType<typeof memberWithChannelIdsDto>;

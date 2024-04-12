@@ -1,6 +1,6 @@
-import { TCategory, TChannel, TServer } from "../../schema";
-import { categoryWithChannelsDetailsDto } from "../categories/categories-detils-dto";
-import { channelDetailsDto } from "../channel/channel-details-dto";
+import { TCategory, TChannel, TServer } from "../../schema.js";
+import { categoryWithChannelsDetailsDto } from "../categories/categories-detils-dto.js";
+import { channelDetailsDto } from "../channel/channel-details-dto.js";
 
 type TServerDetailsProp = TServer & {
   categories: TCategory[];
@@ -18,9 +18,14 @@ export const serverDetailsDto = (data: TServerDetailsProp) => {
     LastUpdatedAt: data.updated_at,
     isPrivate: data.is_private,
     isJoiningAllowed: data.is_joining_allowed,
-    categories: data.categories.map((category) => categoryWithChannelsDetailsDto({ channels: data.channels, data: category})),
+    categories: data.categories.map((category) =>
+      categoryWithChannelsDetailsDto({
+        channels: data.channels,
+        data: category,
+      })
+    ),
     channels: data.channels.map((channel) => channelDetailsDto(channel)),
   };
 };
 
-export type TServerDetailsDto = ReturnType<typeof serverDetailsDto>;
+export type TServerDetailsDTO = ReturnType<typeof serverDetailsDto>;

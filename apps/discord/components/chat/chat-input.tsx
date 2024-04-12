@@ -37,7 +37,6 @@ type TChatInputProps =
       senderDetails: TMessageSenderDto;
     };
 const ChatInput = (props: TChatInputProps) => {
-  
   const { name, type, channelId, isBlocked, senderDetails } = props;
   const { onOpen, file_url, data, setFileUrl } = useModal();
   const { inReply, replingToMessageData, eraceReplyData } = useChatActions();
@@ -100,8 +99,18 @@ const ChatInput = (props: TChatInputProps) => {
         attachments: [],
       });
 
-      if(props.type === "direct-message" && !props.hasAccepted && props.canAccept) {
-        acceptedInvitation(channelId);
+      if (
+        props.type === "direct-message" &&
+        !props.hasAccepted &&
+        props.canAccept
+      ) {
+        fetch(`/api/accept-dm-invitation`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ conversationId: channelId }),
+        });
       }
 
       setFileUrl(null);

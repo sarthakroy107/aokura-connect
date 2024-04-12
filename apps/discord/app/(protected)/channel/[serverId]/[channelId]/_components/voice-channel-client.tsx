@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { MeetingProvider } from "@videosdk.live/react-sdk";
 import { authToken } from "@/app/videosdk/_lib/get-token";
-import { getVideoSDKRoomId } from "../_lib/video-sdk/get-room-id";
 import MeetingView from "./video-sdk/meeting-view";
-import JoinScreen from "./video-sdk/join-screen";
 import useCurrentServer from "@/components/hooks/use-current-member";
 import { useParams } from "next/navigation";
 

@@ -3,7 +3,6 @@
 import '@livekit/components-styles';
 import {
   LiveKitRoom,
-  VideoConference,
   GridLayout,
   ParticipantTile,
   useTracks,

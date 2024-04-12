@@ -2,7 +2,6 @@ import PageNavbar from "@/components/navigation/page-nav";
 import getConversationDetails from "./_actions/get-conversation-details";
 import Image from "next/image";
 import ChatMessages from "@/components/chat/chat-messages-server";
-import ChatInput from "@/components/chat/chat-input";
 import SocketStatus from "@/components/chat/socket-status";
 import DirectMessageChatInput from "./direct-message-input";
 import DemiClient from "./demi-client-component";

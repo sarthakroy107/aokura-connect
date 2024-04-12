@@ -1,5 +1,5 @@
 "use client";
-import { TMemberWithChannelIds } from "@db/dto/member/member-with-channel-ids";
+import { TMemberWithChannelIdsDTO } from "@db/dto/member/member-with-channel-ids";
 import { create } from "zustand";
 
 export enum ModalEnum {
@@ -22,7 +22,7 @@ type TModalDataType = {
   channel?: TDBChannel;
   api_url?: string;
   profile?: TDBProfile;
-  member?: TMemberWithChannelIds;
+  member?: TMemberWithChannelIdsDTO;
   query?: Record<string, any>;
 };
 

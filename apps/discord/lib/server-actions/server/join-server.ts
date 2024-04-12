@@ -3,7 +3,7 @@
 import { currentProfile } from "@/lib/auth/current-user";
 import joinChannelOperation from "@db/data-access/channel/join-channel";
 import { joinServerOperation } from "@db/data-access/server/join-server";
-import { redirect } from "next/navigation";
+
 export default async function joinServerAction({
   channelId,
   serverId,
@@ -69,8 +69,6 @@ export default async function joinServerAction({
       message: joinChannelRes.message,
     };
   }
-
-  redirect(`/channel/${serverId}/${channelId}`);
 
   return {
     status: 200,

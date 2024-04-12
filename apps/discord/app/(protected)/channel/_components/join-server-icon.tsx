@@ -3,8 +3,7 @@
 import TooltipWrapper from '@/components/common/tooltip-wrapper'
 import { ModalEnum, useModal } from '@/lib/store/modal-store';
 import { cn } from '@ui/lib/utils';
-import { LucideCompass, LucidePlus } from 'lucide-react'
-import React from 'react'
+import { LucideCompass } from 'lucide-react'
 
 const JoinServer = () => {
   const { onOpen } = useModal();

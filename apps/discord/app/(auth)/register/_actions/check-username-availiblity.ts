@@ -1,27 +1,26 @@
-
 "use server";
-
-import { db } from "@db/db";
-import { Profile } from "@db/schema";
-import { eq } from "drizzle-orm";
+import { isUsernameAvailable } from "@db/data-access/user/is-username-available";
 
 export const checkUsernameAvailibility = async (username: string) => {
   try {
-    const result = await db
-      .select()
-      .from(Profile)
-      .where(eq(Profile.username, username));
-    if (!result || result.length === 0) {
+    const res = await isUsernameAvailable(username);
+    if (res) {
       return {
         available: true,
         username,
         message: "Username is available",
       };
-    } else
+    } else if (res === null)
       return {
         available: false,
         username,
-        message: "Username is already taken",
+        message: "Error in DB",
+      };
+    else
+      return {
+        available: false,
+        username,
+        message: "Username is not available",
       };
   } catch (error) {
     console.error(error);

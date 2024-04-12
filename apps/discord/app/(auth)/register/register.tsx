@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 import { checkUsernameAvailibility } from "./_actions/check-username-availiblity";
-import { registerUser } from "./_actions/register-user";
+import type { TAPIRegisterUserResponse } from "@/app/api/register/route";
 
 import { BarLoader } from "react-spinners";
 import { toast } from "sonner";
@@ -24,24 +24,40 @@ const RegistrationBox = () => {
   const form = useForm<z.infer<typeof registrationFormSchema>>({
     resolver: zodResolver(registrationFormSchema),
   });
-
   const [usernameAvailibility, setUsernameAvailibility] = useState<Awaited<
     ReturnType<typeof checkUsernameAvailibility>
   > | null>(); // State to check username availibility
 
   const [emailSent, setEmailSent] = useState(false); // State to check if email has been sent
-
   const usernameWatch = form.watch("username"); // Watch the username input
-
   const [value] = useDebounce(usernameWatch, 1000); // Debounce the username check
 
   useEffect(() => {
     if (value && value.length > 0) {
       (async () => {
-        const res = await checkUsernameAvailibility(value);
-        if (res) {
-          setUsernameAvailibility(res);
-        }
+        const res = await fetch("/api/check-username", {
+          method: "PUT",
+          cache: "no-cache",
+          body: JSON.stringify({ username: value }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const body = await res.json();
+        if (res.status !== 200) {
+          setUsernameAvailibility({
+            available: body,
+            message: "Error occured while checking username",
+            username: value,
+          });
+        } else if (!body.error) {
+          setUsernameAvailibility(body);
+        } else
+          setUsernameAvailibility({
+            available: false,
+            message: body.error,
+            username: value,
+          });
       })(); // Check username availibility
     }
   }, [value]);
@@ -50,12 +66,19 @@ const RegistrationBox = () => {
     // Function to handle form submit
     values: z.infer<typeof registrationFormSchema>
   ) => {
-    const res = await registerUser(values);
-    if (res.status === 200) {
-      toast.success("Account activation link sent to your email");
+    const res = await fetch("/api/register", {
+      method: "POST",
+      body: JSON.stringify(values),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const body = (await res.json()) as TAPIRegisterUserResponse;
+    if (res.status === 200 && body.message) {
+      toast.success(body.message);
       setEmailSent(true);
     } else {
-      toast.error(res.message);
+      toast.error(body.error || "Error occured while sending email");
     }
   };
 
