@@ -1,5 +1,5 @@
 import dmFromServerChannelAction from "@/lib/server-actions/conversation/dm-from-group";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export type TAPIDMFromServerReturnType = {
   message: string;
@@ -7,14 +7,14 @@ export type TAPIDMFromServerReturnType = {
   conversationId: string | null;
 };
 
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
   const { textMessage, profile } = await req.json();
   const res = await dmFromServerChannelAction({
     receiverProfileId: profile.id,
     textContent: textMessage,
   });
 
-  if (res.status !== 200 || !res.data) {
+  if (res.status !== 200 || !res.data)
     return new NextResponse(
       JSON.stringify({
         message: (res.error as string) || "Failed to send message",
@@ -25,16 +25,15 @@ export async function POST(req: NextResponse) {
         status: res.status,
       }
     );
-  } else {
-    return new NextResponse(
-      JSON.stringify({
-        message: "Message sent",
-        success: true,
-        conversationId: res.data.conversationId,
-      } satisfies TAPIDMFromServerReturnType),
-      {
-        status: 200,
-      }
-    );
-  }
+
+  return new NextResponse(
+    JSON.stringify({
+      message: "Message sent",
+      success: true,
+      conversationId: res.data.conversationId,
+    } satisfies TAPIDMFromServerReturnType),
+    {
+      status: 200,
+    }
+  );
 }

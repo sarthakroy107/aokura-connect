@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  createChannelOperation,
-  type TCreateChannelDBProps,
-} from "@db/data-access/channel/create-channel";
-import { z, ZodType } from "zod";
+import { createChannelOperation } from "@db/data-access/channel/create-channel";
+import {} from "zod";
 import { currentProfile } from "@/lib/auth/current-user";
 import { getMemberDetails } from "@db/data-access/member/get-member-details";
 import EditChannelOperation from "@db/data-access/channel/edit-channel";
 import deleteChannelOperation from "@db/data-access/channel/delete-channel";
+import {
+  createChannelSchema,
+  modifyChannelSchema,
+  deleteChannelSchema,
+} from "@db/schemas/channel";
 
 //*---------------------POST---------------------*//
 
@@ -16,17 +18,6 @@ export type TAPICreateChannelResponse =
       channelId: string;
     }
   | { error: string };
-
-export const createChannelSchema: ZodType<TCreateChannelDBProps> = z.object({
-  name: z
-    .string()
-    .min(1, { message: "Name is rquired" })
-    .max(32, { message: "Name must be less than 16 characters" }),
-  type: z.enum(["text", "voice"]),
-  memberId: z.string(),
-  serverId: z.string(),
-  categoryId: z.string(),
-});
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -54,14 +45,6 @@ export async function POST(req: NextRequest) {
 //*---------------------PUT---------------------*//
 
 export type TAPIEditChannelResponse = { message: string };
-
-export const modifyChannelSchema = z.object({
-  channelId: z.string().min(1, { message: "Channel ID is required" }),
-  channelName: z.string().min(1, { message: "Channel name is required" }),
-  isBlocked: z.boolean(),
-  isPrivate: z.boolean(),
-  serverId: z.string().min(1, { message: "Server ID is required" }),
-});
 
 export async function PUT(req: NextRequest) {
   const body = await req.json();
@@ -125,11 +108,6 @@ export async function PUT(req: NextRequest) {
 //*---------------------DELETE---------------------*//
 
 export type TAPIDeleteChannelResponse = { message: string };
-
-const deleteChannelSchema = z.object({
-  channelId: z.string().min(1, { message: "Channel ID is required" }),
-  serverId: z.string().min(1, { message: "Server ID is required" }),
-});
 
 export async function DELETE(req: NextRequest) {
   const channelId = req.nextUrl.searchParams.get("channel_id");

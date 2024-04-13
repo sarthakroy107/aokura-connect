@@ -17,10 +17,10 @@ import ChannelTypeButton from "../channel/select-channel-type";
 import SwitchInput from "../form/switch-imput";
 import { useSocket } from "../provider/socket-provider";
 import useCurrentServer from "../hooks/use-current-member";
-import {
-  modifyChannelSchema,
-  type TAPIEditChannelResponse,
+import type {
+  TAPIEditChannelResponse,
 } from "@/app/api/channel/route";
+import { modifyChannelSchema } from "@db/schemas/channel";
 
 const ModifyChannelModal = () => {
   const { isOpen, options, onClose } = useModal();

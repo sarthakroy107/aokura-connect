@@ -8,7 +8,7 @@ import { useCurrentProfile } from "@/components/hooks/use-current-profile";
 import useCurrentServer from "@/components/hooks/use-current-member";
 import { LucideVolume2 } from "lucide-react";
 import type { TCreateChannelDBProps } from "@db/data-access/channel/create-channel";
-import { createChannelSchema } from "@/app/api/channel/route";
+import { createChannelSchema } from "@db/schemas/channel";
 
 import {
   Dialog,
