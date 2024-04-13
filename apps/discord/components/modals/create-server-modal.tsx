@@ -2,7 +2,7 @@
 
 import { ModalEnum, useModal } from "@/lib/store/modal-store";
 import { FileUpload } from "@/components/file-upload";
-import { createServer } from "@/lib/server-actions/server/actions";
+
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,8 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { currentProfile } from "@/lib/auth/current-user";
 import { useCurrentProfile } from "../hooks/use-current-profile";
+import type { TCreateServerDBProps } from "@db/data-access/server/create-server";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z
@@ -72,12 +74,29 @@ const CreateServerModal = () => {
 
       formSchema.parse(values);
 
-      await createServer(values.name, values.avatar, values.profile_id);
+      const res = await fetch("/api/server", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          creatorProfileId: values.profile_id,
+          serverName: values.name,
+          serverAvatar: values.avatar,
+          serverDescription: "",
+        } satisfies TCreateServerDBProps),
+      });
+      if (res.status !== 200) {
+        toast.error("Server not created");
+        console.error(await res.json());
+      }
       form.reset();
       onClose();
       router.refresh();
+      toast.success("Server created successfully");
     } catch (error) {
       console.log(error);
+      toast.error("Server not created");
     }
   };
 

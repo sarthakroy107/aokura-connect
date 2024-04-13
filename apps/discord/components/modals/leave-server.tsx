@@ -1,6 +1,6 @@
 "use client";
 
-import leaveServerAction from "@/lib/server-actions/server/leave-server";
+import { TAPILeaveServerResponse } from "@/app/api/member/route";
 import { useModal } from "@/lib/store/modal-store";
 import {
   AlertDialog,
@@ -23,12 +23,15 @@ const LeaveServerModal = () => {
   const leaveServer = async () => {
     if (options.type !== "leave-server") return;
     console.log("leave server");
-    const res = await leaveServerAction({ serverId: options.data.serverId });
+    const res = await fetch(`/api/member?server_id=${options.data.serverId}`, {
+      method: "DELETE",
+    });
+    const data: TAPILeaveServerResponse = await res.json();
     if (res.status === 200) {
       onClose();
       router.push("/channel/me");
       router.refresh();
-    } else toast.error(res.message);
+    } else toast.error(data.message || "Failed to leave server");
   };
 
   return (

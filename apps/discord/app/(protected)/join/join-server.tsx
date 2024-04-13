@@ -3,7 +3,7 @@
 import { Button } from "@ui/components/ui/button";
 import { useState } from "react";
 import { BarLoader } from "react-spinners";
-import type { TAPIJoinServerResponse } from "@/app/api/join-server/route";
+import type { TAPIJoinServerResponse } from "@/app/api/member/route";
 
 const JoinServerButton = ({
   serverId,
@@ -17,8 +17,8 @@ const JoinServerButton = ({
 
   const handleServerJoining = async () => {
     setLoading(true);
-    const res = await fetch("/api/join-server", {
-      method: "PUT",
+    const res = await fetch("/api/member", {
+      method: "POST",
       body: JSON.stringify({ serverId, channelId }),
       headers: {
         "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-import { createServer } from '@db/data-access/server/create-server'
+import { createServerOperation } from '@db/data-access/server/create-server'
 type TCreateNewServer = {
   creatorProfileId: string,
   serverName: string,
@@ -6,5 +6,5 @@ type TCreateNewServer = {
   serverDescription?: string,
 }
 export const createNewServer = async (data: TCreateNewServer) => {
-  const newServer = await createServer(data);
+  const newServer = await createServerOperation(data);
 }

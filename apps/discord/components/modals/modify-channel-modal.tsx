@@ -10,15 +10,17 @@ import { Form, FormField } from "@ui/components/ui/form";
 import { Button } from "@ui/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { EditChannelAction } from "@/lib/server-actions/channel/edit-channel";
 import { useRouter } from "next/navigation";
 import { BarLoader } from "react-spinners";
 import NormalInput from "../form/normal-input";
 import ChannelTypeButton from "../channel/select-channel-type";
-import deleteChannelAction from "@/lib/server-actions/channel/delete-channel";
 import SwitchInput from "../form/switch-imput";
 import { useSocket } from "../provider/socket-provider";
 import useCurrentServer from "../hooks/use-current-member";
+import {
+  modifyChannelSchema,
+  type TAPIEditChannelResponse,
+} from "@/app/api/channel/route";
 
 const ModifyChannelModal = () => {
   const { isOpen, options, onClose } = useModal();
@@ -138,7 +140,7 @@ const ChangeChannelDetails = ({
       return;
     }
 
-    const res = await EditChannelAction({
+    const result = modifyChannelSchema.safeParse({
       channelId,
       channelName: value.channelName,
       isBlocked: false,
@@ -146,8 +148,22 @@ const ChangeChannelDetails = ({
       serverId,
     });
 
+    if (!result.success) {
+      toast.error(
+        result.error.errors.map((e) => e.message).join(" | ") ||
+          "Invalid request"
+      );
+      return;
+    }
+
+    const res = await fetch("/api/channel", {
+      method: "PUT",
+      body: JSON.stringify(result.data),
+    });
+
     if (res.status !== 200) {
-      toast.error(res.message);
+      const resData: TAPIEditChannelResponse = await res.json();
+      toast.error(resData.message || "Failed to update channel");
       return;
     }
 
@@ -253,7 +269,6 @@ function ChangeChannelStatus({
         type="button"
         onClick={handleChangeStatus}
         className="mt-2 w-20 h-7 text-sm"
-
       >
         {isBlocked ? "UNBLOCK" : "BLOCK"}
       </Button>
@@ -274,15 +289,18 @@ function DeleteChannel({
 
   const handleDelete = async () => {
     setIsSubmitting(true);
-    const res = await deleteChannelAction({
-      channelId,
-      serverId,
+    const res = await fetch("/api/channel", {
+      method: "DELETE",
+      body: JSON.stringify({
+        channelId,
+        serverId,
+      }),
     });
 
     setIsSubmitting(false);
 
     if (res.status !== 200) {
-      toast.error(res.message);
+      toast.error((await res.json()).message || "Failed to delete channel");
       return;
     }
     toast.success("Channel deleted successfully");

@@ -1,7 +1,7 @@
 "use server";
 
 import { checkToken } from "@db/data-access/auth-js/verify-email";
-import { createServer } from "@db/data-access/server/create-server";
+import { createServerOperation } from "@db/data-access/server/create-server";
 import { getAnimeGirlImage } from "@db/fun/get-anime-girl-image";
 
 export const verifyEmail = async (token: string | undefined) => {
@@ -34,7 +34,7 @@ export const verifyEmail = async (token: string | undefined) => {
 
   //*As email varification is successfull,so no need to check for valid profile or not
 
-  const newServer = await createServer({
+  const newServer = await createServerOperation({
     serverName: `${checkTokenRes.profile?.name}'s Server`,
     creatorProfileId: checkTokenRes.profile?.id,
     serverAvatar: getAnimeGirlImage(),

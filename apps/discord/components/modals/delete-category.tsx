@@ -10,16 +10,14 @@ import {
   AlertDialogHeader,
 } from "@ui/components/ui/alert-dialog";
 import { Button } from "@ui/components/ui/button";
-import { categoryDetailsSchema } from "@/lib/validations/category/edit-category-validation";
 import { z } from "zod";
-import useCurrentServer from "../hooks/use-current-member";
 import { toast } from "sonner";
 import { useState } from "react";
-import { deleteCategoryAction } from "@/lib/server-actions/category/delete-category";
 import { deleteCategorySchema } from "@/lib/validations/category/delete-category-validation";
 import { BarLoader } from "react-spinners";
 import { useParams } from "next/navigation";
-import Loading from "@/components/loaders/loading";
+import { TAPIDeleteCategoryResponse } from "@/app/api/server-category/route";
+import useCurrentServer from "../hooks/use-current-member";
 
 const DeleteCategoryModal = () => {
   const { isOpen, options, onClose } = useModal();
@@ -28,30 +26,42 @@ const DeleteCategoryModal = () => {
   const { member, server } = useCurrentServer(serverId);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  
   const isModalOpen = isOpen && options.type === "delete-category";
-  if(options.type !== "delete-category") return null;
+  if (options.type !== "delete-category") return null;
 
   const handleDelete = async () => {
     setIsSubmitting(true);
+
     const parsingObject: z.infer<typeof deleteCategorySchema> = {
       categoryId: options.data?.categoryId!,
       serverId: server?.id!,
       memberId: member?.id!,
     };
+
     const result = deleteCategorySchema.safeParse(parsingObject);
+
     if (!result.success) {
       setIsSubmitting(false);
       toast.error(result.error.message);
       return;
     }
-    const res = await deleteCategoryAction(parsingObject);
+
+    const res = await fetch(
+      `/api/server-category?category_id=${options.data?.categoryId}&server_id=${server?.id}&member_id=${member?.id}`,
+      {
+        method: "DELETE",
+        cache: "no-cache",
+      }
+    );
+
+    const resData: TAPIDeleteCategoryResponse = await res.json();
+
     setIsSubmitting(false);
     if (res.status !== 200) {
-      toast.error(res.error);
+      toast.error(resData.message);
       return;
     }
-    toast.success(res.data);
+    toast.success(resData.message);
     onClose();
   };
 

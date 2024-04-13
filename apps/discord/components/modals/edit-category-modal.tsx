@@ -12,7 +12,6 @@ import NormalInput from "../form/normal-input";
 import { Button } from "@ui/components/ui/button";
 import { toast } from "sonner";
 import useCurrentServer from "../hooks/use-current-member";
-import { modifyCategoryDetailsAction } from "@/lib/server-actions/category/edit-category-details";
 import { categoryDetailsSchema } from "@/lib/validations/category/edit-category-validation";
 import { z } from "zod";
 import { BarLoader } from "react-spinners";
@@ -33,12 +32,13 @@ const ModifyCategoryModal = () => {
     formState: { isSubmitting },
   } = useForm<Omit<TEditCategoryData, "categoryId">>({
     defaultValues: {
-      categoryName: options.type === "modify-category" ? options.data?.categoryName : "",
+      categoryName:
+        options.type === "modify-category" ? options.data?.categoryName : "",
     },
   });
 
-  useEffect(() => {}, [options.data])
-  if(options.type !== "modify-category") return null;
+  useEffect(() => {}, [options.data]);
+  if (options.type !== "modify-category") return null;
 
   const onSubmit = async (data: Omit<TEditCategoryData, "categoryId">) => {
     const parsingObject: z.infer<typeof categoryDetailsSchema> = {
@@ -53,10 +53,14 @@ const ModifyCategoryModal = () => {
       toast.error(result.error.message);
       return;
     }
-    const res = await modifyCategoryDetailsAction(result.data);
-
+    const res = await fetch("/api/server-category", {
+      method: "PUT",
+      body: JSON.stringify(result.data),
+    });
+    const resData: { message: string } = await res.json();
     if (res.status !== 200) {
-      toast.error(res.error);
+      console.error(resData.message);
+      toast.error(resData.message || "Something went wrong");
       return;
     }
 
@@ -64,7 +68,6 @@ const ModifyCategoryModal = () => {
     reset({});
     onClose();
   };
-
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={() => onClose()}>

@@ -6,7 +6,7 @@ import {
   deleteCategory,
 } from "@db/data-access/category/delete-category";
 import { getMemberDetails } from "@db/data-access/member/get-member-details";
-import { stat } from "fs";
+import { deleteCategorySchema } from "@/lib/validations/category/delete-category-validation";
 import { revalidatePath } from "next/cache";
 
 export type TDeleteCategoryAction = TDeleteCategoryDB & {
@@ -16,6 +16,7 @@ export type TDeleteCategoryAction = TDeleteCategoryDB & {
 
 export const deleteCategoryAction = async (data: TDeleteCategoryAction) => {
   try {
+    
     const profile = await currentProfile();
 
     if (profile.status !== 200 || !profile.data)

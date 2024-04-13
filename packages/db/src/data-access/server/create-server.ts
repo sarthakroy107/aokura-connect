@@ -9,14 +9,14 @@ import {
   Profile,
 } from "../../schema.js";
 
-type TCreateServer = {
+export type TCreateServerDBProps = {
   serverName: string;
   creatorProfileId: string;
   serverAvatar?: string;
   serverDescription?: string;
 };
 
-export const createServer = async (data: TCreateServer) => {
+export const createServerOperation = async (data: TCreateServerDBProps) => {
   try {
     return await db.transaction(async (trx) => {
       // Check if the creator profile exists

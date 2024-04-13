@@ -23,10 +23,10 @@ import {
   newInvitationLinkSchema,
 } from "@/lib/validations/invitation-link/new-invitation-link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createInvitationLinkAction } from "@/lib/server-actions/invitation-link/create-invitaion-link";
 import { toast } from "sonner";
 import { useState } from "react";
 import copy from "clipboard-copy";
+import type { TAPICreateInvitationLinkReturn } from "@/app/api/invitation/route";
 
 const maxUsersCountArray: {
   key: TInvitationLinkMaxUsersKeys;
@@ -92,27 +92,33 @@ const CreateInvitaionLinkModal = () => {
       return;
     }
 
-    const res = await createInvitationLinkAction({
-      serverId:
-        options.type === "create-inviation-link" && options.data.serverId
-          ? options.data.serverId
-          : serverId,
-      channelId:
-        options.type === "create-inviation-link" && options.data.channelId
-          ? options.data.channelId
-          : null,
-      data: values,
+    const res = await fetch("/api/invitation", {
+      method: "POST",
+      body: JSON.stringify({
+        serverId:
+          options.type === "create-inviation-link" && options.data.serverId
+            ? options.data.serverId
+            : serverId,
+        channelId:
+          options.type === "create-inviation-link" && options.data.channelId
+            ? options.data.channelId
+            : null,
+        data: values,
+      }),
     });
-    if (res.status !== 200 || !res.data) {
-      toast.error(res.message);
+
+    const data: TAPICreateInvitationLinkReturn = await res.json();
+    if (res.status !== 200 ) {
+
+      toast.error("Link creation failed");
       return;
     }
     setInviteData({
-      link: `${process.env.NEXT_PUBLIC_SITE_URL}/invite/${res.data.token}`,
-      message: res.data.message,
+      link: `${process.env.NEXT_PUBLIC_SITE_URL}/invite/${data.token}`,
+      message: data.message,
     });
 
-    console.log("Link created")
+    console.log("Link created");
   };
 
   return (

@@ -9,6 +9,12 @@ import { getMemberDetails } from "@db/data-access/member/get-member-details";
 import invitationLinkDataFormatter from "./format-invitation-configuration";
 import createInvitationLink from "@db/data-access/invitation-link/create-invitation-link";
 
+export type TCreateInvitationLinkProps = {
+  serverId: string;
+  channelId: string | null;
+  data: TNewInvitationLink;
+}
+
 export const createInvitationLinkAction = async ({
   serverId,
   channelId,

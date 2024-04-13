@@ -14,7 +14,7 @@ import useCurrentServer from "@/components/hooks/use-current-member";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { changeName } from "@/lib/server-actions/common/actions";
-import Loading from "@/components/loaders/loading";
+
 
 const EditServerProfile = () => {
   const { serverId } = useParams<{ serverId: string }>();
@@ -48,7 +48,7 @@ const EditServerProfile = () => {
     <Dialog open={isModalOpen} onOpenChange={() => onClose()}>
       <DialogContent className="flex flex-col items-center bg-discord p-0 pt-7">
         <DialogHeader className="text-2xl font-medium">
-          Edit Sever Profile
+          Edit Sever Profile(Server action hve to be changed to api call). Bo't use it
         </DialogHeader>
         <DisplayImageChange
           currentImage={member?.avatar || ""}
