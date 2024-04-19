@@ -3,6 +3,7 @@ import Image from "next/image";
 import JoinServerButton from "../../join/join-server";
 
 const Page = async ({ params: { token } }: { params: { token: string } }) => {
+
   if (!token) {
     return (
       <main className="w-full h-full bg-discord_blurple flex justify-center">
