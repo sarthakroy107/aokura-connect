@@ -34,7 +34,7 @@ export default async function Page({
       {conversationDetails.data && (
         <>
           <ChatMessages id={channelId} type="direct-message" />
-          <DemiClient channelId={channelId} />
+          {/* <DemiClient channelId={channelId} /> */}
           <DirectMessageChatInput
             conversationId={conversationDetails.data.id}
             isBlocked={conversationDetails.data.block.isBlocked}

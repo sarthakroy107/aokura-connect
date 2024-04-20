@@ -9,8 +9,8 @@ import MessageComponent from "./message-component";
 import MessageLoader from "../loaders/message-loader";
 import ChatWelcome from "./chat-welcome";
 import useSocketMessages from "./use-socket-messages";
-import Loading from "@/loading";
 import { TPOSTMessages } from "@/app/api/messages/route";
+import { PuffLoader } from "react-spinners";
 
 const ChatMessagesClient = ({
   type,
@@ -82,29 +82,36 @@ const ChatMessagesClient = ({
 
   const { socketMessages } = useSocketMessages(params?.channelId!);
 
-  if(isFetching) return <Loading />;
+  if (isFetching)
+    return (
+      <div className="w-full h-[89vh] flex justify-center items-center">
+        <PuffLoader color="#fff" />
+      </div>
+    );
 
   return (
     <>
       {error ? (
-        <div>{error.message}: skjvnjbfhdd</div>
-      ) : data && (
-        <div>
-          {!hasNextPage && type === "server-message" && <ChatWelcome />}
-          <div ref={ref} />
-          {isFetching && hasNextPage && (
-            <div className="w-full flex flex-col justify-center items-center">
-              <MessageLoader />
-            </div>
-          )}
-          {data.map((item) => (
-            <MessageComponent key={item.id} {...item} />
-          ))}
-          {socketMessages.map((item) => (
-            <MessageComponent key={item.id} {...item} />
-          ))}
-          <div ref={scrollRef} />
-        </div>
+        <div>ERROR: {error.message}</div>
+      ) : (
+        data && (
+          <div>
+            {!hasNextPage && type === "server-message" && <ChatWelcome />}
+            <div ref={ref} />
+            {isFetching && hasNextPage && (
+              <div className="w-full flex flex-col justify-center items-center">
+                <MessageLoader />
+              </div>
+            )}
+            {data.map((item) => (
+              <MessageComponent key={item.id} {...item} />
+            ))}
+            {socketMessages.map((item) => (
+              <MessageComponent key={item.id} {...item} />
+            ))}
+            <div ref={scrollRef} />
+          </div>
+        )
       )}
     </>
   );

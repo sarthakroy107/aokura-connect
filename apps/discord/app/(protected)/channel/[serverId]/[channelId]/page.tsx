@@ -10,7 +10,7 @@ const Page = async ({
   params: { serverId: string; channelId: string };
 }) => {
   const channel = await getChannelById(params.channelId);
-  if (!channel) return <div>Channel not found</div>;
+  if (!channel) return <p>Channel not found</p>;
 
   return (
     <div className="w-full bg-discord h-full">

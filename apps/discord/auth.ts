@@ -8,7 +8,7 @@ import { db } from "@db/db";
 import { apiPublicRoutes, authRoutes, publicRoutes } from "./routes";
 import { NextResponse } from "next/server";
 import { encode } from "./lib/server-actions/auth/jwt-token";
-import { getProfile } from "@db/data-access/user/get-profile";
+import { TAPIProfile } from "@/app/api/profile/route";
 
 export const {
   handlers: { GET, POST },
@@ -63,19 +63,28 @@ export const {
       return NextResponse.next();
     },
     async session({ session, user }) {
-      
-      const res = await getProfile({
-        email: user.email,
-        is_email_verified: true,
-        is_deleted: false,
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/profile`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (res.status !== 200) {
+        return session;
+      }
+      const profile = (await res.json()) as TAPIProfile;
 
       session.user.id = user.id;
-      session.user.username = res.data?.usernaeme || null;
-      session.user.email = res.data?.email || user.email;
-      session.user.profile_id = res.data?.id || null;
-      
-      session.jwt = await encode({ id: user.id, email: user.email, username: res.data?.usernaeme || null})
+      session.user.username = profile.usernaeme || null;
+      session.user.email = profile.email || user.email;
+      session.user.profile_id = profile.id || null;
+
+      session.jwt = await encode({
+        id: user.id,
+        email: user.email,
+        username: profile.usernaeme || null,
+      });
       return session;
     },
   },

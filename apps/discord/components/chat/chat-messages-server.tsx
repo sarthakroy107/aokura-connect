@@ -29,7 +29,7 @@ const ChatMessages = async ({
   });
 
   return (
-    <ScrollArea className="w-full h-[89vh]">
+    <ScrollArea className="w-full h-[89%]">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <ChatMessagesClient type={type} />
       </HydrationBoundary>

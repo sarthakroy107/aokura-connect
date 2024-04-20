@@ -1,6 +1,5 @@
 "use client";
 import { TAPIProfile } from "@/app/api/profile/route";
-import { currentProfile } from "@/lib/auth/current-user";
 import { useQuery } from "@tanstack/react-query";
 
 export const useCurrentProfile = () => {
