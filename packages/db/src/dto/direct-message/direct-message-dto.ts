@@ -42,6 +42,7 @@ const senderDTO = (data: TProfile): TSenderBody => {
     id: data.id,
     role: null,
     name: data.name,
+    username: data.username,
     avatar: data.avatar ?? "",
     isBanned: null,
     isMuted: null,

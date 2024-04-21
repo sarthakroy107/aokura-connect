@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
   if (!channelId || !serverId || !type) {
     return new NextResponse("Missing required parameters", { status: 400 });
   }
+
   if (type !== "direct-message" && type !== "server-message") {
     return new NextResponse("Invalid type", { status: 400 });
   }

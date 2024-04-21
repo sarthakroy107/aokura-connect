@@ -16,7 +16,6 @@ import useJWT from "../hooks/use-jwt";
 import Image from "next/image";
 import useSocketSendMessage from "../hooks/use-socket-send-message";
 import useSocketChatInputStatus from "./use-socket-chat-input-status";
-import acceptedInvitation from "@/lib/server-actions/conversation/accept-invitation";
 import type { TMessageSenderDto } from "@db/dto/messages/message-dto";
 
 type TChatInputProps =
@@ -84,11 +83,23 @@ const ChatInput = (props: TChatInputProps) => {
         return;
       }
 
+      console.log("Sending message");
+
       sendMessage({
         token,
         content: values.content,
         attachments: values.attachments,
-        inReplyTo: values.inReplyTo,
+        inReplyTo: replingToMessageData ? {
+          id: replingToMessageData.id,
+          content: replingToMessageData.content,
+          isDeleted: replingToMessageData.isDeleted,
+          sender: replingToMessageData.sender,
+          createdAt: replingToMessageData.createdAt,
+          lastEditedOn: replingToMessageData.lastEditedOn,
+          attachments: replingToMessageData.attachments,
+          inReplyTo: null,
+          channelId: replingToMessageData.channelId,
+        } : null,
         senderDetails,
         channelId,
         type,

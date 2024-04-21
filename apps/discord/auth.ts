@@ -8,7 +8,7 @@ import { db } from "@db/db";
 import { apiPublicRoutes, authRoutes, publicRoutes } from "./routes";
 import { NextResponse } from "next/server";
 import { encode } from "./lib/server-actions/auth/jwt-token";
-import { TAPIProfile } from "@/app/api/profile/route";
+import { getProfileFromAuthUserAction } from "./lib/server-actions/auth/get-profile-from-auth-user";
 
 export const {
   handlers: { GET, POST },
@@ -62,29 +62,29 @@ export const {
 
       return NextResponse.next();
     },
-    async session({ session, user }) {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/profile`,
-        {
-          method: "GET",
-        }
-      );
 
-      if (res.status !== 200) {
+    async session({ session, user }) {
+      const resProfile = await getProfileFromAuthUserAction({
+        authUserEmail: user.email,
+      });
+
+      if (!resProfile) {
+        console.log("Error fetching profile");
         return session;
       }
-      const profile = (await res.json()) as TAPIProfile;
 
       session.user.id = user.id;
-      session.user.username = profile.usernaeme || null;
-      session.user.email = profile.email || user.email;
-      session.user.profile_id = profile.id || null;
+      session.user.username = resProfile.usernaeme || null;
+      session.user.email = resProfile.email || user.email;
+      session.user.profile_id = resProfile.id || null;
 
-      session.jwt = await encode({
+      const jwt = await encode({
         id: user.id,
         email: user.email,
-        username: profile.usernaeme || null,
+        username: resProfile.usernaeme || null,
       });
+
+      session.jwt = jwt;
       return session;
     },
   },

@@ -15,7 +15,7 @@ const httpServer = createServer();
 
 const socketServer = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://aokura-connect.vercel.app"],
     methods: ["GET", "POST"],
     allowedHeaders: ["*"],
   },
@@ -23,6 +23,7 @@ const socketServer = new Server(httpServer, {
 
 socketServer.use(async (socket, next) => {
   const token = socket.handshake.auth.token;
+  console.log("Socket token: ", token);
   if (await verifyToken(token)) {
     next();
   } else {
@@ -58,7 +59,7 @@ socketServer.on("connection", (io: Socket) => {
   });
 
   io.on("event:send-message", async (data: TInsertMessage) => {
-    console.log(data.token);
+    console.log(data.inReplyTo?.sender);
     const result = messageSchema.safeParse(data);
 
     if (result.success) {
@@ -70,9 +71,9 @@ socketServer.on("connection", (io: Socket) => {
           message.type === "server-message"
             ? await produceMessage(formattedMessage)
             : await produceDirectMessage({
-              message: formattedMessage,
-              conversationId: result.data.channelId
-            });
+                message: formattedMessage,
+                conversationId: result.data.channelId,
+              });
         if (res) {
           io.nsp
             .to(`channel:${message.channelId}`)
@@ -84,6 +85,9 @@ socketServer.on("connection", (io: Socket) => {
       }
     } else {
       console.log("Invalid message: ", result.error);
+      console.error(
+        `Invalid request: ${result.error.errors.map((e) => `${e.path}: ${e.message}`).join(" | ")}`
+      );
     }
   });
 
@@ -108,5 +112,5 @@ httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-startMessageConsumer();
+//startMessageConsumer();
 // startDirectMessageConsumer()

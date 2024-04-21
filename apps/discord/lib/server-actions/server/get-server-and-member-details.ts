@@ -56,6 +56,7 @@ export const getServerAndMemberDetails = async (serverId: string) => {
     data: {
       server: serverData.data,
       member: memeberData.data,
+      profile: profile.data,
     },
 
   }

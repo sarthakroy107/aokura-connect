@@ -32,6 +32,7 @@ export default async function DirectMessageChatInput({
         isMuted: null,
         role: null,
         joinedOn: profileRes.data.created_at,
+        username: profileRes.data.usernaeme,
       }}
       channelId={conversationId}
       name="Direct Message"

@@ -1,6 +1,7 @@
 "use client";
 import { TMemberWithChannelIdsDTO } from "@db/dto/member/member-with-channel-ids";
 import { create } from "zustand";
+import type { TGenericMessageBody } from "@db/dto/messages/sender";
 
 export enum ModalEnum {
   CREATE_SERVER = "create-server",
@@ -79,7 +80,11 @@ type TOptionsData =
         isBlocked: boolean;
         serverId: string;
       };
-    };
+    }
+  | {
+    type: "in-reply-to"
+    data: TGenericMessageBody
+  }
 
 //Need category.id in create-channel-modal.tsx
 //Need data.profile?.id in create-server-modal.tsx

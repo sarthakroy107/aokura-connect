@@ -39,6 +39,7 @@ export default async function ChannelMessageChatInput({
         isMuted: res.data.member.isMuted,
         role: res.data.member.role,
         joinedOn: res.data.member.joinedOn,
+        username: res.data.profile.usernaeme,
       }}
       channelId={channelId}
       name="Direct Message"

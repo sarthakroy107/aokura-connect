@@ -1,5 +1,5 @@
 import type { TInsertMessage } from "../../../../packages/db/src/data-access/messages/create-message.js";
-import { string, z, ZodType } from "zod";
+import { z, ZodType } from "zod";
 
 export const messageSchema: ZodType<TInsertMessage> = z.object({
   content: z.string(),
@@ -20,13 +20,13 @@ export const messageSchema: ZodType<TInsertMessage> = z.object({
         username: z.string(),
         name: z.string(),
         avatar: z.string(),
-        isBanned: z.boolean(),
-        isMuted: z.boolean(),
-        isKicked: z.boolean(),
-        isLeft: z.boolean(),
+        isBanned: z.boolean().nullable(),
+        isMuted: z.boolean().nullable(),
+        isKicked: z.boolean().nullable(),
+        isLeft: z.boolean().nullable(),
       }),
       createdAt: z.string(),
-      latEditedAt: z.string(),
+      lastEditedOn: z.string(),
       attachments: z.array(z.string()),
       channelId: z.string(),
       inReplyTo: z.object({
@@ -48,16 +48,14 @@ export const messageSchema: ZodType<TInsertMessage> = z.object({
           isMuted: z.boolean(),
           isKicked: z.boolean(),
           isLeft: z.boolean(),
-        }),
+        }).nullable(),
         createdAt: z.string(),
         lastEditedOn: z.string(),
         attachments: z.array(z.string()),
         channelId: z.string(),
         inReplyTo: z.null(),
-      }),
-      lastEditedOn: z.string(),
-    })
-    .nullable(),
+      }).nullable(),
+    }),
 
   senderDetails: z.object({
     id: z.string(),

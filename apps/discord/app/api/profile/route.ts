@@ -5,13 +5,13 @@ export type TAPIProfile = TProfileDTO;
 
 export async function GET(req: NextRequest) {
   const profile = await currentProfile();
+  console.log("PROFILE FROM ROUTE", profile);
   if (profile.status !== 200 || profile.data === null) {
     return new NextResponse(JSON.stringify(null), {
       status: profile.status,
     });
   }
-  console.log("sjfnvdcnsdkcjnsjdncijndscjnsodjcnojsdnconsojcdnosdncojsdnojnsodjcnosjdncojsndcojnsdojcnojsdncojnsdojcjnosjdnj");
-  console.log({ profile });
+  
   return new NextResponse(JSON.stringify(profile.data satisfies TAPIProfile), {
     status: 200,
   });

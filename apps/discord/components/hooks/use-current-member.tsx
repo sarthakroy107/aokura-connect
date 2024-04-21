@@ -6,16 +6,17 @@ import { TAPIServerAndMemberDetails } from "@/app/api/server-and-member/route";
 const useCurrentServer = (serverId: string) => {
   const { data, refetch, error, isFetching } = useQuery({
     queryKey: ["server", serverId],
-    queryFn: () =>
-      fetch(`/api/server-and-member?server_id=${serverId}`).then(
-        (res) => {
-          if (!res.ok)
-            throw new Error("An error occurred while fetching server data");
-          else if (res.status !== 200)
-            throw new Error("An error occurred while fetching server data");
-          else return res.json() as Promise<TAPIServerAndMemberDetails>;
-        }
-      ),
+    queryFn: async () => {
+      if (!serverId) return null;
+      const res = await fetch(`/api/server-and-member?server_id=${serverId}`);
+      if (!res.ok) {
+        console.error("An error occurred while fetching server data");
+        return null;
+      } else if (res.status !== 200) {
+        console.error("An error occurred while fetching server data");
+        return null;
+      } else return (await res.json()) as TAPIServerAndMemberDetails;
+    },
     refetchInterval: false,
     staleTime: 1000 * 60 * 10,
     refetchOnMount: false,

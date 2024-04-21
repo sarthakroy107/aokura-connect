@@ -12,10 +12,10 @@ import {
   LucideTrash2,
 } from "lucide-react";
 
-import { TMessageBodyDto } from "@db/dto/messages/message-dto";
 import { useChatActions } from "@/lib/store/chat-store";
 import { useCurrentProfile } from "../hooks/use-current-profile";
 import TooltipWrapper from "../common/tooltip-wrapper";
+import { TGenericMessageBody } from "@db/dto/messages/sender";
 
 const ChatActions = memo(
   ({
@@ -23,13 +23,12 @@ const ChatActions = memo(
     setIsEditing,
     setIsDeleting,
   }: {
-    data: TMessageBodyDto;
+    data: TGenericMessageBody;
     setIsEditing: Dispatch<SetStateAction<boolean>>;
     setIsDeleting: Dispatch<SetStateAction<boolean>>;
   }) => {
     const { profile } = useCurrentProfile();
     const setReply = useChatActions(useShallow((state) => state.setReply));
-    //if (!serverId) return <div>Loading...</div>;
     
     return (
       <div className="flex p-0.5 bg-disord_lighter rounded-sm gap-x-0.5 text-white/30">
@@ -57,6 +56,8 @@ const ChatActions = memo(
         <TooltipWrapper label="Reply" align="center" side="top">
           <div
             onClick={() => {
+              console.log(data.sender?.username)
+              console.log(data);
               setReply(data);
             }}
             className="hover:bg-white/20 rounded-sm p-1"

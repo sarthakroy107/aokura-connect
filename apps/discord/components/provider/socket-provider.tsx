@@ -26,6 +26,12 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
+    console.log("SESSION DATA");
+    console.table(session.data);
+    console.log("SOCKET");
+    console.log(socket);
+    console.log("JWT")
+    console.log(session.data?.jwt)
     if (session.data && session.data.jwt && !socket) {
       (async () => {
         console.log("Connecting to socket server");

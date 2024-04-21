@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { TAPIJWTToken } from "@/app/api/jwt/route";
+import { TAPIJWTToken } from "@/app/api/token/route";
 
 export default function useJWT({
   type,
@@ -21,7 +21,7 @@ export default function useJWT({
     refetchOnMount: true,
     queryFn: () =>
       fetch(
-        `/api/jwt?channel_id=${channelId}&server_id=${serverId}&type=${type}`
+        `/api/token?channel_id=${channelId}&server_id=${serverId}&type=${type}`
       ).then((res) => {
         if (!res.ok || res.status !== 200) {
           throw new Error("Failed to fetch JWT");
