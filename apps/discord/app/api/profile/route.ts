@@ -10,6 +10,8 @@ export async function GET(req: NextRequest) {
       status: profile.status,
     });
   }
+  console.log("sjfnvdcnsdkcjnsjdncijndscjnsodjcnojsdnconsojcdnosdncojsdnojnsodjcnosjdncojsndcojnsdojcnojsdncojnsdojcjnosjdnj");
+  console.log({ profile });
   return new NextResponse(JSON.stringify(profile.data satisfies TAPIProfile), {
     status: 200,
   });

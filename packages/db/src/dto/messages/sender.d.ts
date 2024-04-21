@@ -2,6 +2,7 @@ type TSenderBody = {
   id: string;
   role: "admin" | "moderator" | "guest" | null;
   name: string;
+  username: string;
   avatar: string;
   isBanned: boolean | null;
   isMuted: boolean | null;

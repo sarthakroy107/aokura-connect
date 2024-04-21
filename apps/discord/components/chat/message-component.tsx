@@ -52,6 +52,7 @@ const MessageComponent = memo((props: TGenericMessageBody) => {
         isEditing={isEditing}
         setIsEditing={setIsEditing}
         senderProfile={props.sender}
+        inReplyTo={props.inReplyTo}
       />
       {!isEditing && (
         <div className="absolute right-10 -top-5 hidden hover:block group-hover/action:block text-black shadow-sm shadow-black/20">
@@ -90,6 +91,7 @@ const MessageComponent = memo((props: TGenericMessageBody) => {
                   isEditing={isEditing}
                   setIsEditing={setIsEditing}
                   senderProfile={props.sender}
+                  inReplyTo={props.inReplyTo}
                 />
               </ScrollArea>
             </AlertDialogHeader>

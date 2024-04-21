@@ -23,6 +23,7 @@ export const formateNewChatMessage = (
       isBanned: data.senderDetails.isBanned,
       isMuted: data.senderDetails.isMuted,
       isKicked: data.senderDetails.isKicked,
+      username: data.senderDetails.username,
       isLeft: data.senderDetails.isLeft,
     },
     createdAt: new Date().toISOString(),

@@ -1,22 +1,25 @@
 "use client";
+
 import { TAPIProfile } from "@/app/api/profile/route";
 import { useQuery } from "@tanstack/react-query";
 
 export const useCurrentProfile = () => {
   const { data, refetch, isFetching, error } = useQuery({
     queryKey: ["current-profile"],
-    queryFn: () =>
-      fetch("/api/profile", { method: "GET" }).then((res) => {
-        const data = res.json();
-        if (res.status !== 200) {
-          throw new Error("Failed to fetch profile data");
-        }
-        return res.json() as Promise<TAPIProfile>;
-      }),
-    refetchInterval: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    staleTime: 1000 * 60 * 10,
+    queryFn: async () => {
+      const res = await fetch("/api/profile", { method: "GET" });
+      if (!res.ok) {
+        throw new Error("Failed to fetch profile data");
+      }
+      const profile = await res.json();
+      if (!profile) {
+        throw new Error("No profile data found");
+      }
+      //*Don't use return await res.json() or .then(res => res.json()) because it does not work
+      return profile as TAPIProfile;
+    },
+    refetchInterval: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 
   if (error) {
@@ -26,15 +29,6 @@ export const useCurrentProfile = () => {
       isProfileDataFetching: isFetching,
     };
   }
-
-  // if (data?.status !== 200 || !data.data) {
-  //   return {
-  //     profile: null,
-  //     refetchProfileData: refetch,
-  //     isProfileDataFetching: isFetching,
-  //   };
-  // }
-
   return {
     profile: data,
     refetchProfile: refetch,

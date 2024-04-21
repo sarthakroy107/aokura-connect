@@ -7,7 +7,7 @@ const useCurrentServer = (serverId: string) => {
   const { data, refetch, error, isFetching } = useQuery({
     queryKey: ["server", serverId],
     queryFn: () =>
-      fetch(`/api/server-and-member-details?server_id=${serverId}`).then(
+      fetch(`/api/server-and-member?server_id=${serverId}`).then(
         (res) => {
           if (!res.ok)
             throw new Error("An error occurred while fetching server data");
@@ -19,6 +19,7 @@ const useCurrentServer = (serverId: string) => {
     refetchInterval: false,
     staleTime: 1000 * 60 * 10,
     refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   if (error) console.error(error);

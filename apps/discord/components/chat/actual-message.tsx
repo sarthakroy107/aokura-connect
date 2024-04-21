@@ -13,8 +13,8 @@ import {
   PopoverTrigger,
 } from "@ui/components/ui/popover";
 import { Textarea } from "@ui/components/ui/textarea";
-import { Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { LucideFile, Trash2 } from "lucide-react";
+import { cn } from "@ui/lib/utils";
 import { Separator } from "@ui/components/ui/separator";
 import { formatJoinedOnDate } from "@/lib/transformations/date-formater";
 import { Input } from "@ui/components/ui/input";
@@ -22,6 +22,23 @@ import { MoonLoader } from "react-spinners";
 import { toast } from "sonner";
 import TooltipWrapper from "../common/tooltip-wrapper";
 import type { TSenderBody } from "@db/dto/messages/sender";
+
+type TProps = {
+  form: UseFormReturn<TTransformedMessage>;
+  isEditing: boolean;
+  setIsEditing: Dispatch<React.SetStateAction<boolean>>;
+  isMessageDeleting: boolean;
+  isDeleted: boolean;
+  senderProfile: TSenderBody | null;
+  inReplyTo: {
+    id: string;
+    content: string;
+    attachments: string[];
+    sender: TSenderBody | null;
+    createdAt: string;
+    lastEditedOn: string;
+  } | null;
+};
 
 const ActualMessage = memo(
   ({
@@ -31,14 +48,8 @@ const ActualMessage = memo(
     isMessageDeleting,
     isDeleted,
     senderProfile,
-  }: {
-    form: UseFormReturn<TTransformedMessage>;
-    isEditing: boolean;
-    setIsEditing: Dispatch<React.SetStateAction<boolean>>;
-    isMessageDeleting: boolean;
-    isDeleted: boolean;
-    senderProfile: TSenderBody | null;
-  }) => {
+    inReplyTo,
+  }: TProps) => {
     const { content, attachments, sender, createdAt, lastEditedOn } =
       form.getValues();
 
@@ -72,113 +83,186 @@ const ActualMessage = memo(
     }, [isDeleted]);
 
     return (
-      <div className="w-full flex gap-x-3">
-        {sender && (
-          <div className="mt-[2px]">
-            <Image
-              src={
-                sender.avatar
-                  ? sender.avatar
-                  : "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
-              }
-              alt={sender.name}
-              width={64}
-              height={64}
-              draggable={false}
-              className="rounded-full object-cover h-10 w-10"
-            />
-          </div>
+      <div className="w-full">
+        {true && (
+          // <InReplyToComponent
+          //   username={inReplyTo.sender?.name || ""}
+          //   name={inReplyTo.sender?.name || ""}
+          //   text={inReplyTo.content}
+          //   hasMedia={inReplyTo.attachments.length > 0}
+          // />
+          <InReplyToComponent
+            username={"Mai"}
+            name={"Sakuta"}
+            text={"Hello, how are you?"}
+            hasMedia={true}
+            avatar={
+              "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
+            }
+            id="1"
+          />
         )}
-        <div className="w-[95%] relative">
-          <div className="w-full justify-between flex gap-x-3">
-            <div className="flex gap-x-2 text-white/80">
-              {senderProfile && <NameHoverCard {...senderProfile} />}
-              <p className="text-xs text-white text-opacity-40 mt-0.5">
-                {createdAt}
-              </p>
-            </div>
-          </div>
-          {isDeleted ? (
-            <i className="text-white/50 text-sm">Message has been deleted</i>
-          ) : isEditing && !form.formState.isSubmitting ? (
-            <form
-              onSubmit={form.handleSubmit(onEditSubmit)}
-              className="text-sm text-white text-opacity-75 mt-[2px] my-1"
-            >
-              <Textarea
-                onKeyDown={handleKeyDown}
-                disabled={form.formState.isSubmitting}
-                className="max-w-[690px] h-10 bg-[#202225] rounded-[3px] outline-none focus-visible:ring-offset-0 focus-visible:ring-0"
-                {...form.register("content")}
+        <div className="w-full flex gap-x-3">
+          {sender && (
+            <div className="mt-[2px]">
+              <Image
+                src={
+                  sender.avatar
+                    ? sender.avatar
+                    : "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
+                }
+                alt={sender.name}
+                width={64}
+                height={64}
+                draggable={false}
+                className="rounded-full object-cover h-10 w-10"
               />
-              <div className="flex pl-1 mt-0.5 text-xs text-white/50">
-                <span>
-                  Esc to{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      form.reset();
-                      setIsEditing(false);
-                    }}
-                    className="text-blue-400 hover:underline"
-                  >
-                    cancel
-                  </button>
-                </span>
-                &nbsp; &middot; &nbsp;
-                <span>
-                  Enter to{" "}
-                  <button
-                    type="submit"
-                    className="text-blue-400 hover:underline"
-                  >
-                    save
-                  </button>
-                </span>
-              </div>
-            </form>
-          ) : (
-            <p className="text-sm text-start text-white text-opacity-75 mt-[2px] my-1">
-              {currentTextContent} &nbsp;{" "}
-              {lastEditedOn !== lastUpdatedAt && "(edited)"}
-            </p>
-          )}
-          {attachments && (
-            <div className={cn("group/delete w-fit mt-1 relative")}>
-              {!isMessageDeleting && (
-                <div className="hidden group-hover/delete:flex justify-center items-center bg-discord hover:bg-red-500 absolute right-1.5 top-1.5 cursor-pointer rounded-sm">
-                  <TooltipWrapper label="Delete" side="top">
-                    <Trash2 className="m-1" />
-                  </TooltipWrapper>
-                </div>
-              )}
-              {attachments.map((imageURL, index) => (
-                <Image
-                  key={index}
-                  width={900}
-                  height={750}
-                  src={imageURL}
-                  alt="upload"
-                  draggable={false}
-                  className="h-56 w-fit object-cover rounded-sm"
-                />
-              ))}
             </div>
           )}
+          <div className="w-[95%] relative">
+            <div className="w-full justify-between flex gap-x-3">
+              <div className="flex gap-x-2 text-white/80">
+                {senderProfile && (
+                  <NameHoverCard
+                    {...senderProfile}
+                    triggerText={senderProfile.name}
+                  />
+                )}
+                <p className="text-xs text-white text-opacity-40 mt-0.5">
+                  {createdAt}
+                </p>
+              </div>
+            </div>
+            {isDeleted ? (
+              <i className="text-white/50 text-sm">Message has been deleted</i>
+            ) : isEditing && !form.formState.isSubmitting ? (
+              <form
+                onSubmit={form.handleSubmit(onEditSubmit)}
+                className="text-sm text-white text-opacity-75 mt-[2px] my-1"
+              >
+                <Textarea
+                  onKeyDown={handleKeyDown}
+                  disabled={form.formState.isSubmitting}
+                  className="max-w-[690px] h-10 bg-[#202225] rounded-[3px] outline-none focus-visible:ring-offset-0 focus-visible:ring-0"
+                  {...form.register("content")}
+                />
+                <div className="flex pl-1 mt-0.5 text-xs text-white/50">
+                  <span>
+                    Esc to{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        form.reset();
+                        setIsEditing(false);
+                      }}
+                      className="text-blue-400 hover:underline"
+                    >
+                      cancel
+                    </button>
+                  </span>
+                  &nbsp; &middot; &nbsp;
+                  <span>
+                    Enter to{" "}
+                    <button
+                      type="submit"
+                      className="text-blue-400 hover:underline"
+                    >
+                      save
+                    </button>
+                  </span>
+                </div>
+              </form>
+            ) : (
+              <p className="text-sm text-start text-white text-opacity-75 mt-[2px] my-1">
+                {currentTextContent} &nbsp;{" "}
+                {lastEditedOn !== lastUpdatedAt && "(edited)"}
+              </p>
+            )}
+            {attachments && (
+              <div className={cn("group/delete w-fit mt-1 relative")}>
+                {!isMessageDeleting && (
+                  <div className="hidden group-hover/delete:flex justify-center items-center bg-discord hover:bg-red-500 absolute right-1.5 top-1.5 cursor-pointer rounded-sm">
+                    <TooltipWrapper label="Delete" side="top">
+                      <Trash2 className="m-1" />
+                    </TooltipWrapper>
+                  </div>
+                )}
+                {attachments.map((imageURL, index) => (
+                  <Image
+                    key={index}
+                    width={900}
+                    height={750}
+                    src={imageURL}
+                    alt="upload"
+                    draggable={false}
+                    className="h-56 w-fit object-cover rounded-sm"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
   }
 );
 
+function InReplyToComponent({
+  username,
+  text,
+  name,
+  hasMedia,
+  avatar,
+  id,
+}: {
+  username: string;
+  name: string;
+  text: string;
+  hasMedia: boolean;
+  avatar: string;
+  id: string;
+}) {
+  return (
+    <div className="text-xs text-slate-100/60 flex cursor-pointer">
+      <div className="w-5 h-3 mt-1.5 mr-1 ml-4 border-l-2 border-t-2 rounded-tl-sm  border-slate-100/50"></div>
+      <Image
+        src={avatar}
+        alt="Profile image"
+        width={24}
+        height={24}
+        draggable={false}
+        className="rounded-full w-4 h-4 mr-1 mb-1.5"
+      />
+      <div className="flex gap-1">
+        <NameHoverCard
+          triggerText={`@${username}`}
+          avatar={avatar}
+          id={id}
+          popovertriggerClassName="text-xs -mt-1.5 italic text-slate-100/70"
+        />{" "}
+        {name}
+      </div>
+      <p className="hover:text-slate-100/90 mx-1"> {text}</p>{" "}
+      {hasMedia && <LucideFile height={15} width={15} className="stroke-2" />}
+    </div>
+  );
+}
+
 type TNameHoverCard = {
-  name?: string | undefined;
+  triggerText?: string | undefined;
   id: string;
   avatar: string;
-  joinedOn: string;
+  popovertriggerClassName?: string;
+  popoverContentClassName?: string;
 };
 
-const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
+const NameHoverCard = ({
+  triggerText,
+  id,
+  avatar,
+  popoverContentClassName,
+  popovertriggerClassName,
+}: TNameHoverCard) => {
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<{ textMessage: string }>();
   const { profile } = useCurrentProfile();
@@ -202,15 +286,23 @@ const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
 
   return (
     <Popover onOpenChange={() => reset({})}>
-      <PopoverTrigger className="text-sm font-medium hover:underline cursor-pointer">
-        {name}
+      <PopoverTrigger
+        className={cn(
+          "text-sm font-medium hover:underline cursor-pointer",
+          popovertriggerClassName
+        )}
+      >
+        {triggerText}
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="bg-discord_darker rounded-sm p-0 w-96 overflow-hidden relative"
+        className={cn(
+          "bg-discord_darker rounded-sm p-0 w-96 overflow-hidden relative",
+          popoverContentClassName
+        )}
       >
         {!profile ? (
-          <div className="py-8 flex justify-center">
+          <div className="py-8 flex justify-center items-center">
             <MoonLoader size={32} color="#FFF" />
           </div>
         ) : (
@@ -227,7 +319,7 @@ const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
               />
             </div>
             <div className="flex flex-col gap-y-1 mx-3.5 rounded-md p-2 px-3.5 bg-black text-sm mb-4">
-              <p className="text-base font-medium px-1.5">{name}</p>
+              <p className="text-base font-medium px-1.5">{profile.name}</p>
               <p>@{profile.usernaeme}</p>
               <Separator className="my-1" />
               <div className="py-1 mb-3">
@@ -235,7 +327,7 @@ const NameHoverCard = ({ name, id, avatar, joinedOn }: TNameHoverCard) => {
                   AOKURA CONNECT MEMBER SINCE
                 </p>
                 <p className="text-white/80 text-base mt-0.5">
-                  {formatJoinedOnDate(joinedOn)}
+                  {formatJoinedOnDate(profile.created_at)}
                 </p>
               </div>
               {profile && profile.id !== id && (
