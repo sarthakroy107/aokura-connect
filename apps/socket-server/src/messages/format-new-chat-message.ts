@@ -13,7 +13,7 @@ export const formateNewChatMessage = (
     attachments: data.attachments,
     isDeleted: false,
     channelId: data.channelId,
-    inReplyTo: null,
+    inReplyTo: data.inReplyTo,
     sender: {
       joinedOn: data.senderDetails.joinedOn,
       name: data.senderDetails.name,

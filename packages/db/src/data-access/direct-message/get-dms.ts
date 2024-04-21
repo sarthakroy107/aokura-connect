@@ -33,8 +33,6 @@ export default async function getDirectMessagesOperation(
       .from(DirectMessage)
       .where(eq(DirectMessage.conversationId, conversationId));
 
-    //console.log(dms);
-
     return {
       messages: dms.map((dm) => directMessaageDTO(dm)),
       skip: (!skip ? 0 : skip) + (batchSize ?? MESSAGE_BATCH),

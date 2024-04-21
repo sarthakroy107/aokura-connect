@@ -5,7 +5,7 @@ export type TAPIProfile = TProfileDTO;
 
 export async function GET(req: NextRequest) {
   const profile = await currentProfile();
-  console.log("PROFILE FROM ROUTE", profile);
+  
   if (profile.status !== 200 || profile.data === null) {
     return new NextResponse(JSON.stringify(null), {
       status: profile.status,

@@ -16,9 +16,9 @@ export async function createProducer() {
 
 export async function produceMessage(message: TMessageBodyDto) {
   try {
-    console.log("Producing server channel message");
+    //console.log("Producing server channel message");
     const producer = await createProducer();
-    console.table("Producing message ");
+    //console.table("Producing message ");
     await producer.send({
       topic: "MESSAGES",
       messages: [
@@ -40,15 +40,15 @@ export type TDirectMessage = {
 export async function produceDirectMessage(message: TDirectMessage) {
   try {
     const producer = await createProducer();
-    console.table("Producing direct message ");
+    // console.table("Producing direct message ");
     await producer.send({
       topic: "DIRECT_MESSAGES",
       messages: [
         { key: `message-${Date.now()}`, value: JSON.stringify(message) },
       ],
     });
-    console.log("Message produced")
-    console.log({message});
+    // console.log("Direct Message produced")
+    // console.log({message});
     return true;
   } catch (error) {
     console.error("Error producing direct message: ", error);

@@ -84,23 +84,26 @@ const ActualMessage = memo(
 
     return (
       <div className="w-full">
-        {true && (
-          // <InReplyToComponent
-          //   username={inReplyTo.sender?.name || ""}
-          //   name={inReplyTo.sender?.name || ""}
-          //   text={inReplyTo.content}
-          //   hasMedia={inReplyTo.attachments.length > 0}
-          // />
+        {inReplyTo && inReplyTo.sender && (
           <InReplyToComponent
-            username={"Mai"}
-            name={"Sakuta"}
-            text={"Hello, how are you?"}
-            hasMedia={true}
-            avatar={
-              "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
-            }
-            id="1"
+            username={inReplyTo.sender.username || ""}
+            name={inReplyTo.sender.name || ""}
+            text={inReplyTo.content}
+            hasMedia={inReplyTo.attachments.length > 0}
+            avatar={inReplyTo.sender?.avatar || ""}
+            profileId={inReplyTo.sender?.id || ""}
+
           />
+          // <InReplyToComponent
+          //   username={"Mai"}
+          //   name={"Sakuta"}
+          //   text={"Hello, how are you?"}
+          //   hasMedia={true}
+          //   avatar={
+          //     "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
+          //   }
+          //   id="1"
+          // />
         )}
         <div className="w-full flex gap-x-3">
           {sender && (
@@ -213,14 +216,14 @@ function InReplyToComponent({
   name,
   hasMedia,
   avatar,
-  id,
+  profileId,
 }: {
   username: string;
   name: string;
   text: string;
   hasMedia: boolean;
   avatar: string;
-  id: string;
+  profileId: string;
 }) {
   return (
     <div className="text-xs text-slate-100/60 flex cursor-pointer">
@@ -237,7 +240,7 @@ function InReplyToComponent({
         <NameHoverCard
           triggerText={`@${username}`}
           avatar={avatar}
-          id={id}
+          id={profileId}
           popovertriggerClassName="text-xs -mt-1.5 italic text-slate-100/70"
         />{" "}
         {name}

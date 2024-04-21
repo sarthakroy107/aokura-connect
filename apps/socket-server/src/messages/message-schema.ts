@@ -55,7 +55,7 @@ export const messageSchema: ZodType<TInsertMessage> = z.object({
         channelId: z.string(),
         inReplyTo: z.null(),
       }).nullable(),
-    }),
+    }).nullable(),
 
   senderDetails: z.object({
     id: z.string(),

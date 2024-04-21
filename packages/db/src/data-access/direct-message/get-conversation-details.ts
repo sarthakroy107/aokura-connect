@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../db.js";
-import { Conversation, DirectMessage, Profile } from "../../schema.js";
+import { Conversation } from "../../schema.js";
 
 export default async function getCoversationDetailsOperation({
   conversationId,

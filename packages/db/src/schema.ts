@@ -265,7 +265,7 @@ export const DirectMessage = pgTable('direct_message', {
   content:                text('content'),
   attachments:            text('attachments').array(),
   isDeleted:              boolean('deleted').default(false).notNull(),
-  inReplyTo:              uuid('in_reply_to').references((): AnyPgColumn => Message.id, { onDelete: 'no action' }),
+  inReplyTo:              uuid('in_reply_to').references((): AnyPgColumn => DirectMessage.id, { onDelete: 'no action' }),
 
   createdAt:  timestamp('created_at', {
     withTimezone: true,

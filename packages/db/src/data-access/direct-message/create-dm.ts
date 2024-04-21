@@ -12,8 +12,9 @@ export default async function createDMOperation({
   senderProfileId: string;
   files?: string[] | undefined;
   textContent: string;
-  inReplyTo?: string ;
+  inReplyTo: string | undefined;
 }) {
+  console.log({ inReplyTo })
   try {
     const newDm = await db
       .insert(DirectMessage)

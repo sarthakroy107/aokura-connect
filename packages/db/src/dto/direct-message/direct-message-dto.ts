@@ -1,5 +1,4 @@
 import { TDirectMessage, TProfile } from "../../schema.js";
-import { formatDate } from "../messages/date-formater.js";
 import type { TGenericMessageBody, TSenderBody } from "../messages/sender.js";
 
 type TChatDirectMessageData = TDirectMessage & {
@@ -20,8 +19,8 @@ export const directMessaageDTO = (data: TChatDirectMessageData): TGenericMessage
       ? null
       : replingToDirectMessageDTO(data.in_reply_to),
 
-    createdAt: formatDate(data.createdAt),
-    lastEditedOn: formatDate(data.createdAt),
+    createdAt: data.createdAt,
+    lastEditedOn: data.createdAt,
   };
 };
 
@@ -32,8 +31,8 @@ const replingToDirectMessageDTO = (data: TDirectMessage & { sender: TProfile }) 
     attachments: [],
     isDeleted: null,
     sender: senderDTO(data.sender),
-    createdAt: formatDate(data.createdAt),
-    lastEditedOn: formatDate(data.updatedAt),
+    createdAt: data.createdAt,
+    lastEditedOn: data.updatedAt,
   };
 };
 

@@ -1,5 +1,4 @@
 import { TMember, TMessage, TProfile } from "../../schema.js";
-import { formatDate } from "./date-formater.js";
 import type { TGenericMessageBody, TSenderBody } from "./sender.js";
 
 type TChatMessageData = TMessage & {
@@ -21,8 +20,8 @@ export const messageBodyDto = (data: TChatMessageData): TGenericMessageBody => {
 
     inReplyTo: !data.in_reply_to ? null : replingToMessageDto(data.in_reply_to),
 
-    createdAt: formatDate(data.created_at),
-    lastEditedOn: formatDate(data.updated_at),
+    createdAt: data.created_at,
+    lastEditedOn: data.updated_at,
   };
 };
 
@@ -38,8 +37,8 @@ const replingToMessageDto = (
     sender:
       (data.sender && data.sender.profile && senderDto(data.sender)) || null,
     inReplyTo: null,
-    createdAt: formatDate(data.created_at),
-    lastEditedOn: formatDate(data.updated_at),
+    createdAt: data.created_at,
+    lastEditedOn: data.updated_at,
   };
 };
 
