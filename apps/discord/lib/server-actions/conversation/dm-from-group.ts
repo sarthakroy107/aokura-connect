@@ -10,6 +10,7 @@ export default async function dmFromServerChannelAction({
   receiverProfileId,
 }: {
   receiverProfileId: string;
+
   textContent: string;
 }) {
   try {
