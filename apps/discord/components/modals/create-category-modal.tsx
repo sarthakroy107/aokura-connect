@@ -1,7 +1,7 @@
 "use client";
 
 import { createCategorySchema } from "@/lib/validations/category/create-category-validation";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useCurrentServer from "../hooks/use-current-member";
 
@@ -29,9 +29,14 @@ import NormalInput from "@/components/form/normal-input";
 const CreateCategoryModal = () => {
   const { serverId } = useParams<{ serverId: string }>();
   const { isOpen, onClose, type } = useModal();
+  const router = useRouter();
 
   const { server, member, isServerDataFetching } = useCurrentServer(serverId);
-  const form = useForm<{ name: string }>();
+  const form = useForm<{ name: string }>({
+    defaultValues: {
+      name: "",
+    },
+  });
 
   const isModalOpen = isOpen && type === ModalEnum.CREATE_CATEGORY;
   const isLoading = form.formState.isSubmitting;
@@ -57,12 +62,14 @@ const CreateCategoryModal = () => {
       });
 
       if (res.status !== 200) {
+        console.log(res);
         toast.error("Failed to create category");
         return;
       }
       toast.success("Category created successfully");
       form.reset();
       onClose();
+      router.refresh();
     } catch (error) {
       console.log(error);
     }

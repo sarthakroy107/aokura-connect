@@ -3,6 +3,7 @@ import { isUsernameAvailable } from "@db/data-access/user/is-username-available"
 
 export const checkUsernameAvailibility = async (username: string) => {
   try {
+    
     const res = await isUsernameAvailable(username);
     if (res) {
       return {

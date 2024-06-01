@@ -15,13 +15,14 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { deleteCategorySchema } from "@/lib/validations/category/delete-category-validation";
 import { BarLoader } from "react-spinners";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { TAPIDeleteCategoryResponse } from "@/app/api/server-category/route";
 import useCurrentServer from "../hooks/use-current-member";
 
 const DeleteCategoryModal = () => {
   const { isOpen, options, onClose } = useModal();
   const { serverId } = useParams<{ serverId: string }>();
+  const router = useRouter();
 
   const { member, server } = useCurrentServer(serverId);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,8 +62,10 @@ const DeleteCategoryModal = () => {
       toast.error(resData.message);
       return;
     }
+
     toast.success(resData.message);
     onClose();
+    router.refresh();
   };
 
   return (

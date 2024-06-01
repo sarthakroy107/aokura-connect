@@ -16,6 +16,7 @@ export async function createChannelOperation({
   categoryId,
   type,
 }: TCreateChannelDBProps) {
+  console.log("Creating channel");
   const newChannel = await db
     .insert(Channel)
     .values({
@@ -23,7 +24,6 @@ export async function createChannelOperation({
       channel_type: type,
       server_id: serverId,
       category_id: categoryId,
-      creator_member_id: memberId,
     })
     .returning();
 

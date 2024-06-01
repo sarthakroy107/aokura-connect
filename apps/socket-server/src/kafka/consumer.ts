@@ -22,7 +22,7 @@ export async function startMessageConsumer() {
     autoCommit: true,
     autoCommitInterval: 100,
     eachMessage: async ({ message, pause, topic }) => {
-      //console.log("In message consumer");
+      console.log("In message consumer");
       if (!message.value) return;
       try {
         if (topic === "MESSAGES") {
@@ -36,13 +36,13 @@ export async function startMessageConsumer() {
           if (!res || !res.hasJoinedChannel || !res.memberDetails) return;
           obj.sender.id = res.memberDetails.id;
           await insertMessage(obj);
-          //console.log("Message inserted into database");
+          console.log("Message inserted into database");
         } else if (topic === "DIRECT_MESSAGES") {
-          //console.log("In direct message consumer");
+          console.log("In direct message consumer");
           const obj: TDirectMessage = await JSON.parse(
             message.value.toString()
           );
-          //console.log(obj);
+          console.log(obj);
           await createDMOperation({
             conversationId: obj.conversationId,
             senderProfileId: obj.message.sender?.id,

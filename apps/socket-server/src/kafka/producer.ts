@@ -1,4 +1,4 @@
-import { Producer } from "kafkajs";
+import { Partitioners, Producer } from "kafkajs";
 import kafka from "./client.js";
 import { TMessageBodyDto } from "../../../../packages/db/src/dto/messages/message-dto.js";
 import { TSenderBody } from "../../../../packages/db/src/dto/messages/sender.js";
@@ -7,8 +7,11 @@ let producer: null | Producer = null;
 export async function createProducer() {
   if (producer) return producer;
 
-  const _producer = kafka.producer();
+  const _producer = kafka.producer({
+    createPartitioner: Partitioners.LegacyPartitioner,
+  });
   await _producer.connect();
+  
   producer = _producer;
 
   return producer;
@@ -16,9 +19,9 @@ export async function createProducer() {
 
 export async function produceMessage(message: TMessageBodyDto) {
   try {
-    //console.log("Producing server channel message");
+    console.log("Producing server channel message");
     const producer = await createProducer();
-    //console.table("Producing message ");
+    console.table("Producing message ");
     await producer.send({
       topic: "MESSAGES",
       messages: [

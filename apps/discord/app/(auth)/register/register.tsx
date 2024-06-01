@@ -38,7 +38,7 @@ const RegistrationBox = () => {
         const res = await fetch("/api/check-username", {
           method: "PUT",
           cache: "no-cache",
-          body: JSON.stringify({ username: value }),
+          body: JSON.stringify(value),
           headers: {
             "Content-Type": "application/json",
           },
@@ -51,7 +51,9 @@ const RegistrationBox = () => {
             username: value,
           });
         } else if (!body.error) {
+          console.log(body);
           setUsernameAvailibility(body);
+          console.log(usernameAvailibility);
         } else
           setUsernameAvailibility({
             available: false,
@@ -62,10 +64,15 @@ const RegistrationBox = () => {
     }
   }, [value]);
 
+  useEffect(()=>{
+
+  }, [usernameAvailibility])
+
   const onRegistrationFormSubmit = async (
     // Function to handle form submit
     values: z.infer<typeof registrationFormSchema>
   ) => {
+    
     const res = await fetch("/api/register", {
       method: "POST",
       body: JSON.stringify(values),

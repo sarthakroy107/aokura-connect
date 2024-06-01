@@ -68,6 +68,8 @@ export async function DELETE(req: NextRequest) {
     serverId,
   });
 
+  console.log("IS member");
+
   if (member.status !== 200 || !member.memberDetails) {
     return new NextResponse(
       JSON.stringify({
@@ -89,6 +91,8 @@ export async function DELETE(req: NextRequest) {
       { status: 500 }
     );
   }
+
+  console.log("Left server successfully");
 
   return new NextResponse(
     JSON.stringify({

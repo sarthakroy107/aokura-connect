@@ -48,7 +48,7 @@ const senderDto = (data: TMember & { profile: TProfile }): TSenderBody => {
     role: data.role,
     name: data.nickname ?? data.profile.name ?? "",
     username: data.profile.username ?? "",
-    avatar: data.server_avatar ?? data.profile.avatar ?? "",
+    avatar: data.avatar ?? data.profile.avatar ?? "",
     isBanned: data.is_banned,
     isMuted: data.is_muted,
     isKicked: data.is_kicked,

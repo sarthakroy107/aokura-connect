@@ -16,6 +16,7 @@ export const registerUser = async (
     const parse = registrationFormSchema.safeParse(data); // Check if form data is valid
 
     if (!parse.success) {
+      console.log(parse.error.errors.map((error) => error.message));
       return {
         status: 400,
         success: false,

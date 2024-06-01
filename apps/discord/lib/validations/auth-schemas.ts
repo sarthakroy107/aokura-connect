@@ -7,5 +7,5 @@ export const registrationFormSchema = z.object({
     .string()
     .min(8, { message: "Password must be at least 8 characters" }),
   username: z.string().min(1, { message: "Username is required" }),
-  dateOfBirth: z.date({ required_error: "Date of birth is required" }),
+  dateOfBirth: z.coerce.date({ required_error: "Date of birth is required" }),
 });

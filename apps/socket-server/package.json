@@ -24,6 +24,7 @@
     "@repo/db": "workspace:*",
     "dotenv": "^16.4.1",
     "drizzle-orm": "^0.29.3",
+    "ioredis": "^5.4.1",
     "jose": "^5.2.2",
     "kafkajs": "^2.2.4",
     "socket.io": "^4.7.4",

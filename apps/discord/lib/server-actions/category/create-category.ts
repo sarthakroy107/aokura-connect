@@ -14,6 +14,7 @@ export type TCreateCategoryAction = TCreateCategoryDB;
 
 export const createCategoryAction = async (data: TCreateCategoryAction) => {
   const result = createCategorySchema.safeParse(data);
+  console.log(result);
   if (!result.success) {
     return {
       status: 400,

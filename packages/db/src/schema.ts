@@ -2,7 +2,6 @@ import { InferSelectModel, relations } from "drizzle-orm";
 import { text, timestamp, pgTable, pgEnum, uuid, varchar, primaryKey, boolean, AnyPgColumn, integer } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from '@auth/core/adapters'
 
-
 export const memberRole  = pgEnum('role', ['admin', 'moderator', 'guest'])
 export const channelTypes = pgEnum('type', ['text', 'voice', 'video'])
 
@@ -12,9 +11,7 @@ export enum channelTypesEnum {
   VIDEO = 'video'
 }
 
-
 //***************************Auth.js********************************//
-
 
 export const users = pgTable("user", {
  id: text("id").notNull().primaryKey(),
@@ -98,12 +95,12 @@ export const Profile = pgTable('profile', {
 
 export const Server = pgTable('server', {
 
-  id:                    uuid('id').defaultRandom().primaryKey().notNull(),
+  id:                    uuid('id').defaultRandom().primaryKey(),
   name:                  text('name').notNull(),
   avatar:                text('avatar').default('https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg'),
   description:           text('description').default(''),
   invitation_code:       text('inviteCode').unique(),
-  creator_profile_id:    uuid('creator_profile_id').notNull().references(() => Profile.id, { onDelete: 'cascade' }),
+  creator_profile_id:    uuid('creator_profile_id').references(() => Profile.id, { onDelete: 'no action' }),
   is_deleted:            boolean('deleted').default(false).notNull(),
   is_private:            boolean('is_private').default(false).notNull(),
   is_joining_allowed:    boolean('is_new_member_allowed').default(true).notNull(),
@@ -123,10 +120,10 @@ export const Server = pgTable('server', {
 
 export const Member = pgTable('member', {
   
-  id:                     uuid('id').defaultRandom().unique().notNull(),
+  id:                     uuid('id').defaultRandom().primaryKey(),
   role:                   memberRole('role').notNull(),
   nickname:               varchar('nickname', { length: 64 }),
-  server_avatar:          text('server_avatar'),
+  avatar:                 text('server_avatar'),
   server_id:              uuid('server_id').notNull().references(() => Server.id),
   profile_id:             uuid('profile_id').notNull().references(() => Profile.id),
   is_banned:              boolean('is_banned').default(false).notNull(),
@@ -144,16 +141,12 @@ export const Member = pgTable('member', {
     mode: 'string'
   }).defaultNow().notNull(),
 
-}, 
-(t) =>({
-  pk: primaryKey({ columns: [ t.id, t.server_id, t.profile_id] })
-}))
+})
 
 
 export const Category = pgTable('category', {
 
   id:                 uuid('id').defaultRandom().unique().notNull(),
-  creator_member_id:  uuid('creator_member_id').notNull().references(() => Member.id, { onDelete: 'cascade' }),
   server_id:          uuid('server_id').notNull().references(() => Server.id, { onDelete: 'cascade' }),
   name:               varchar('name', { length: 64 }).notNull(),
   description:        text('description'),
@@ -169,17 +162,16 @@ export const Category = pgTable('category', {
   }).defaultNow().notNull(),
 
 }, (t) => ({
-  pk: primaryKey({ columns: [ t.id, t.server_id, t.creator_member_id] })
+  pk: primaryKey({ columns: [ t.id, t.server_id] })
 }));
 
 
 export const Channel = pgTable('channel', {
 
-  id:                  uuid('id').defaultRandom().primaryKey().notNull(),
+  id:                  uuid('id').defaultRandom().unique().notNull(),
   name:                varchar('name', { length: 64 }).notNull(),
   server_id:           uuid('server_id').notNull().references(() => Server.id, { onDelete: 'cascade' }),
   category_id:         uuid('category_id').notNull().references(() => Category.id, { onDelete: 'cascade' }),
-  creator_member_id:   uuid('creator_member_id').notNull().references(() => Member.id, { onDelete: 'no action' }),
   channel_type:        channelTypes('channel_type').notNull(),
   is_private:          boolean('is_private').default(false).notNull(),
   is_blocked:          boolean('is_blocked').default(false).notNull(),
@@ -194,7 +186,9 @@ export const Channel = pgTable('channel', {
     mode: 'string'
   }).defaultNow().notNull(),
 
-})
+}, (t) => ({
+  pk: primaryKey({ columns: [ t.id, t.server_id] })
+}))
 
 
 export const memberToChannel = pgTable('member_to_channel', {
@@ -202,7 +196,6 @@ export const memberToChannel = pgTable('member_to_channel', {
   id:               uuid('id').defaultRandom().notNull(),
   channel_id:       uuid('channel_id').notNull().references(() => Channel.id, { onDelete: 'cascade' }),
   member_id:        uuid('member_id').notNull().references(() => Member.id, { onDelete: 'cascade' }),
-  
 
   created_at: timestamp('created_at', {
     withTimezone: true,
@@ -326,35 +319,30 @@ export const serverRelations = relations(Server, ({ many }) => ({
 
 
 export const membersRelation = relations(Member, ({ one, many }) => ({
-  
+
   profile: one(Profile, {
     fields: [Member.profile_id],
     references: [Profile.id],
   }),
-  
+
   server: one(Server, {
     fields: [Member.server_id],
     references: [Server.id],
   }),
-  
+
   channels: many(memberToChannel),
   messages: many(Message),
 }))
 
 export const categoryRelations = relations(Category, ({ one, many }) => ({
-  
+
   server: one(Server, {
     fields: [Category.server_id],
     references: [Server.id],
   }),
-  
-  creator: one(Member, {
-    fields: [Category.creator_member_id],
-    references: [Member.id],
-  }),
-  
+
   channels: many(Channel)
-  
+
 }))
 
 

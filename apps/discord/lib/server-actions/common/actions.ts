@@ -23,7 +23,7 @@ export const changeImage = async (data: TChageImage) => {
       return true;
     }
     else if(type === 'member') {
-      await db.update(Member).set({ server_avatar:  avatar_url }).where(eq(Member.id, id));
+      await db.update(Member).set({ avatar:  avatar_url }).where(eq(Member.id, id));
       return true;
     }
     else {

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createChannelOperation } from "@db/data-access/channel/create-channel";
-import {} from "zod";
 import { currentProfile } from "@/lib/auth/current-user";
 import { getMemberDetails } from "@db/data-access/member/get-member-details";
 import EditChannelOperation from "@db/data-access/channel/edit-channel";

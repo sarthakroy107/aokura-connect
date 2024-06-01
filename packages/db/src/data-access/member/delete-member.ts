@@ -4,6 +4,7 @@ import { Member } from "../../schema.js";
 
 export async function deleteMember({ memberId }: { memberId: string }) {
   try {
+    console.log("Deleting member with id: ", memberId);
     await db.delete(Member).where(eq(Member.id, memberId));
     return {
       status: 200,

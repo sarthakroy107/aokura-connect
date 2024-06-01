@@ -19,9 +19,9 @@ export async function POST(req: NextRequest) {
   const res = await createCategoryAction(body);
 
   if (res.status !== 200 || res.error || !res.data) {
-    return new NextResponse(null, { status: res.status });
+    return new NextResponse(JSON.stringify(res.data), { status: 405 });
   }
-  return new NextResponse(JSON.stringify(res.data), { status: 405 });
+  return new NextResponse(null, { status: 200 });
 }
 
 //*---------------------------------------------PUT---------------------------------------------

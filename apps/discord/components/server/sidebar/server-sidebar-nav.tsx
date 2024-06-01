@@ -35,7 +35,7 @@ const ServersidebarNavbar = memo(
   }) => {
     const [open, setOpen] = useState<boolean>(false);
     const params = useParams<{ serverId: string }>();
-    const { onOpen, setData, openModalWithOptions } = useModal();
+    const { onOpen, openModalWithOptions } = useModal();
 
     return (
       <DropdownMenu onOpenChange={() => setOpen(!open)}>

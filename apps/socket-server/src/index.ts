@@ -10,6 +10,29 @@ import {
   TChangeChannelStatus,
   chnageChannelStatus,
 } from "./channel/block-channel.js";
+import Redis from "ioredis";
+
+const pub = new Redis({
+  host: "13.202.130.171", // Your EC2 instance public IP
+  port: 6379, // Default Redis port
+  password: "mai-sakuta",
+});
+
+pub.on("connect", () => {
+  console.log("Connected to Redis from publisher");
+});
+
+const sub = new Redis({
+  host: "13.202.130.171", // Your EC2 instance public IP
+  port: 6379, // Default Redis port
+  password: "mai-sakuta",
+});
+
+sub.on("connect", () => {
+  console.log("Connected to Redis from subscriber");
+});
+
+sub.subscribe("MESSAGES");
 
 const httpServer = createServer();
 
@@ -50,7 +73,6 @@ socketServer.on("connection", (io: Socket) => {
   });
 
   io.on("event:chat-input-join", (data) => {
-    console.log("Chat input joined: ", data);
     io.join(`channel-input:${data.channel_id}`);
   });
 
@@ -59,14 +81,15 @@ socketServer.on("connection", (io: Socket) => {
   });
 
   io.on("event:send-message", async (data: TInsertMessage) => {
-    console.log(data.inReplyTo?.sender);
     const result = messageSchema.safeParse(data);
-
     if (result.success) {
       try {
-        await decrypt(data.token);
         const message = result.data;
         const formattedMessage = formateNewChatMessage(message);
+        await pub.publish(
+          "MESSAGES",
+          JSON.stringify(formattedMessage)
+        );
         const res =
           message.type === "server-message"
             ? await produceMessage(formattedMessage)
@@ -74,11 +97,11 @@ socketServer.on("connection", (io: Socket) => {
                 message: formattedMessage,
                 conversationId: result.data.channelId,
               });
-        if (res) {
-          io.nsp
-            .to(`channel:${message.channelId}`)
-            .emit("event:broadcast-message", formattedMessage);
-        }
+        // if (res) {
+        //   io.nsp
+        //     .to(`channel:${message.channelId}`)
+        //     .emit("event:broadcast-message", formattedMessage);
+        // }
       } catch (error) {
         console.log("Error: ", error);
         return;
@@ -89,6 +112,16 @@ socketServer.on("connection", (io: Socket) => {
         `Invalid request: ${result.error.errors.map((e) => `${e.path}: ${e.message}`).join(" | ")}`
       );
     }
+  });
+
+  sub.on("message", (channel, message) => {
+    console.log("FROM CHANNEL:", channel);
+    console.log("New message: ", message);
+    const parsedMessage: ReturnType<typeof formateNewChatMessage> =
+      JSON.parse(message);
+      io.nsp
+      .to(`channel:${parsedMessage.channelId}`)
+      .emit("event:broadcast-message", parsedMessage);
   });
 
   io.on("event:change-channel-status", async (data: TChangeChannelStatus) => {

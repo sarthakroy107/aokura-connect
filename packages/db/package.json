@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@auth/core": "^0.27.0",
+    "@lucia-auth/adapter-drizzle": "^1.0.7",
     "@neondatabase/serverless": "^0.8.1",
     "@next/env": "^14.1.0",
     "adaptrs": "link:@auth/core/adaptrs",

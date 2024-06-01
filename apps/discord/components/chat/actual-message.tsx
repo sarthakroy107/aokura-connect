@@ -16,7 +16,7 @@ import { Textarea } from "@ui/components/ui/textarea";
 import { LucideFile, Trash2 } from "lucide-react";
 import { cn } from "@ui/lib/utils";
 import { Separator } from "@ui/components/ui/separator";
-import { formatJoinedOnDate } from "@/lib/transformations/date-formater";
+import { formatDate, formatJoinedOnDate } from "@/lib/transformations/date-formater";
 import { Input } from "@ui/components/ui/input";
 import { MoonLoader } from "react-spinners";
 import { toast } from "sonner";
@@ -94,16 +94,6 @@ const ActualMessage = memo(
             profileId={inReplyTo.sender?.id || ""}
 
           />
-          // <InReplyToComponent
-          //   username={"Mai"}
-          //   name={"Sakuta"}
-          //   text={"Hello, how are you?"}
-          //   hasMedia={true}
-          //   avatar={
-          //     "https://i.ibb.co/GQ8CTsZ/1aa7e647b894e219e42cc079d8e54e18.jpg"
-          //   }
-          //   id="1"
-          // />
         )}
         <div className="w-full flex gap-x-3">
           {sender && (
@@ -132,7 +122,7 @@ const ActualMessage = memo(
                   />
                 )}
                 <p className="text-xs text-white text-opacity-40 mt-0.5">
-                  {createdAt}
+                  {formatDate(createdAt)}
                 </p>
               </div>
             </div>

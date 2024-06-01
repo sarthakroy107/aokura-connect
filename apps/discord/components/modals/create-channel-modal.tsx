@@ -76,7 +76,7 @@ const CreateChannelModal = () => {
         toast.error(result.error.message);
         return;
       }
-      const res = await fetch("channel", {
+      const res = await fetch("/api/channel", {
         method: "POST",
         body: JSON.stringify(result.data),
       });
