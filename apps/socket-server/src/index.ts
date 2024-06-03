@@ -1,6 +1,6 @@
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
-import { decrypt, verifyToken } from "./verify-token.js";
+import { verifyToken } from "./verify-token.js";
 import { TInsertMessage } from "../../../packages/db/src/data-access/messages/create-message.js";
 import { produceDirectMessage, produceMessage } from "./kafka/producer.js";
 import { startMessageConsumer } from "./kafka/consumer.js";
@@ -86,10 +86,7 @@ socketServer.on("connection", (io: Socket) => {
       try {
         const message = result.data;
         const formattedMessage = formateNewChatMessage(message);
-        await pub.publish(
-          "MESSAGES",
-          JSON.stringify(formattedMessage)
-        );
+        await pub.publish("MESSAGES", JSON.stringify(formattedMessage));
         const res =
           message.type === "server-message"
             ? await produceMessage(formattedMessage)
@@ -114,16 +111,6 @@ socketServer.on("connection", (io: Socket) => {
     }
   });
 
-  sub.on("message", (channel, message) => {
-    console.log("FROM CHANNEL:", channel);
-    console.log("New message: ", message);
-    const parsedMessage: ReturnType<typeof formateNewChatMessage> =
-      JSON.parse(message);
-      io.nsp
-      .to(`channel:${parsedMessage.channelId}`)
-      .emit("event:broadcast-message", parsedMessage);
-  });
-
   io.on("event:change-channel-status", async (data: TChangeChannelStatus) => {
     console.log("Channel status changing: ", data);
     const res = await chnageChannelStatus({
@@ -139,6 +126,16 @@ socketServer.on("connection", (io: Socket) => {
       .to(`channel-input:${data.channelId}`)
       .emit("event:channel-status-changed", data.newState);
   });
+});
+
+sub.on("message", (channel, message) => {
+  console.log("FROM CHANNEL:", channel);
+  console.log("New message: ", message);
+  const parsedMessage: ReturnType<typeof formateNewChatMessage> =
+    JSON.parse(message);
+  socketServer // Changed io.nsp.to to .to
+    .to(`channel:${parsedMessage.channelId}`)
+    .emit("event:broadcast-message", parsedMessage);
 });
 
 httpServer.listen(PORT, () => {

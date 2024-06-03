@@ -60,7 +60,7 @@ export const createServerOperation = async (data: TCreateServerDBProps) => {
         .insert(Member)
         .values({
           nickname: profile.name,
-          server_avatar: profile.avatar,
+          avatar: profile.avatar,
           profile_id: data.creatorProfileId,
           server_id: server[0].id,
           role: "admin",
@@ -83,7 +83,6 @@ export const createServerOperation = async (data: TCreateServerDBProps) => {
         .values({
           server_id: server[0].id,
           name: "General",
-          creator_member_id: newMember[0].id,
         })
         .returning();
 
@@ -103,7 +102,6 @@ export const createServerOperation = async (data: TCreateServerDBProps) => {
         .values({
           category_id: newCategory[0].id,
           name: "General",
-          creator_member_id: newMember[0].id,
           channel_type: "text",
           server_id: server[0].id,
         })

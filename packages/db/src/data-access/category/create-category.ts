@@ -14,7 +14,6 @@ export const createCategory = async ({
 
   try {
     await db.insert(Category).values({
-      creator_member_id: creatorMemberId,
       server_id: serverId,
       name: categoryName,
     });

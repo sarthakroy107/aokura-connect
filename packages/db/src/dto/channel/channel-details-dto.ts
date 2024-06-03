@@ -9,7 +9,6 @@ export const channelDetailsDto = (data: TChannel) => {
     isBlocked: data.is_blocked,
     channelType: data.channel_type,
     categoryId: data.category_id,
-    creatorMemberId: data.creator_member_id,
     createdAt: data.created_at,
     updatedAt: data.updated_at,
   };

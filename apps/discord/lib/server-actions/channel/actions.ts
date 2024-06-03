@@ -23,7 +23,6 @@ export const createChannel = async (
         channel_type: type,
         server_id: serverId,
         category_id: categoryId,
-        creator_member_id: memberId,
       })
       .returning();
 

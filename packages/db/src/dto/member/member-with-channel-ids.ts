@@ -13,7 +13,7 @@ export const memberWithChannelIdsDto = (data: TMemberWithChannelIdsProp) => {
   return {
     id: data.id,
     name: data.nickname || "",
-    avatar: data.server_avatar || "",
+    avatar: data.avatar || "",
     serverId: data.server_id,
     profile_id: data.profile_id,
     role: data.role,

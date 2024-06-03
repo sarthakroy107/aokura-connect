@@ -118,7 +118,6 @@ export const getServerAndMemberDetails = async (
               is_private: true,
               channel_type: true,
               category_id: true,
-              creator_member_id: true,
             },
           },
         },
@@ -205,7 +204,6 @@ export const createServer = async (
         .values({
           name: "General",
           server_id: newServer[0]!.id,
-          creator_member_id: newMember[0]!.id,
         })
         .returning();
       if (!newCategory || !newCategory[0]) trx.rollback();
@@ -215,7 +213,6 @@ export const createServer = async (
         .values({
           name: "Welcome",
           category_id: newCategory[0]!.id,
-          creator_member_id: newMember[0]!.id,
           server_id: newServer[0]!.id,
           channel_type: "text",
         })
